@@ -1,0 +1,58 @@
+{
+  "version": "basemap-2026-10-18",
+  "crs": "EPSG:3826",
+  "terrain": {
+    "width": 2007,
+    "height": 3770,
+    "bounds": [
+      150930,
+      2422210,
+      351630,
+      2799210
+    ],
+    "cell": 100,
+    "nodata": 65535,
+    "format": "uint16-le",
+    "max": 3915,
+    "valid": 3623067,
+    "url": "/terrain.bin",
+    "source": {
+      "url": "https://www.tgos.tw/MDE/VirtualDir_TC/Product/528530be-0710-431e-954e-2f2f5e98b0c5/不分幅_全台20MDEM(2025).zip",
+      "dataset": "https://data.gov.tw/dataset/176927",
+      "sha256": "2e1cd738b3c3abbcfdbce79ac18a5818a6ec80aa32c2813f0e21cfd909be295c",
+      "file": "DEM_tawiwan_V2025.tif",
+      "originalCell": 20,
+      "reference": "TWD97 / TM2 121; file projection uses the WGS84 ellipsoid; no precise reference-frame adjustment"
+    }
+  },
+  "counts": {
+    "roads": 222889,
+    "rivers": 53947,
+    "water": 11544
+  },
+  "sources": [
+    {
+      "url": "https://www.tgos.tw/MDE/VirtualDir_TC/Product/528530be-0710-431e-954e-2f2f5e98b0c5/不分幅_全台20MDEM(2025).zip",
+      "dataset": "https://data.gov.tw/dataset/176927",
+      "sha256": "2e1cd738b3c3abbcfdbce79ac18a5818a6ec80aa32c2813f0e21cfd909be295c",
+      "file": "DEM_tawiwan_V2025.tif",
+      "originalCell": 20,
+      "reference": "TWD97 / TM2 121; file projection uses the WGS84 ellipsoid; no precise reference-frame adjustment"
+    },
+    {
+      "url": "https://download.geofabrik.de/asia/taiwan-261017-free.shp.zip",
+      "sha256": "378d6b1edc67f8c2d54e7a2fb273ccbe7b55a6cbe5009e3cc20fe0c0709ae4fa",
+      "date": "2026-10-17",
+      "license": "ODbL-1.0",
+      "attribution": "© OpenStreetMap contributors / Geofabrik"
+    }
+  ],
+  "limitations": [
+    "地形以 100 公尺顯示網格取樣；原始 NoData 留空",
+    "OSM 道路與水系為參考線索，不參與評分",
+    "本島視覺裁切使用當版行政答案的陸域遮罩；來源日期及沿岸差異見 SOURCES.md"
+  ],
+  "terrainSha256": "11f1ca976a43ee17a3a0f972abbbd736c688dcdda81c2bf8fb4d5d58ac8fd642",
+  "vectorsSha256": "564e465dc88aa338af4dff305b0603910a167953079614fd5d82789a5d8714e6",
+  "terrainFileSha256": "d785daa3a9d5fac37236c05a596c1003c335164ffcd9b58310f353e42b3a035e"
+}

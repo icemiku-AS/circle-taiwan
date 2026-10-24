@@ -1,0 +1,111 @@
+{
+  "version": "nlsc-mainland-nearshore-2026-10-22",
+  "generatedAt": "2026-10-22T07:05:46.339Z",
+  "crs": "EPSG:3826",
+  "projection": "+proj=tmerc +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=m +no_defs",
+  "attribution": "內政部國土測繪中心；政府資料開放授權條款第 1 版",
+  "licenseUrl": "https://data.gov.tw/license",
+  "sources": [
+    {
+      "level": "county",
+      "dataset": 7442,
+      "url": "https://www.tgos.tw/tgos/VirtualDir/Product/1cd4f4c9-6b01-4cf9-bf6c-23a73aa17d24/直轄市、縣(市)界線1140318.zip",
+      "files": [
+        {
+          "file": "COUNTY_MOI_1140318",
+          "encoding": "UTF-8",
+          "sourceCrs": "GEOGCS[\"GCS_TWD97[2020]\",DATUM[\"D_TWD_1997\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]"
+        }
+      ],
+      "sha256": "9ff4d337e03a711d7e17caaf4d0c46a0fe2c6bd3660b321a2e35123030d8491c"
+    },
+    {
+      "level": "town",
+      "dataset": 7441,
+      "url": "https://www.tgos.tw/tgos/VirtualDir/Product/3fe61d4a-ca23-4f45-8aca-4a536f40f290/鄉(鎮、市、區)界線1140318.zip",
+      "files": [
+        {
+          "file": "Town_Majia_Sanhe",
+          "encoding": "UTF-8",
+          "sourceCrs": "GEOGCS[\"GCS_TWD97[2020]\",DATUM[\"D_TWD_1997\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]"
+        },
+        {
+          "file": "TOWN_MOI_1140318",
+          "encoding": "UTF-8",
+          "sourceCrs": "GEOGCS[\"GCS_TWD97[2020]\",DATUM[\"D_TWD_1997\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]"
+        }
+      ],
+      "sha256": "c5dc6c0f9a8cc1aad6758a0a6fb81b203718b37f42c5aa8e684262ca24a7d9dd"
+    },
+    {
+      "level": "village",
+      "dataset": 7438,
+      "url": "https://www.tgos.tw/tgos/VirtualDir/Product/a04697c8-64db-450a-a105-3eb471c45abd/村(里)界(TWD97經緯度).zip",
+      "files": [
+        {
+          "file": "VILLAGE_NLSC_1150817",
+          "encoding": "UTF-8",
+          "sourceCrs": "GEOGCS[\"GCS_TWD97[2020]\",DATUM[\"D_TWD_1997\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]"
+        },
+        {
+          "file": "Village_Sanhe",
+          "encoding": "UTF-8",
+          "sourceCrs": "GEOGCS[\"GCS_TWD97[2020]\",DATUM[\"D_TWD_1997\",SPHEROID[\"GRS 1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]"
+        }
+      ],
+      "sha256": "c6cc09589cfdc073df6ca85b84be5f76a92c268774a44744fda341766479ef62"
+    }
+  ],
+  "coast": {
+    "version": "nlsc-coasta-2026-10-21",
+    "inputSha256": "d91712e99f39c3ff4504db6eaf9908e5d0c78d232bbdc49ea6d61b429efec9cb",
+    "manifestSha256": "eb80d54eda1178964594943786b786a64f2948b8ed53717f2fbf350b1aeca8a7",
+    "scales": [
+      25000,
+      50000
+    ],
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  "nearshore": {
+    "version": "nearshore-approved-2026-10-22",
+    "manifestSha256": "f5e884fef5cee1f15a5785a72e9054bca5ea591cf986346b951ca14bec590af0",
+    "regions": [
+      {
+        "name": "彰濱鹿港區主要陸塊",
+        "sha256": "86776aa055fe4094682f030ab6af01c592a55dd736526f916ae55c8a82df494b"
+      },
+      {
+        "name": "旗津本體",
+        "sha256": "c12bae16dc20f863d6ddb3aa3e52dab4955eb75c55c675e2f7853cbf68b274ac"
+      },
+      {
+        "name": "布袋商港主要分離陸塊",
+        "sha256": "a3db527cfc2a1b5b19bf4f4c66b4e71fb9101a415d4a70707542b5a9aa5f7c8f"
+      },
+      {
+        "name": "和平島主要陸塊",
+        "sha256": "de2ab8d03646c93ea5bb691f5c487d560f9bd6f12e00f194bc1776cb92d8aeda"
+      },
+      {
+        "name": "漁光島主要陸塊",
+        "sha256": "5d2af1b4f06cb077efe15402fa9e6f3472ba8cec50329c7ba24777b80e63368a"
+      },
+      {
+        "name": "三仙台主島",
+        "sha256": "3f2ffd916da08a15bd7e8c0a6bd6cf7c95d2d0fbb2966953ea73817633c97ef7"
+      }
+    ]
+  },
+  "limitations": [
+    "本島以官方 CoastA 海洋面排除海面後取最大連通陸域，加上六組雜湊釘選的近岸陸塊；河川與湖泊不自動排除",
+    "海洋面採 1:25,000 圖幅，5 處缺口局部採 1:50,000；來源日期與海岸變動須參考 SOURCES.md",
+    "行政區僅對遊戲範圍內部分出題與計分；其他沿岸島塊、遠方離島及無交集區域不出題",
+    "不作為正式測量圖資"
+  ],
+  "counts": {
+    "county": 19,
+    "town": 349,
+    "village": 7656
+  },
+  "outputSha256": "8270785cb7aeebd503cb138863834b515b4ba3c47fe62773742301ffc75014f3"
+}
