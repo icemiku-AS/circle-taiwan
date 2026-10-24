@@ -11,7 +11,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const sha = value => createHash('sha256').update(value).digest('hex');
 
 // Large data and display tiles are served separately to fit the static file size limit.
-export const SOLO_SOURCE_FILES = [...['app.js', 'basemap.js', 'clue-tiles.js', 'draft.js', 'index.html', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'map.js', 'sha256.js', 'share.js',
+export const SOLO_SOURCE_FILES = [...['app.js', 'basemap.js', 'clue-tiles.js', 'draft.js', 'index.html', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'og-image-v1.0.1.png', 'map.js', 'sha256.js', 'share.js',
   'solo-assets.js', 'solo-engine.js', 'solo-game.js', 'solo-worker.js', 'multi-client.js', 'style.css'].map(file => 'public/' + file),
   'shared/rules.js', 'shared/scoring.js', 'server/catalog.js', 'server/basemap.js', 'server/static.js',
   'scripts/build-static.js', 'scripts/prepare-solo-release.js', 'scripts/prepare-data.js', 'scripts/prepare-basemap.js', 'scripts/mainland-mask.js',
@@ -142,7 +142,7 @@ console.log('圖資還原完成');
   const files = readdirSync(out, { recursive: true, withFileTypes: true }).filter(f => f.isFile());
   assert.ok(files.every(f => !['.git', '.cache', 'node_modules', 'server', 'prototype'].some(name => f.parentPath.split(/[\\/]/).slice(out.split(/[\\/]/).length).includes(name))));
   assert.ok(files.every(f => !/\.(cmd|ps1|patch)$/.test(f.name)), '發布包不可包含舊啟動器或還原補丁');
-  const evidence = { schema: 1, fingerprint: manifest.fingerprint, engineVersion: manifest.engineVersion,
+  const evidence = { schema: 1, version: JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version, fingerprint: manifest.fingerprint, engineVersion: manifest.engineVersion,
     runtimeVersion: manifest.runtimeVersion, dataVersion: manifest.dataVersion, preserved, assets: assets.length,
     assetBytes: assets.reduce((n, asset) => n + asset.bytes, 0),
     sourceArchiveSha256: sha(readFileSync(join(out, 'source-code.tar.gz'))),
