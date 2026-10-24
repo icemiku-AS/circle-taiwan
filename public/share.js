@@ -10,7 +10,13 @@ export function roundScoreText(result) {
   if (!result) return '—';
   if (result.voided) return `本題作廢${result.status === 'calculation_failed' ? '（計分失敗）' : ''}`;
   const status = { forced_missing: '強制封存缺件', unanswered: '未作答', invalid: '無效筆畫', calculation_failed: '計分失敗' }[result.status];
-  return `${result.points ? '+1' : '0'} 點 · ${result.score.toFixed(2)}%${status ? `（${status}）` : ''}`;
+  return `${result.points > 0 ? `+${result.points}` : '0'} 點 · ${result.score.toFixed(2)}%${status ? `（${status}）` : ''}`;
+}
+
+export function multiplayerRulesText(rulesVersion) {
+  return (rulesVersion === 'circle-taiwan-0.5'
+    ? '舊版：原始吻合度 > 50% 得 1 點；同分依平均吻合度、總時間排序。'
+    : '每題依名次與吻合度最高得 10 點；同分依平均吻合度排序，相同則並列。') + '作廢題不計積分、平均與時間。';
 }
 
 export function comparisonBounds(target, points) {
@@ -89,10 +95,10 @@ export function multiplayerScoreImage(data, state) {
   c.fillStyle = '#1f2a23'; c.font = 'bold 40px sans-serif'; c.fillText('圈出台灣｜多人結算', 40, 65);
   c.font = '23px sans-serif'; c.fillText(challengeScope(data, state.settings), 40, 108, 1120);
   c.fillText(`${state.settings.difficulty === 'easy' ? '初階' : '高階'} · ${state.history.length} 題 · 每題 ${state.settings.seconds} 秒 · ${players.length} 人`, 40, 146);
-  c.font = '19px sans-serif'; c.fillText('原始吻合度 > 50% 得 1 點；同分依平均、總時間排序。作廢題不計入積分、平均與時間。', 40, 187, 1120);
+  c.font = '19px sans-serif'; c.fillText(multiplayerRulesText(state.rulesVersion), 40, 187, 1120);
   if (players.every(p => p.rank == null)) { c.fillStyle = '#8c3b19'; c.fillText('本局無有效題，不產生名次。', 40, 221); }
   c.fillStyle = '#657466'; c.font = '20px sans-serif';
-  ['名次', '玩家', '達標積分', '平均吻合度', '總作答時間'].forEach((text, i) => c.fillText(text, [40, 128, 640, 815, 1005][i], 270));
+  ['名次', '玩家', '積分', '平均吻合度', '總作答時間'].forEach((text, i) => c.fillText(text, [40, 128, 640, 815, 1005][i], 270));
   let y = 310;
   players.forEach(p => {
     c.fillStyle = '#1f2a23'; c.font = 'bold 25px sans-serif';

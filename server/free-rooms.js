@@ -1,4 +1,4 @@
-import { COUNTS, TIMES, MAX_POINTS, standings } from '../shared/rules.js';
+import { COUNTS, TIMES, MAX_POINTS, RULES_VERSION, standings } from '../shared/rules.js';
 
 const TTL = 30 * 60 * 1000, BUFFER = 6000, GRACE = 10000, BODY_LIMIT = 128 * 1024;
 const COLORS = ['#D55E00', '#0072B2', '#CC79A7', '#9A7300', '#5B3F8C', '#009E73', '#B14444', '#495057'];
@@ -16,6 +16,7 @@ function plan(input) {
     !['county', 'town', 'village'].includes(s.challenge) || !['easy', 'hard'].includes(s.difficulty) || !['mainland', 'county', 'town'].includes(s.scope)) throw fail('遊戲設定無效');
   if (!Array.isArray(q) || !q.length || q.length > s.count || new Set(q).size !== q.length || q.some(id => typeof id !== 'string' || !/^[\w-]{1,40}$/.test(id))) throw fail('題目清單無效');
   if (!v || ['dataVersion', 'rulesVersion', 'runtimeVersion'].some(k => typeof v[k] !== 'string' || v[k].length > 128 || !v[k])) throw fail('圖資版本無效');
+  if (v.rulesVersion !== RULES_VERSION) throw fail('計分規則已更新，請重新整理後再開新局。',409,'version_mismatch');
   const settings = { challenge: s.challenge, difficulty: s.difficulty, scope: s.scope, county: String(s.county || '').slice(0,40), town: String(s.town || '').slice(0,40), count:s.count, seconds:s.seconds, capacity:s.capacity };
   return [JSON.stringify(settings), JSON.stringify(q), JSON.stringify(v)];
 }
@@ -52,7 +53,7 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
     if (new TextEncoder().encode(JSON.stringify(summary)).byteLength > 1024) throw new Error('Room summary exceeds 1 KiB');
     const response = { summary };
     if (includeDetails && Number(version) !== r.metadata_version) {
-      const questions = JSON.parse(r.questions), settings = JSON.parse(r.settings);
+      const questions = JSON.parse(r.questions), settings = JSON.parse(r.settings), versions = JSON.parse(r.versions);
       const roster = players.filter(p=>r.phase === 'lobby' ? !p.left : p.in_game).map(p=>({id:p.id,seat:p.seat,name:p.name,color:COLORS[p.seat],left:Boolean(p.left)}));
       const rows = answers.results;
       const rounds = [];
@@ -63,9 +64,9 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
       }
       for (const round of rounds) round.voided=Object.values(round.results).some(a=>a.status==='calculation_failed');
       const current = rounds.find(q=>q.id===r.round_id);
-      response.details = { code:r.code,settings,questions,versions:JSON.parse(r.versions),players:roster,rounds,
-        roundStandings:current?standings(roster,[current],settings.seconds,'multi'):null,
-        cumulativeStandings:rounds.length?standings(roster,rounds,settings.seconds,'multi'):null };
+      response.details = { code:r.code,settings,questions,versions,players:roster,rounds,
+        roundStandings:current?standings(roster,[current],settings.seconds,'multi',versions.rulesVersion):null,
+        cumulativeStandings:rounds.length?standings(roster,rounds,settings.seconds,'multi',versions.rulesVersion):null };
     }
     return { response, room:r, player:me, players };
   }
@@ -140,6 +141,7 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
         stmt(env,'UPDATE rooms SET version=version+1,expires_at=? WHERE id=? AND changes()=1',until,r.id)
       ]);
     } else if(type==='start') {
+      if(JSON.parse(r.versions).rulesVersion!==RULES_VERSION)throw fail('計分規則已更新，請重新整理後再開新局。',409,'version_mismatch');
       host();const game=key(),question=key(),deadline=at+BUFFER+JSON.parse(r.settings).seconds*1000;
       const results=await env.DB.batch([
         stmt(env,`UPDATE rooms SET phase='playing',game_id=?,round_id=?,round_index=0,start_at=?,deadline=?,version=version+1,metadata_version=metadata_version+1,expires_at=? WHERE ${active} AND phase='lobby' AND plan_version=? AND (SELECT COUNT(*) FROM room_players WHERE room_id=rooms.id AND left=0)>=2 AND NOT EXISTS(SELECT 1 FROM room_players WHERE room_id=rooms.id AND left=0 AND (ready=0 OR loaded_version<>rooms.plan_version))`,game,question,at+BUFFER,deadline,until,r.id,at,input.revision),

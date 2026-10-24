@@ -69,7 +69,7 @@ export class MultiplayerHTTP {
     const q=s.round?{id:s.round,regionId:id,name:region?.name||id,number:s.index+1,count:d.questions.length,start:s.start,deadline:s.deadline,extent:extent||this.data.bounds,
       points:this.pending?.points||this.draftPoints,revision:0,locked:Boolean(this.pending||me.submitted||this.now()>=s.deadline),checking:this.calculating,
       results:current?.results||null,voided:current?.voided||false,neutralNames:region?.neutralNames||[],scoredAt:s.now,nextAt:null}:null;
-    const state={type:'state',free:true,code:d.code,mode:'multi',phase,gameId:s.game,hostId:players.find(p=>p.seat===s.host)?.id,you:me.id,players,settings,settingsRevision:s.plan,
+    const state={type:'state',free:true,code:d.code,mode:'multi',rulesVersion:d.versions.rulesVersion,phase,gameId:s.game,hostId:players.find(p=>p.seat===s.host)?.id,you:me.id,players,settings,settingsRevision:s.plan,
       serverNow:this.now(),question:q,notices:[],expiresAt:s.expires,localFailure:this.localError,canReportFailure:this.localError==='calculation'&&(this.pending?.attempts||0)>=2,
       error:this.localError==='upload'?'圈選與成績已保留，請重新送出。':'背景計分失敗，原筆跡與作答時間已保留，請重新計分。',
       roundStandings:d.roundStandings,cumulativeStandings:d.cumulativeStandings,standings:s.phase==='results'?d.cumulativeStandings:null,
