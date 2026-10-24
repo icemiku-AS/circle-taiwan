@@ -1,5 +1,5 @@
 import { GameMap, drawPath } from './map.js';
-import { scoreImage, multiplayerScoreImage, challengeScope, roundScoreText, comparison } from './share.js';
+import { scoreImage, multiplayerScoreImage, challengeScope, roundScoreText, multiplayerRulesText, comparison } from './share.js';
 import { DraftSync } from './draft.js';
 import { MultiplayerHTTP } from './multi-client.js';
 import { SoloAssets } from './solo-assets.js';
@@ -564,8 +564,8 @@ function renderResults() {
     return;
   }
   const host = state.hostId === state.you;
-  $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">${mine?.rank == null ? '本局無有效成績' : `本局第 ${mine.rank} 名 · 你的達標積分`}</div><div class="score-card-value">${mine?.rank == null ? '—' : `${mine.points}<small> 點</small>`}</div><p>${mine ? `平均吻合度 ${score(mine.score)} · 總作答 ${totalTime(mine.time)}` : `共 ${state.standings.length} 位參賽者完成本局`}</p></div><div class="report-copy"><h1>多人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p>${!host && state.free ? '<p>等待房主返回大廳，請手動查看狀態。</p>' : ''}<div class="summary-actions"><button type="button" class="primary" data-action="replay">${!host && state.free ? '查看大廳狀態' : '返回大廳'}</button><button type="button" data-action="share">下載成績圖 ↓</button><button type="button" data-action="leave">離開／重新開房</button></div></div></div>
-    <div class="summary-content"><div class="section-heading"><h2>整局排名</h2><p>原始吻合度 &gt; 50% 得 1 點；同分依平均、總時間排序，作廢題除外。</p></div><div class="table-wrap results-ranking"><table><thead><tr><th>名次／玩家</th><th>積分</th><th>平均</th><th>總時間</th>${state.history.map((q, i) => `<th class="desktop-rounds">${i + 1}. ${esc(q.name)}</th>`).join('')}</tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td><strong class="rank-num">${p.rank == null ? '—' : '#' + p.rank}</strong><span class="player-name" data-text-color="${p.color}"><i class="dot" data-color="${p.color}"></i>${playerIdentity(p)}</span>${p.left ? '（已離開／未完成）' : ''}</td><td><strong>${p.points} 點</strong></td><td>${score(p.score)}</td><td>${totalTime(p.time)}</td>${p.perQuestion.map(q => `<td class="desktop-rounds">${esc(roundScoreText(q))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">${mine?.rank == null ? '本局無有效成績' : `本局第 ${mine.rank} 名 · 你的積分`}</div><div class="score-card-value">${mine?.rank == null ? '—' : `${mine.points}<small> 點</small>`}</div><p>${mine ? `平均吻合度 ${score(mine.score)} · 總作答 ${totalTime(mine.time)}` : `共 ${state.standings.length} 位參賽者完成本局`}</p></div><div class="report-copy"><h1>多人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p>${!host && state.free ? '<p>等待房主返回大廳，請手動查看狀態。</p>' : ''}<div class="summary-actions"><button type="button" class="primary" data-action="replay">${!host && state.free ? '查看大廳狀態' : '返回大廳'}</button><button type="button" data-action="share">下載成績圖 ↓</button><button type="button" data-action="leave">離開／重新開房</button></div></div></div>
+    <div class="summary-content"><div class="section-heading"><h2>整局排名</h2><p>${esc(multiplayerRulesText(state.rulesVersion))}</p></div><div class="table-wrap results-ranking"><table><thead><tr><th>名次／玩家</th><th>積分</th><th>平均</th><th>總時間</th>${state.history.map((q, i) => `<th class="desktop-rounds">${i + 1}. ${esc(q.name)}</th>`).join('')}</tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td><strong class="rank-num">${p.rank == null ? '—' : '#' + p.rank}</strong><span class="player-name" data-text-color="${p.color}"><i class="dot" data-color="${p.color}"></i>${playerIdentity(p)}</span>${p.left ? '（已離開／未完成）' : ''}</td><td><strong>${p.points} 點</strong></td><td>${score(p.score)}</td><td>${totalTime(p.time)}</td>${p.perQuestion.map(q => `<td class="desktop-rounds">${esc(roundScoreText(q))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
     <details class="mobile-rounds"><summary>逐題成績（${state.history.length} 題）</summary>${state.history.map((q, i) => `<section><h3>${i + 1}. ${esc(q.name)}</h3><table aria-label="${esc(q.name)}逐題成績"><thead><tr><th>玩家</th><th>成績</th></tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td>${playerIdentity(p)}</td><td>${esc(roundScoreText(p.perQuestion[i]))}</td></tr>`).join('')}</tbody></table></section>`).join('')}</details></div>`;
   for (const el of $('#results').querySelectorAll('[data-color]')) el.style.backgroundColor = el.dataset.color;
   for (const el of $('#results').querySelectorAll('[data-text-color]')) el.style.color = el.dataset.textColor;
@@ -648,6 +648,8 @@ document.addEventListener('click', async e => {
     if (action === 'help') {
       const multi = (state?.mode || mode) === 'multi';
       $('#help-single').hidden = multi; $('#help-multi').hidden = !multi;
+      $('#multi-scoring-rule').textContent = multiplayerRulesText(state?.rulesVersion);
+      $('#multi-scoring-details').hidden = state?.rulesVersion === 'circle-taiwan-0.5';
       $('#help-dialog').showModal();
     }
     else if (action === 'dismiss-hint') { gestureHintDismissed = true; $('#map-help').hidden = true; }
