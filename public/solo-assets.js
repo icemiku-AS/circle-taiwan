@@ -66,6 +66,11 @@ export class SoloAssets {
     finally { signal?.removeEventListener('abort', abort); }
   }
   async catalog() { return compressedJSON(this.manifest.catalog); }
+  async countyBoundaries() {
+    if (!this.counties) this.counties = compressedJSON(this.manifest.answerPacks.county)
+      .then(regions => regions.flatMap(r => r.geometry)).catch(error => { this.counties = null; throw error; });
+    return this.counties;
+  }
   async terrainCanvas(overview = false) {
     const info = this.manifest.clues, asset = overview ? info.overviewTerrain : info.terrainAsset;
     const bytes = await compressedBytes(asset), { width, height } = overview ? asset : info.terrain;

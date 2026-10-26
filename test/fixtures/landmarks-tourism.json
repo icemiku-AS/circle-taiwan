@@ -1,0 +1,35 @@
+{
+  "_fixture": "官方來源欄位摘錄，僅供格式與轉檔測試，不是正式核准題庫",
+  "_source": {
+    "sourceUrl": "https://media.taiwan.net.tw/XMLReleaseAll_public/v2.0/Zh_tw/Attraction-json.zip",
+    "retrievedAt": "2026-10-26T07:16:03.222Z",
+    "sourceSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+    "bytes": 3111006,
+    "datasetUrl": "https://data.gov.tw/dataset/7777",
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  "UpdateTime": "2026-10-26T14:30:03+08:00",
+  "Language": "Zh_tw",
+  "Attractions": [
+    {
+      "AttractionID": "Attraction_379000000A_000217",
+      "AttractionName": "台北101",
+      "PositionLon": 121.56476,
+      "PositionLat": 25.03361,
+      "PostalAddress": {
+        "CityCode": "63000"
+      },
+      "UpdateTime": "2026-10-21T11:50:32+08:00"
+    },
+    {
+      "AttractionID": "Attraction_395000000A_000572",
+      "AttractionName": "奇美博物館",
+      "PositionLon": 120.22619,
+      "PositionLat": 22.93482,
+      "PostalAddress": {
+        "CityCode": "67000"
+      },
+      "UpdateTime": "2024-01-09T16:06:59+08:00"
+    }
+  ]
+}

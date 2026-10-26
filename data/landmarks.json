@@ -1,0 +1,2308 @@
+{
+  "schemaVersion": 1,
+  "version": "landmarks-2026-10-26-03",
+  "crs": "EPSG:3826",
+  "projection": "+proj=tmerc +lat_0=0 +lon_0=121 +k=0.9999 +x_0=250000 +y_0=0 +ellps=GRS80 +units=m +no_defs",
+  "landmarks": [
+    {
+      "id": "lm-alishan-shouzhen-temple",
+      "name": "阿里山受鎮宮",
+      "county": "10010",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.81078,
+        23.51764
+      ],
+      "point": [
+        230677.35531952197,
+        2601617.5360059706
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010800H_000252",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-01-07T18:21:30+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-anping-fort",
+      "name": "安平古堡",
+      "county": "67000",
+      "anchorLabel": "古堡",
+      "wgs84": [
+        120.16062,
+        23.00092
+      ],
+      "point": [
+        163951.66962228058,
+        2544631.298907155
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_395000000A_000671",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-02-08T11:12:24+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-baguashan-buddha",
+      "name": "八卦山大佛",
+      "county": "10007",
+      "anchorLabel": "大佛",
+      "wgs84": [
+        120.5488,
+        24.07848
+      ],
+      "point": [
+        204121.7534498253,
+        2663788.3067567446
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376470000A_000004",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-05-21T16:38:32+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-beigang-chaotian-temple",
+      "name": "北港朝天宮",
+      "county": "10009",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.30476,
+        23.56809
+      ],
+      "point": [
+        179029.90879756803,
+        2607363.8366924846
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376490000A_000002",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-17T11:00:55+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-beimen-station",
+      "name": "嘉義北門驛",
+      "county": "10020",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.45469,
+        23.48769
+      ],
+      "point": [
+        194301.29207723425,
+        2598393.781030226
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376600000A_000057",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-26T19:16:57+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-beipu-citian-temple",
+      "name": "北埔慈天宮",
+      "county": "10004",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.058173093252,
+        24.6998099183357
+      ],
+      "point": [
+        255886.17896983668,
+        2732529.884685125
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376440000A_000087",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-07-30T07:45:45+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-beitou-hot-spring-museum",
+      "name": "北投溫泉博物館",
+      "county": "63000",
+      "anchorLabel": "館舍",
+      "wgs84": [
+        121.50715,
+        25.13658
+      ],
+      "point": [
+        301135.4133383051,
+        2781001.684018938
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000033",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-20T16:29:19+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-beitou-library",
+      "name": "北投圖書館",
+      "county": "63000",
+      "anchorLabel": "北投分館",
+      "wgs84": [
+        121.50638,
+        25.13653
+      ],
+      "point": [
+        301057.79451990983,
+        2780995.853984818
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000212",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-29T09:27:30+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-buddha-museum",
+      "name": "佛光山佛陀紀念館",
+      "county": "64000",
+      "anchorLabel": "紀念館",
+      "wgs84": [
+        120.44032,
+        22.75729
+      ],
+      "point": [
+        192523.2145946338,
+        2517516.139066279
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000579",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-03-27T11:26:34+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-changchun-shrine",
+      "name": "太魯閣長春祠",
+      "county": "10015",
+      "anchorLabel": "祠堂",
+      "wgs84": [
+        121.60369,
+        24.16048
+      ],
+      "point": [
+        311344.7406628991,
+        2672928.2898730775
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376550000A_009394",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-25T15:12:59+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-changhua-roundhouse",
+      "name": "彰化扇形車庫",
+      "county": "10007",
+      "anchorLabel": "車庫",
+      "wgs84": [
+        120.5359,
+        24.08442
+      ],
+      "point": [
+        202812.23020287798,
+        2664450.440931981
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376470000A_000017",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-05-06T16:01:54+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-checheng-station",
+      "name": "車埕車站",
+      "county": "10008",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.86572,
+        23.83268
+      ],
+      "point": [
+        236320.52390830917,
+        2636499.5918428064
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000113",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-chiang-kai-shek-memorial",
+      "name": "中正紀念堂",
+      "county": "63000",
+      "anchorLabel": "紀念堂",
+      "wgs84": [
+        121.51868,
+        25.03619
+      ],
+      "point": [
+        302340.6726992239,
+        2769886.3038261984
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000023",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-22T12:00:23+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-chiayi-sun-shooting-tower",
+      "name": "嘉義射日塔",
+      "county": "10020",
+      "anchorLabel": "塔樓",
+      "wgs84": [
+        120.46906,
+        23.48131
+      ],
+      "point": [
+        195766.48358695838,
+        2597681.7460451885
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376600000A_000020",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-25T17:53:30+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-chihkan-tower",
+      "name": "赤崁樓",
+      "county": "67000",
+      "anchorLabel": "樓閣",
+      "wgs84": [
+        120.20242,
+        22.99722
+      ],
+      "point": [
+        168234.73123998882,
+        2544197.637732671
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_395000000A_000674",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-10-31T16:46:33+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-chimei-museum",
+      "name": "奇美博物館",
+      "county": "67000",
+      "anchorLabel": "主館",
+      "wgs84": [
+        120.22619,
+        22.93482
+      ],
+      "point": [
+        170635.2420586163,
+        2537274.4342749724
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_395000000A_000572",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-01-09T16:06:59+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-chung-tai-monastery",
+      "name": "中台禪寺",
+      "county": "10008",
+      "anchorLabel": "寺院",
+      "wgs84": [
+        120.94459,
+        24.00909
+      ],
+      "point": [
+        244362.89341806,
+        2656030.9261583956
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000084",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-cimin-visitor-center",
+      "name": "慈湖遊客中心",
+      "county": "68000",
+      "anchorLabel": "遊客中心",
+      "wgs84": [
+        121.29427,
+        24.84037
+      ],
+      "point": [
+        279741.95996104315,
+        2748128.9310445753
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376430000A_000381",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-04-08T15:04:06+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-dajia-jenn-lann-temple",
+      "name": "大甲鎮瀾宮",
+      "county": "66000",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.62357,
+        24.34523
+      ],
+      "point": [
+        211804.08822972648,
+        2693308.949341253
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000609",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-04-23T12:30:22+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-dapeng-visitor-center",
+      "name": "大鵬灣遊客中心",
+      "county": "10013",
+      "anchorLabel": "遊客中心",
+      "wgs84": [
+        120.4788,
+        22.45642
+      ],
+      "point": [
+        196358.52753395744,
+        2484186.1650169953
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010400H_000429",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:15:08+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-daxi-bridge",
+      "name": "大溪橋",
+      "county": "68000",
+      "anchorLabel": "橋身",
+      "wgs84": [
+        121.2839,
+        24.88482
+      ],
+      "point": [
+        278683.5983736639,
+        2753050.0205012164
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376430000A_001003",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-06-06T18:19:13+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-daxi-wude-hall",
+      "name": "大溪武德殿",
+      "county": "68000",
+      "anchorLabel": "館舍",
+      "wgs84": [
+        121.28609,
+        24.88105
+      ],
+      "point": [
+        278905.74168617546,
+        2752632.914786439
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376430000A_000392",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-08-22T17:16:18+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-dianji-temple",
+      "name": "基隆奠濟宮",
+      "county": "10017",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.7429968,
+        25.1281559
+      ],
+      "point": [
+        324921.46520387806,
+        2780178.7572753895
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376570000A_000441",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-10T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-donggang-donglong-temple",
+      "name": "東港東隆宮",
+      "county": "10013",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.4485,
+        22.46314
+      ],
+      "point": [
+        193242.7461729471,
+        2484941.416018051
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010400H_000427",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:15:08+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-dongshi-fisherman-wharf",
+      "name": "東石漁人碼頭",
+      "county": "10010",
+      "anchorLabel": "碼頭廣場",
+      "wgs84": [
+        120.13527,
+        23.44876
+      ],
+      "point": [
+        161647.99407927043,
+        2594242.3720464623
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15011100H_000035",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-10-04T14:26:52+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-duoliang-station",
+      "name": "多良車站",
+      "county": "10014",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.95888,
+        22.50753
+      ],
+      "point": [
+        245769.55809111794,
+        2489752.7426929143
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376540000A_000429",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-23T16:21:50+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-eternal-golden-castle",
+      "name": "億載金城",
+      "county": "67000",
+      "anchorLabel": "砲臺",
+      "wgs84": [
+        120.16001,
+        22.98836
+      ],
+      "point": [
+        163881.16641843977,
+        2543240.747756567
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_395000000A_000673",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-09-26T16:15:42+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-formosa-boulevard",
+      "name": "美麗島站光之穹頂",
+      "county": "64000",
+      "anchorLabel": "車站大廳",
+      "wgs84": [
+        120.30132,
+        22.63151
+      ],
+      "point": [
+        178182.51698615222,
+        2503648.594038984
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000226",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-03-27T15:36:39+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-fort-san-domingo",
+      "name": "淡水紅毛城",
+      "county": "65000",
+      "anchorLabel": "紅毛城主堡",
+      "wgs84": [
+        121.43294,
+        25.17543
+      ],
+      "point": [
+        293638.9732752462,
+        2785278.8736914145
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109672",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-11T03:24:29+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-gaomei-lighthouse",
+      "name": "高美燈塔",
+      "county": "66000",
+      "anchorLabel": "燈塔",
+      "wgs84": [
+        120.55149,
+        24.31227
+      ],
+      "point": [
+        204478.3509951979,
+        2689680.197523086
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000948",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-09-07T10:35:13+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-gaomei-visitor-center",
+      "name": "高美濕地遊客中心",
+      "county": "66000",
+      "anchorLabel": "遊客服務中心",
+      "wgs84": [
+        120.54761,
+        24.30529
+      ],
+      "point": [
+        204082.03114312247,
+        2688908.409845997
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_001416",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-04-23T12:14:34+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-gold-museum",
+      "name": "金瓜石黃金博物館",
+      "county": "65000",
+      "anchorLabel": "博物館園區",
+      "wgs84": [
+        121.85766,
+        25.10796
+      ],
+      "point": [
+        336498.4773243278,
+        2778010.216161629
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109620",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-03-26T02:34:47+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-guangfu-sugar-factory",
+      "name": "光復糖廠",
+      "county": "10015",
+      "anchorLabel": "糖廠展售區",
+      "wgs84": [
+        121.42003,
+        23.65673
+      ],
+      "point": [
+        292847.3749681418,
+        2617070.820828563
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010300H_000020",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-02-02T16:16:48+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-gukeng-green-tunnel",
+      "name": "古坑綠色隧道",
+      "county": "10009",
+      "anchorLabel": "綠色隧道公園",
+      "wgs84": [
+        120.540999,
+        23.659304
+      ],
+      "point": [
+        203178.04346518376,
+        2617368.114535987
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376490000A_000015",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-17T11:00:57+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-hayashi-store",
+      "name": "林百貨",
+      "county": "67000",
+      "anchorLabel": "百貨建築",
+      "wgs84": [
+        120.20252,
+        22.99179
+      ],
+      "point": [
+        168241.71364775102,
+        2543596.261808119
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A25000000E_000052",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-06T11:57:26+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-hinoki-village",
+      "name": "檜意森活村",
+      "county": "10020",
+      "anchorLabel": "木造宿舍群",
+      "wgs84": [
+        120.45406,
+        23.48619
+      ],
+      "point": [
+        194236.31084436097,
+        2598227.910398604
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376600000A_000015",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-25T17:56:16+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-hsinchu-city-god-temple",
+      "name": "新竹都城隍廟",
+      "county": "10018",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.96294047592836,
+        24.80450434749329
+      ],
+      "point": [
+        246253.31433068137,
+        2744124.90384846
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376580000A_000030",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-14T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-hsinchu-east-gate",
+      "name": "新竹迎曦門",
+      "county": "10018",
+      "anchorLabel": "東門城",
+      "wgs84": [
+        120.96823237592821,
+        24.804205247505237
+      ],
+      "point": [
+        246788.3131537104,
+        2744091.6410480128
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376580000A_000029",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-14T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-hsinchu-zoo",
+      "name": "新竹市立動物園",
+      "county": "10018",
+      "anchorLabel": "動物園",
+      "wgs84": [
+        120.97734687604826,
+        24.80015607796872
+      ],
+      "point": [
+        247709.70904830538,
+        2743642.9759855377
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376580000A_000055",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-14T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-huwei-iron-bridge",
+      "name": "虎尾鐵橋",
+      "county": "10009",
+      "anchorLabel": "鐵橋",
+      "wgs84": [
+        120.43721,
+        23.70223
+      ],
+      "point": [
+        192609.23818962974,
+        2622159.89237485
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376490000A_000021",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-17T11:00:58+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-jiji-station",
+      "name": "集集車站",
+      "county": "10008",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.78489,
+        23.82645
+      ],
+      "point": [
+        228085.07974476056,
+        2635819.7939605103
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000046",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-jimmy-plaza",
+      "name": "宜蘭幾米廣場",
+      "county": "10002",
+      "anchorLabel": "廣場",
+      "wgs84": [
+        121.757,
+        24.75263
+      ],
+      "point": [
+        326565.3103336274,
+        2738590.6551274
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376420000A_000232",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-13T16:13:35+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-jingzaijiao-salt-fields",
+      "name": "井仔腳瓦盤鹽田",
+      "county": "67000",
+      "anchorLabel": "鹽田展區",
+      "wgs84": [
+        120.10757,
+        23.25883
+      ],
+      "point": [
+        158687.76473160964,
+        2573225.4310485134
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15011100H_000369",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-09-21T12:01:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-kaohsiung-fine-arts-museum",
+      "name": "高雄市立美術館",
+      "county": "64000",
+      "anchorLabel": "主館",
+      "wgs84": [
+        120.28655,
+        22.65669
+      ],
+      "point": [
+        176677.61818860314,
+        2506444.0779684423
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000158",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-02-20T14:20:09+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-keelung-zhongzheng-park",
+      "name": "基隆中正公園",
+      "county": "10017",
+      "anchorLabel": "公園代表點",
+      "wgs84": [
+        121.7506408,
+        25.1332847
+      ],
+      "point": [
+        325689.1293161516,
+        2780751.140595855
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376570000A_000384",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-10T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-kenting-forest",
+      "name": "墾丁森林遊樂區入口",
+      "county": "10013",
+      "anchorLabel": "入口服務區",
+      "wgs84": [
+        120.81203853828217,
+        21.958724278213854
+      ],
+      "point": [
+        230587.0000018035,
+        2428999.0014696545
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_345040000G_000014",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:20:13+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-lanyang-museum",
+      "name": "蘭陽博物館",
+      "county": "10002",
+      "anchorLabel": "主館",
+      "wgs84": [
+        121.83274,
+        24.86866
+      ],
+      "point": [
+        334147.835021193,
+        2751487.4099628357
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376420000A_000321",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-25T11:49:33+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-leofoo-village",
+      "name": "六福村",
+      "county": "10004",
+      "anchorLabel": "遊樂園",
+      "wgs84": [
+        121.180648497943,
+        24.8253091698669
+      ],
+      "point": [
+        268260.3758356732,
+        2746440.8042938407
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376440000A_000038",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-03T03:22:25+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-lin-family-garden",
+      "name": "板橋林家花園",
+      "county": "65000",
+      "anchorLabel": "林本源園邸",
+      "wgs84": [
+        121.45459,
+        25.01113
+      ],
+      "point": [
+        295882.4894369963,
+        2767087.300734436
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109673",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-06-14T21:00:59+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-longshan-temple",
+      "name": "艋舺龍山寺",
+      "county": "63000",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.499863,
+        25.037316
+      ],
+      "point": [
+        300441.33256013214,
+        2770003.882452328
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000068",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-20T18:08:14+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-longteng-bridge",
+      "name": "龍騰斷橋",
+      "county": "10005",
+      "anchorLabel": "北段斷橋",
+      "wgs84": [
+        120.7738,
+        24.35843
+      ],
+      "point": [
+        227050.2006084023,
+        2694737.8392285355
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376450000A_000035",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:00:07+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-lukang-longshan-temple",
+      "name": "鹿港龍山寺",
+      "county": "10007",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.4349,
+        24.05038
+      ],
+      "point": [
+        192527.59992095668,
+        2660718.092222646
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376470000A_000079",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-08-06T09:00:40+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-lukang-tianhou-temple",
+      "name": "鹿港天后宮",
+      "county": "10007",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.4315,
+        24.05937
+      ],
+      "point": [
+        192185.82887241954,
+        2661715.1432891237
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376470000A_000091",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-11-12T09:44:20+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-luodong-forestry",
+      "name": "羅東林業文化園區",
+      "county": "10002",
+      "anchorLabel": "林場園區",
+      "wgs84": [
+        121.77225,
+        24.68193
+      ],
+      "point": [
+        328151.9398358393,
+        2730768.2452072897
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376420000A_000426",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-09-21T16:09:52+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-luye-highland",
+      "name": "鹿野高台",
+      "county": "10014",
+      "anchorLabel": "熱氣球草坪",
+      "wgs84": [
+        121.12156,
+        22.91646
+      ],
+      "point": [
+        262469.05516417645,
+        2535037.6947202138
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376540000A_000450",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-29T20:34:39+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-marine-science-museum",
+      "name": "國立海洋科技博物館",
+      "county": "10017",
+      "anchorLabel": "主題館",
+      "wgs84": [
+        121.7985672,
+        25.1400236
+      ],
+      "point": [
+        330517.45271815767,
+        2781525.3652189565
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376570000A_000395",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-10T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-nanzhuang-post-office",
+      "name": "南庄老郵局",
+      "county": "10005",
+      "anchorLabel": "郵局",
+      "wgs84": [
+        120.99932,
+        24.60006
+      ],
+      "point": [
+        249931.14028648767,
+        2721480.671992227
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010700H_000027",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-30T11:34:44+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-national-palace-museum",
+      "name": "國立故宮博物院",
+      "county": "63000",
+      "anchorLabel": "正館",
+      "wgs84": [
+        121.54849,
+        25.10236
+      ],
+      "point": [
+        305319.16595354426,
+        2777227.5538526787
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000019",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-20T11:55:06+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-national-taichung-theater",
+      "name": "臺中國家歌劇院",
+      "county": "66000",
+      "anchorLabel": "劇院",
+      "wgs84": [
+        120.6403,
+        24.16265
+      ],
+      "point": [
+        213449.5286216331,
+        2673083.302210272
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000942",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-09-07T17:35:12+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-neiwan-station",
+      "name": "內灣車站",
+      "county": "10004",
+      "anchorLabel": "車站",
+      "wgs84": [
+        121.182499443257,
+        24.7054230742238
+      ],
+      "point": [
+        268465.191590019,
+        2733162.625712754
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376440000A_000416",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-07-22T06:51:38+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-old-takao-station",
+      "name": "舊打狗驛故事館",
+      "county": "64000",
+      "anchorLabel": "車站館舍",
+      "wgs84": [
+        120.2755,
+        22.6217
+      ],
+      "point": [
+        175523.08966611302,
+        2502574.9783123215
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_001215",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2023-02-05T00:13:26+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-pine-garden",
+      "name": "花蓮松園別館",
+      "county": "10015",
+      "anchorLabel": "館舍",
+      "wgs84": [
+        121.61551,
+        23.98287
+      ],
+      "point": [
+        312632.07080930064,
+        2653262.7737122388
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376550000A_000012",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-06T15:30:42+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-pingtung-cifong-temple",
+      "name": "屏東慈鳳宮",
+      "county": "10013",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.48632,
+        22.67094
+      ],
+      "point": [
+        197214.2126525525,
+        2507937.304278632
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376530000A_000023",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-02-26T08:46:09+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-pingtung-library",
+      "name": "屏東縣立圖書館總館",
+      "county": "10013",
+      "anchorLabel": "總館",
+      "wgs84": [
+        120.50414,
+        22.68341
+      ],
+      "point": [
+        199050.037213406,
+        2509311.906243893
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376530000A_000004",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-02-26T08:46:04+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-pingtung-tobacco-museum",
+      "name": "屏菸1936文化基地",
+      "county": "10013",
+      "anchorLabel": "主展館",
+      "wgs84": [
+        120.50496,
+        22.66258
+      ],
+      "point": [
+        199126.6121674679,
+        2507005.091964491
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376530000A_000003",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-02-26T08:46:04+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-prehistory-museum",
+      "name": "國立臺灣史前文化博物館",
+      "county": "10014",
+      "anchorLabel": "康樂本館",
+      "wgs84": [
+        121.09136,
+        22.76069
+      ],
+      "point": [
+        259381.9535882815,
+        2517786.919124734
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376540000A_000309",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-23T16:49:22+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-puzi-peitian-temple",
+      "name": "朴子配天宮",
+      "county": "10010",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.2453,
+        23.46776
+      ],
+      "point": [
+        172901.5965206169,
+        2596283.3178916923
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376500000A_000002",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2017-11-09T10:59:05+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-qishan-station",
+      "name": "旗山車站",
+      "county": "64000",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.48197,
+        22.88462
+      ],
+      "point": [
+        196850.02509033645,
+        2531600.2900718465
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000614",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2023-11-30T12:04:46+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-ruisui-tropic-marker",
+      "name": "瑞穗北回歸線標誌",
+      "county": "10015",
+      "anchorLabel": "日晷紀念碑",
+      "wgs84": [
+        121.3574,
+        23.46573
+      ],
+      "point": [
+        286511.1512344841,
+        2595901.64333533
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376550000A_000333",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-17T19:34:06+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-sanxia-zushi-temple",
+      "name": "三峽清水祖師廟",
+      "county": "65000",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.37023,
+        24.934
+      ],
+      "point": [
+        287391.1218492215,
+        2758518.245690405
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109622",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-06-21T21:00:35+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-sanxiantai-visitor-center",
+      "name": "三仙台遊客中心",
+      "county": "10014",
+      "anchorLabel": "本島遊客中心",
+      "wgs84": [
+        121.4071,
+        23.12326
+      ],
+      "point": [
+        291695.00597178267,
+        2557990.3440896585
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010100H_000211",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-01-01T20:08:42+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-science-museum",
+      "name": "國立自然科學博物館",
+      "county": "66000",
+      "anchorLabel": "本館",
+      "wgs84": [
+        120.66606,
+        24.15724
+      ],
+      "point": [
+        216065.69053561415,
+        2672477.655068954
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000418",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-03T10:46:33+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-science-technology-museum",
+      "name": "國立科學工藝博物館",
+      "county": "64000",
+      "anchorLabel": "本館",
+      "wgs84": [
+        120.32255,
+        22.64149
+      ],
+      "point": [
+        180369.85629625045,
+        2504743.6279210444
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000652",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2023-02-05T00:01:17+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-shengxing-station",
+      "name": "勝興車站",
+      "county": "10005",
+      "anchorLabel": "車站",
+      "wgs84": [
+        120.7821,
+        24.38823
+      ],
+      "point": [
+        227897.48466646852,
+        2698036.935491234
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376450000A_000030",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:00:07+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-shifen-waterfall",
+      "name": "十分瀑布",
+      "county": "65000",
+      "anchorLabel": "瀑布",
+      "wgs84": [
+        121.78746,
+        25.04897
+      ],
+      "point": [
+        329456.2910380714,
+        2771432.77556898
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109612",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-12-05T13:14:51+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-sicao-dazhong-temple",
+      "name": "四草大眾廟",
+      "county": "67000",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.13513,
+        23.01993
+      ],
+      "point": [
+        161350.86987519887,
+        2546751.6898816517
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15011100H_000086",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-07-23T16:47:50+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-southern-palace-museum",
+      "name": "故宮南院",
+      "county": "10010",
+      "anchorLabel": "博物館主館",
+      "wgs84": [
+        120.29272,
+        23.47313
+      ],
+      "point": [
+        177749.01270560414,
+        2596853.4055769886
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15011100H_000490",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-07-17T14:19:20+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-sun-yat-sen-memorial",
+      "name": "國父紀念館",
+      "county": "63000",
+      "anchorLabel": "紀念館",
+      "wgs84": [
+        121.560245,
+        25.040038
+      ],
+      "point": [
+        306533.3701375425,
+        2770329.2439858667
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000024",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-22T11:47:35+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-taichung-confucius-temple",
+      "name": "臺中孔廟",
+      "county": "66000",
+      "anchorLabel": "孔廟",
+      "wgs84": [
+        120.68997,
+        24.15432
+      ],
+      "point": [
+        218494.6769251628,
+        2672148.675722549
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000041",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-04-22T11:57:46+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-tainan-confucius-temple",
+      "name": "臺南孔廟",
+      "county": "67000",
+      "anchorLabel": "孔廟",
+      "wgs84": [
+        120.20409,
+        22.99055
+      ],
+      "point": [
+        168401.9334480184,
+        2543458.069552053
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_395000000A_000800",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-01T16:29:08+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-taipei-101",
+      "name": "台北101",
+      "county": "63000",
+      "anchorLabel": "主塔",
+      "wgs84": [
+        121.56476,
+        25.03361
+      ],
+      "point": [
+        306991.95079199696,
+        2769619.1344478326
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_379000000A_000217",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-21T11:50:32+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-taitung-art-museum",
+      "name": "臺東美術館",
+      "county": "10014",
+      "anchorLabel": "館舍",
+      "wgs84": [
+        121.14991,
+        22.7643
+      ],
+      "point": [
+        265394.18130546814,
+        2518191.5517909005
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376540000A_000313",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-23T16:48:35+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-taiwan-hakka-museum",
+      "name": "臺灣客家文化館",
+      "county": "10005",
+      "anchorLabel": "主館",
+      "wgs84": [
+        120.7712,
+        24.46239
+      ],
+      "point": [
+        226805.41064839286,
+        2706252.225216112
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376450000A_000391",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:00:07+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-tangweigou-park",
+      "name": "礁溪湯圍溝公園",
+      "county": "10002",
+      "anchorLabel": "溫泉公園",
+      "wgs84": [
+        121.76996,
+        24.82851
+      ],
+      "point": [
+        327828.813755635,
+        2747002.8349828743
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376420000A_000092",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-25T12:17:19+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-taoyuan-shrine",
+      "name": "桃園神社",
+      "county": "68000",
+      "anchorLabel": "神社",
+      "wgs84": [
+        121.32528,
+        25.00629
+      ],
+      "point": [
+        282832.20403774997,
+        2766513.65228532
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376430000A_000012",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-11-07T15:25:19+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-weiwuying",
+      "name": "衛武營國家藝術文化中心",
+      "county": "64000",
+      "anchorLabel": "劇院建築",
+      "wgs84": [
+        120.34244,
+        22.623
+      ],
+      "point": [
+        182405.22616361064,
+        2502687.0054417513
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_397000000A_000247",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2025-03-27T17:58:24+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-wenwu-temple",
+      "name": "日月潭文武廟",
+      "county": "10008",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.92755,
+        23.86995
+      ],
+      "point": [
+        242621.4312117519,
+        2640622.468695416
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000033",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-wufeng-lin-mansion",
+      "name": "霧峰林家宮保第",
+      "county": "66000",
+      "anchorLabel": "宮保第",
+      "wgs84": [
+        120.70081,
+        24.06284
+      ],
+      "point": [
+        219574.63717714453,
+        2662014.8942292905
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_387000000A_000935",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-04-22T17:13:36+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xiangshan-visitor-center",
+      "name": "日月潭向山遊客中心",
+      "county": "10008",
+      "anchorLabel": "遊客中心",
+      "wgs84": [
+        120.90212,
+        23.85114
+      ],
+      "point": [
+        240030.1074728403,
+        2638540.908465525
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000078",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xihu-sugar-factory",
+      "name": "溪湖糖廠",
+      "county": "10007",
+      "anchorLabel": "糖廠主園區",
+      "wgs84": [
+        120.4807,
+        23.95141
+      ],
+      "point": [
+        197145.2801122776,
+        2649739.1777847074
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376470000A_000018",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2024-11-22T13:46:11+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xiluo-fuxing-temple",
+      "name": "西螺福興宮",
+      "county": "10009",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.46053,
+        23.80143
+      ],
+      "point": [
+        195029.01887746598,
+        2633136.790452151
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376490000A_000084",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-06-17T11:00:59+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xincheng-catholic-church",
+      "name": "新城天主堂",
+      "county": "10015",
+      "anchorLabel": "教堂",
+      "wgs84": [
+        121.6503,
+        24.12903
+      ],
+      "point": [
+        316097.37928780075,
+        2669466.291284217
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376550000A_000071",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-06T14:38:56+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xingang-fengtian-temple",
+      "name": "新港奉天宮",
+      "county": "10010",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.3479,
+        23.55652
+      ],
+      "point": [
+        183427.94423948188,
+        2606061.803554183
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376500000A_000072",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2023-10-18T17:02:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xinpu-yimin-temple",
+      "name": "新埔義民廟",
+      "county": "10004",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.03628999176,
+        24.8441781200252
+      ],
+      "point": [
+        253667.7181136712,
+        2748519.1188539127
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376440000A_000116",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-07-30T07:14:22+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-xuanguang-temple",
+      "name": "日月潭玄光寺",
+      "county": "10008",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        120.9136,
+        23.8521
+      ],
+      "point": [
+        241199.506474864,
+        2638646.4633658654
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15010600H_000014",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-26T12:05:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-yeliu-lighthouse",
+      "name": "野柳燈塔",
+      "county": "65000",
+      "anchorLabel": "燈塔",
+      "wgs84": [
+        121.69725,
+        25.21357
+      ],
+      "point": [
+        320259.37749715237,
+        2789615.423371384
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109751",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2021-09-27T06:29:15+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-yilan-traditional-arts",
+      "name": "宜蘭傳藝中心",
+      "county": "10002",
+      "anchorLabel": "傳藝園區",
+      "wgs84": [
+        121.8241,
+        24.68558
+      ],
+      "point": [
+        333396.9772125864,
+        2731203.0638147895
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_A15011300H_010087",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-10-25T23:10:09+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-yingge-ceramics-museum",
+      "name": "鶯歌陶瓷博物館",
+      "county": "65000",
+      "anchorLabel": "主館",
+      "wgs84": [
+        121.35203,
+        24.94925
+      ],
+      "point": [
+        285548.6336263958,
+        2760202.4865314323
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_382000000A_109616",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-05-11T03:24:03+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-zhengbin-color-houses",
+      "name": "正濱漁港色彩屋",
+      "county": "10017",
+      "anchorLabel": "彩色屋街區",
+      "wgs84": [
+        121.7691051,
+        25.1524181
+      ],
+      "point": [
+        327538.91705577157,
+        2782881.042488033
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376570000A_000052",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-08-10T00:00:00+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    },
+    {
+      "id": "lm-zhongli-renhai-temple",
+      "name": "中壢仁海宮",
+      "county": "68000",
+      "anchorLabel": "寺廟",
+      "wgs84": [
+        121.22794,
+        24.96234
+      ],
+      "point": [
+        273015.31012806157,
+        2761625.605134957
+      ],
+      "source": {
+        "datasetUrl": "https://data.gov.tw/dataset/7777",
+        "recordId": "Attraction_376430000A_000993",
+        "licenseUrl": "https://data.gov.tw/license",
+        "retrievedAt": "2026-10-26T07:16:03.222Z",
+        "snapshotSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
+        "updatedAt": "2026-03-13T15:08:19+08:00"
+      },
+      "reviewedAt": "2026-10-26"
+    }
+  ]
+}

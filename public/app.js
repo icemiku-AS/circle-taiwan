@@ -1,5 +1,5 @@
 import { GameMap, drawPath } from './map.js';
-import { scoreImage, multiplayerScoreImage, challengeScope, roundScoreText, multiplayerRulesText, comparison } from './share.js';
+import { scoreImage, multiplayerScoreImage, challengeScope, roundScoreText, multiplayerRulesText, comparison, comparisonBounds, scoreText, landmarkDetails } from './share.js';
 import { DraftSync } from './draft.js';
 import { MultiplayerHTTP } from './multi-client.js';
 import { SoloAssets } from './solo-assets.js';
@@ -8,11 +8,11 @@ import { SoloGame, createSoloRecord, selectQuestions } from './solo-game.js';
 
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const score = value => Number.isFinite(value) ? `${value.toFixed(2)}%` : '—';
+const score = value => scoreText(value, state?.settings.challenge || settings.challenge);
 const totalTime = value => Number.isFinite(value) ? `${value.toFixed(1)} 秒` : '—';
 const seconds = ms => `${(Math.round(ms / 100) / 10).toFixed(1)} 秒`;
 const defaultSettings = { challenge: 'county', scope: 'mainland', county: '', town: '', count: 5, seconds: null, capacity: 5, difficulty: 'easy' };
-const difficultyName = s => s.difficulty === 'easy' ? '初階・地圖線索' : '高階・純輪廓';
+const difficultyName = s => s.difficulty === 'easy' ? s.challenge === 'landmark' ? '初階・縣市界線' : '初階・地圖線索' : '高階・純輪廓';
 let data, map, socket, state, session, mode = 'single', settings = { ...defaultSettings }, nickname = '玩家';
 let homeEntry = 'create', joinCode = '', playersExpanded = false, rankingView = 'round';
 try { nickname = (localStorage.getItem('circle-nickname') || nickname).slice(0, 16); } catch {}
@@ -63,7 +63,7 @@ function fixSelection(s, whichMode = mode) {
   if (!['easy', 'hard'].includes(s.difficulty)) s.difficulty = 'easy';
   if (whichMode === 'single') s.seconds = null;
   else if (!data.times.includes(s.seconds)) s.seconds = 20;
-  if (s.challenge === 'county') { s.scope = 'mainland'; s.county = ''; s.town = ''; }
+  if (s.challenge === 'county' || s.challenge === 'landmark') { s.scope = 'mainland'; s.county = ''; s.town = ''; }
   if (s.challenge === 'town') {
     if (!['county', 'mainland'].includes(s.scope)) s.scope = 'county';
     if (s.scope === 'county' && !s.county) s.county = '10004';
@@ -84,13 +84,13 @@ function settingsFields(s, whichMode, disabled = false) {
   const field = (name, label, html) => `<label>${label}<select name="${name}" data-setting ${disabled ? 'disabled' : ''}>${html}</select></label>`;
   const choice = (key, value, title, note) => `<button type="button" class="choice-card" data-action="choose-setting" data-setting-key="${key}" data-value="${value}" aria-pressed="${String(s[key]) === String(value)}" ${disabled ? 'disabled' : ''}><span><strong>${title}</strong><small>${note}</small></span></button>`;
   const pool = available(s).length;
-  return `<div><div class="field-head"><span>挑戰類型</span></div><input type="hidden" name="challenge" data-setting value="${s.challenge}"><div class="challenge-grid">${choice('challenge', 'county', '縣市', `從 ${data.regions.filter(r => r.level === 'county').length} 個縣市出題`)}${choice('challenge', 'town', '鄉鎮市區', '全台或指定縣市')}</div><button type="button" class="village-entry" data-action="choose-setting" data-setting-key="challenge" data-value="village" aria-pressed="${s.challenge === 'village'}" ${disabled ? 'disabled' : ''}>村里挑戰 · 選擇鄉鎮 <span>${s.challenge === 'village' ? '已選取' : '選擇 →'}</span></button>
-    ${s.challenge !== 'county' ? '<div class="inline-scope">' : ''}
+  return `<div><div class="field-head"><span>挑戰類型</span></div><input type="hidden" name="challenge" data-setting value="${s.challenge}"><div class="challenge-grid">${choice('challenge', 'county', '縣市', `從 ${data.regions.filter(r => r.level === 'county').length} 個縣市出題`)}${choice('challenge', 'town', '鄉鎮市區', '全台或指定縣市')}${choice('challenge', 'village', '村里', '選擇一個鄉鎮')}${choice('challenge', 'landmark', '知名景點', `本島 ${data.regions.filter(r => r.level === 'landmark').length} 個景點`)}</div>
+    ${['town', 'village'].includes(s.challenge) ? '<div class="inline-scope">' : ''}
     ${s.challenge === 'town' ? field('scope', '出題範圍', options(['county', 'mainland'], s.scope, v => v === 'county' ? '指定縣市' : '全台灣（遊戲範圍）')) : ''}
     ${s.challenge === 'village' || (s.challenge === 'town' && s.scope === 'county') ? field('county', '縣市', options(counties.map(r => r.id), s.county, id => counties.find(r => r.id === id).label)) : ''}
     ${s.challenge === 'village' ? field('town', '鄉鎮市區', options(towns.map(r => r.id), s.town, id => towns.find(r => r.id === id).label)) : ''}
-    ${s.challenge !== 'county' ? '</div>' : ''}${s.challenge === 'village' ? '<p class="pool-note">僅從所選鄉鎮、遊戲範圍內的村里出題。</p>' : ''}</div>
-    <div><div class="field-head"><span>線索難度</span></div><input type="hidden" name="difficulty" data-setting value="${s.difficulty}"><div class="difficulty-grid">${choice('difficulty', 'easy', '初階', '地形、河川與道路')}${choice('difficulty', 'hard', '高階', '只有海岸輪廓')}</div></div>
+    ${['town', 'village'].includes(s.challenge) ? '</div>' : ''}${s.challenge === 'village' ? '<p class="pool-note">僅從所選鄉鎮、遊戲範圍內的村里出題。</p>' : ''}</div>
+    <div><div class="field-head"><span>線索難度</span></div><input type="hidden" name="difficulty" data-setting value="${s.difficulty}"><div class="difficulty-grid">${choice('difficulty', 'easy', '初階', s.challenge === 'landmark' ? '縣市邊界輔助線' : '地形、河川與道路')}${choice('difficulty', 'hard', '高階', '只有海岸輪廓')}</div></div>
     ${whichMode === 'multi' ? `<div class="fields">${field('seconds', '每題時間', options(data.times, s.seconds, n => `${n} 秒`))}${field('capacity', '參賽容量', options([2, 3, 4, 5, 6, 7, 8], s.capacity, n => `${n} 人`))}</div>` : ''}
     <div><div class="field-head"><span>題數</span><small>題庫 ${pool} 題</small></div><input type="hidden" name="count" data-setting value="${s.count}"><div class="question-count-row"><div class="segmented" role="group" aria-label="題數">${data.counts[whichMode].map(n => `<button type="button" data-action="choose-setting" data-setting-key="count" data-value="${n}" aria-pressed="${s.count === n}" ${disabled ? 'disabled' : ''}>${n} 題</button>`).join('')}</div>${pool < s.count ? `<span role="status">實際 ${pool} 題</span>` : ''}</div></div>`;
 }
@@ -104,11 +104,11 @@ function renderHome() {
   show('home');
   settings = fixSelection(settings);
   const actualCount = Math.min(settings.count, available(settings).length);
-  const challengeLabel = ({ county: '縣市', town: '鄉鎮市區', village: '村里' })[settings.challenge];
+  const challengeLabel = ({ county: '縣市', town: '鄉鎮市區', village: '村里', landmark: '知名景點' })[settings.challenge];
   const diffLabel = settings.difficulty === 'easy' ? '初階線索' : '高階輪廓';
   for (const button of $('#mode-tabs').querySelectorAll('button')) button.setAttribute('aria-pressed', button.dataset.action === `${mode}-mode`);
   const joining = mode === 'multi' && homeEntry === 'join';
-  $('#home-form').innerHTML = `<div class="home-grid"><div class="home-hero"><h1 class="display-title">把記憶<br><span>圈成一座島</span></h1><p class="hero-lede">看到行政區名稱，憑印象圈出它的完整範圍。</p><div class="home-map-card"><div class="home-map-frame"><canvas id="home-map-art" width="700" height="410" aria-label="官方圖資的台灣本島與指定近岸輪廓"></canvas></div><div class="home-map-caption"><strong>臺灣本島與指定近岸</strong></div></div>
+  $('#home-form').innerHTML = `<div class="home-grid"><div class="home-hero"><h1 class="display-title">把記憶<br><span>圈成一座島</span></h1><p class="hero-lede">看到題目，憑印象圈出行政區範圍或景點位置。</p><div class="home-map-card"><div class="home-map-frame"><canvas id="home-map-art" width="700" height="410" aria-label="官方圖資的台灣本島與指定近岸輪廓"></canvas></div><div class="home-map-caption"><strong>臺灣本島與指定近岸</strong></div></div>
     <div class="steps-strip" aria-label="玩法三步驟">${['看題目', '圈輪廓', '比差異'].map((title, i) => `<div class="step"><span class="step-index">0${i + 1}</span><strong>${title}</strong></div>`).join('')}</div></div>
     <div><form id="setup" class="config-card"><div class="config-head"><div><h2>${mode === 'single' ? '開始一局' : joining ? '加入朋友的房間' : '建立房間'}</h2><button type="button" data-action="help" class="text-link">玩法與鍵盤操作</button></div>${joining ? '' : `<div class="config-head-cta"><button class="primary" type="submit">${mode === 'single' ? `開始 ${actualCount} 題 →` : '建立多人房間 →'}</button><small class="config-summary">${mode === 'single' ? `${challengeLabel} · ${diffLabel} · 不限時` : `${challengeLabel} · ${diffLabel} · ${settings.seconds} 秒 · ${actualCount} 題`}</small></div>`}</div><div class="config-body">${mode === 'multi' ? `<div class="segmented room-entry" role="group" aria-label="多人入口"><button type="button" data-action="entry-join" aria-pressed="${joining}">加入房間</button><button type="button" data-action="entry-create" aria-pressed="${!joining}">建立房間</button></div><label>暱稱<input name="nickname" maxlength="16" required value="${esc(nickname)}" autocomplete="nickname" placeholder="輸入顯示暱稱"></label>${joining ? `<div class="join-inline"><label for="room-code">房間代碼</label><div class="row"><input id="room-code" name="code" form="join" maxlength="6" required autocomplete="off" value="${esc(joinCode)}" placeholder="6 碼房間代碼"><button type="button" class="primary" data-action="join-room">加入房間 →</button></div></div>` : ''}` : `<input type="hidden" name="nickname" value="${esc(nickname)}">`}${joining ? '' : `<div class="settings-fields">${settingsFields(settings, mode)}</div>`}</div></form>
     ${mode === 'multi' ? '<form id="join" hidden><button type="submit" hidden tabindex="-1"></button></form>' : ''}</div></div>`;
@@ -165,6 +165,14 @@ async function fetchView(bounds, detail, progress = () => {}, mpp = 1 / map.view
 }
 async function prepareClues(s, current, progress = () => {}) {
   if (s.difficulty !== 'easy') return;
+  if (s.challenge === 'landmark') {
+    progress('縣市邊界');
+    try {
+      const boundaries = await localAssets.countyBoundaries();
+      if (current()) { map.countyBoundaries = boundaries; map.baseKey = map.baseContentKey = null; progress('縣市邊界', true); map.render(); }
+    } catch (error) { error.clueStage = '縣市邊界'; throw error; }
+    return;
+  }
   progress('地形');
   const clues = await localAssets.clues();
   if (!current()) return;
@@ -213,8 +221,8 @@ async function ensureRoomLoaded() {
     roomLoadReady = true;
     if (state.free && state.phase !== 'lobby') { renderState(); return; }
     send({ type: 'loaded', revision: current.settingsRevision, versions: socket instanceof MultiplayerHTTP ? socket.versions : undefined, dataVersion: data.manifest.version, rulesVersion: data.rulesVersion,
-      terrainSha256: current.settings.difficulty === 'easy' ? map.clues.terrainSha256 : null,
-      vectorsSha256: current.settings.difficulty === 'easy' ? map.clues.vectorsSha256 : null });
+      terrainSha256: current.settings.difficulty === 'easy' && current.settings.challenge !== 'landmark' ? map.clues.terrainSha256 : null,
+      vectorsSha256: current.settings.difficulty === 'easy' && current.settings.challenge !== 'landmark' ? map.clues.vectorsSha256 : null });
   } catch (error) {
     if (!isCurrent()) return;
     roomLoadError = `${error.message}；請重試載入，或${state.mode === 'multi' ? '由房主' : ''}改為高階。`; renderState();
@@ -269,14 +277,14 @@ function settingsSummary(s, count = Math.min(s.count, available(s).length)) {
 function waitingStatus() {
   const q = state.question, me = state.players.find(p => p.id === state.you);
   if (state.phase === 'error') return state.error;
-  if (q.checking) return '計算吻合度中，圈選與作答時間已保留。';
+  if (q.checking) return '計算得分中，圈選與作答時間已保留。';
   if (state.free && !me.submitted) return '正在送出答案，圈選與成績已保留。';
   const players = state.players.filter(p => !p.spectator && (state.free || !p.left));
   const received = players.filter(p => p.submitted || (!state.free && p.id === state.you && q.locked)).length;
   return received < players.length ? `已收件 ${received}／${players.length}，等待其他玩家。` : '已全數收件，等待揭曉。';
 }
 function ranking(rows, title, cumulative = false) {
-  return `<div class="table-wrap"><table aria-label="${esc(title)}"><thead><tr><th>名次／玩家</th><th>積分</th><th>${cumulative ? '平均' : '吻合度'}</th><th>${cumulative ? '總' : ''}時間</th></tr></thead><tbody>${rows.map(p => {
+  return `<div class="table-wrap"><table aria-label="${esc(title)}"><thead><tr><th>名次／玩家</th><th>積分</th><th>${cumulative ? '平均' : state.settings.challenge === 'landmark' ? '得分' : '吻合度'}</th><th>${cumulative ? '總' : ''}時間</th></tr></thead><tbody>${rows.map(p => {
     const live = state.players?.find(x => x.id === p.id);
     const seenBadge = !cumulative && live && !live.spectator && !live.left && live.seen ? '<span class="seen-badge" title="已按我看完了">✓</span>' : '';
     return `<tr class="${p.id === state.you ? 'is-you' : ''} ${focus === p.id ? 'is-focused' : ''}" data-action="compare" data-player="${p.id}" title="點選查看 ${esc(p.name)} 的圈選對照；再點一次返回全部輪廓"><td><span class="rank-num">${p.rank == null ? '—' : p.rank + '.'}</span><button type="button" class="rank-player player-name" data-action="compare" data-player="${p.id}" aria-pressed="${focus === p.id}" data-text-color="${p.color}"><i class="dot" data-color="${p.color}"></i>${playerIdentity(p)}</button>${p.left ? '／已離開' : ''}${seenBadge}</td><td>${p.points} 點</td><td>${score(p.score)}</td><td>${totalTime(p.time)}</td></tr>`;
@@ -383,7 +391,7 @@ function renderState() {
   show('play'); const q = state.question, me = state.players.find(p => p.id === state.you);
   const comparisonButtons = '#compare button, #round-rankings button';
   const activeComparison = [...document.querySelectorAll(comparisonButtons)].indexOf(document.activeElement);
-  const single = state.mode === 'single', scored = state.phase === 'reveal-scores', newQuestion = lastQuestion !== q.id;
+  const single = state.mode === 'single', landmark = state.settings.challenge === 'landmark', scored = state.phase === 'reveal-scores', newQuestion = lastQuestion !== q.id;
   if (newQuestion) { playersExpanded = false; rankingView = 'round'; }
   const answering = ['countdown', 'answering'].includes(state.phase);
   const panelVisible = single ? scored : !answering || playersExpanded;
@@ -393,11 +401,13 @@ function renderState() {
   $('#play').classList.toggle('has-panel', panelVisible);
   $('#play').classList.toggle('is-answering', answering);
   $('#play').classList.toggle('is-reveal', scored);
+  $('#play').classList.toggle('is-landmark', landmark);
   $('#players-toggle').hidden = single || !answering;
   $('#players-toggle').setAttribute('aria-expanded', String(playersExpanded));
   $('#players-toggle').textContent = `玩家 (${state.players.filter(p => !p.spectator && !p.left).length})`;
   map.resize();
-  map.cluesVisible = state.settings.difficulty === 'easy';
+  map.cluesVisible = !landmark && state.settings.difficulty === 'easy';
+  map.countiesVisible = landmark && state.settings.difficulty === 'easy';
   map.strokeColor = single ? '#c56e46' : (me?.color || '#c56e46');
   if (newQuestion) {
     clearTimeout(draftTimer); lastQuestion = q.id; revision = q.revision; finalFlush = false; focus = null;
@@ -414,21 +424,27 @@ function renderState() {
   const reveal = state.phase.startsWith('reveal');
   if (reveal) map.mode = 'move';
   $('.target-kicker').hidden = !answering;
+  $('.target-kicker').textContent = landmark ? '請將景點圈在裡面' : '請圈出完整範圍';
   $('.tools').hidden = !answering;
   $('#timer-pill').hidden = !answering && (single || state.free);
   for (const el of document.querySelectorAll('.tools button')) el.setAttribute('aria-pressed', el.dataset.action === map.mode);
   if (scored && (newQuestion || lastPhase !== state.phase)) focus = single ? state.you : null;
   const review = single && scored ? reviewAsset(q.id) : null;
   const drawings = single ? review ? [{ ...me, points: review.points }] : [] : reveal ? roundAsset('drawings') || [] : [];
-  const target = single ? review?.target : scored || state.phase === 'reveal-answer' ? roundAsset('target') : null;
+  const target = landmark ? null : single ? review?.target : scored || state.phase === 'reveal-answer' ? roundAsset('target') : null;
+  const targetPoint = !landmark ? null : single ? review?.targetPoint : scored || state.phase === 'reveal-answer' ? roundAsset('targetPoint') : null;
   const preloadPlayer = !single && scored ? (focus || (state.free ? (q.results?.[state.you]?.status === 'ok' ? state.you : Object.keys(q.results || {}).find(id => q.results[id].status === 'ok')) : (q.results?.[state.you] ? state.you : state.roundStandings?.[0]?.id))) : null;
   if (state.free && scored) roundAsset('neutral');
   const preloadedDetail = !single && scored && preloadPlayer ? roundAsset('comparison', preloadPlayer) : null;
   const detail = !single && scored && focus ? (focus === preloadPlayer ? preloadedDetail : roundAsset('comparison', focus)) : null;
-  const comparisonReady = single ? Boolean(review) : (assets.values.has('drawings:') && (state.phase === 'reveal-drawings' || assets.values.has('target:')) &&
+  const comparisonReady = single ? Boolean(review) : (assets.values.has('drawings:') && (state.phase === 'reveal-drawings' || assets.values.has(landmark ? 'targetPoint:' : 'target:')) &&
     (!scored || (assets.values.has('neutral:') && (!focus || Boolean(detail)))));
-  map.reveal = reveal ? { players: single ? drawings.map(p => ({ ...p, color: '#c56e46' })) : drawings, target,
-    results: single ? review?.results : detail ? { [focus]: detail } : null, neutral: single ? review?.neutral || [] : detail?.neutral || assets.values.get('neutral:') || [], focus } : null;
+  map.reveal = reveal ? { players: single ? drawings.map(p => ({ ...p, color: '#c56e46' })) : drawings, target, targetPoint,
+    landmark: single ? review?.results[state.you]?.landmark : detail?.landmark || (preloadPlayer === state.you ? preloadedDetail?.landmark : null),
+    results: single ? landmark && review ? { [state.you]: { ...review.results[state.you], answer: review.answer } } : review?.results : detail ? { [focus]: detail } : null,
+    neutral: single ? review?.neutral || [] : detail?.neutral || assets.values.get('neutral:') || [], focus } : null;
+  const fitLabel = landmark && scored ? '查看目標與圈選' : '回到完整地圖';
+  $('[data-action="home-map"]').setAttribute('aria-label', fitLabel); $('[data-action="home-map"]').title = fitLabel;
   map.editable = state.phase === 'answering' && me.loaded && (!(single || state.free) || roomLoadReady) && !q.locked && !me.spectator && !me.left && !state.readonly && (state.local || socket?.readyState === 1) && (q.deadline === null || now() < q.deadline);
   if (!map.cluesVisible) $('#clue-status').textContent = '';
   else if (single && !roomLoadReady) $('#clue-status').innerHTML = roomLoadError ? `${esc(roomLoadError)} <button data-action="retry-load">重試載入</button>` : '正在載入地圖線索，完成後即可圈選。';
@@ -459,7 +475,10 @@ function renderState() {
   $('#compare').innerHTML = reveal ? `<button type="button" data-action="compare" data-player="" aria-pressed="${!focus}"><span class="compare-name">${!focus ? '✓ 比較全部輪廓' : '↺ 返回比較全部輪廓'}</span><span class="compare-meta">${!focus ? `${drawings.length} 人同圖對照` : `目前單看：${esc(focusedPlayer?.name || '')}`}</span></button>` : '';
   for (const el of document.querySelectorAll('[data-color]')) el.style.backgroundColor = el.dataset.color;
   for (const el of document.querySelectorAll('[data-text-color]')) el.style.color = el.dataset.textColor;
-  $('#privacy').textContent = reveal ? (!focus ? '選取玩家可查看圈對、多圈與漏圈。' : '') : '作答時只看得到自己的圈選。';
+  $('#privacy').textContent = reveal ? (!focus ? landmark ? '選取玩家可查看圈選面積與最近距離。' : '選取玩家可查看圈對、多圈與漏圈。' : '') : '作答時只看得到自己的圈選。';
+  const focusedLandmark = detail?.landmark || preloadedDetail?.landmark;
+  $('#landmark-detail').hidden = single || !scored || !landmark || !focusedLandmark;
+  $('#landmark-detail').textContent = focusedLandmark ? `${preloadPlayer === state.you ? '你的圈選' : state.players.find(p => p.id === preloadPlayer)?.name || '圈選'}：${landmarkDetails(focusedLandmark)}` : '';
   $('#submit').hidden = !['countdown', 'answering'].includes(state.phase); $('#submit').disabled = !map.editable || map.points.length < 3 || Boolean(map.gesture?.drawing || map.keyboardDrawing);
   $('#submit').textContent = !single && state.phase === 'answering' && q.checking ? '檢查圈選中…' : !single && state.phase === 'answering' && q.locked ? (waitingCount > 0 ? `✓ 已送出・等待其他人（${submittedCount}／${activeParticipants.length}）` : '✓ 已送出・即將揭曉…') : '送出圈選 →';
   $('#clear').disabled = !map.editable && !(state.local && state.phase === 'error');
@@ -487,10 +506,11 @@ function renderState() {
   $('#force').classList.toggle('primary', scored && state.free);
   $('#legend').hidden = !scored;
   $('#legend .user').textContent = single ? '我的圈選：橙色實線' : '圈選：實線（依玩家顏色）';
-  if ($('#legend-fill')) $('#legend-fill').textContent = !single && !focus ? '中立區：灰色' : '圈對：金色 · 多圈：橙色 · 漏圈：藍灰 · 中立區：灰色';
+  $('#legend .target').textContent = landmark ? '景點：紅色圖針' : '正確邊界：綠色虛線';
+  if ($('#legend-fill')) $('#legend-fill').textContent = landmark ? '虛線：距圈選最近位置' : !single && !focus ? '中立區：灰色' : '圈對：金色 · 多圈：橙色 · 漏圈：藍灰 · 中立區：灰色';
   if (single && scored) {
     const result = q.results[state.you];
-    $('#single-result').innerHTML = `<div class="result-head"><h2>本題結果</h2><button type="button" class="quiet" data-action="toggle-result" aria-controls="single-result-details" aria-expanded="${!collapsed}">${collapsed ? '展開' : '收合'}明細</button></div><div class="score-big">${result.score.toFixed(2)}<small>% 吻合度</small></div><p class="score-message">${result.status === 'skipped' ? '已跳過 · 0 分 · ' : ''}${seconds(result.elapsed)}</p><div id="single-result-details" class="result-details"><div class="breakdown" aria-label="占聯集面積的比例">${[['hit', '圈對'], ['extra', '多圈'], ['miss', '漏圈']].map(([key, label]) => `<div class="breakdown-row"><span>${label}</span><meter min="0" max="100" value="${result.breakdown[key]}" aria-label="${label}占聯集面積"></meter><strong>${result.breakdown[key].toFixed(2)}%</strong></div>`).join('')}</div></div>`;
+    $('#single-result').innerHTML = `<div class="result-head"><h2>本題結果</h2><button type="button" class="quiet" data-action="toggle-result" aria-controls="single-result-details" aria-expanded="${!collapsed}">${collapsed ? '展開' : '收合'}明細</button></div><div class="score-big">${result.score.toFixed(2)}<small>${landmark ? ' 分' : '% 吻合度'}</small></div><p class="score-message">${result.status === 'skipped' ? '已跳過 · 0 分 · ' : landmark && collapsed ? result.landmark?.hit ? '命中 · ' : '未命中 · ' : ''}${seconds(result.elapsed)}</p><div id="single-result-details" class="result-details">${landmark ? `<p>${esc(landmarkDetails(result.landmark))}</p>` : `<div class="breakdown" aria-label="占聯集面積的比例">${[['hit', '圈對'], ['extra', '多圈'], ['miss', '漏圈']].map(([key, label]) => `<div class="breakdown-row"><span>${label}</span><meter min="0" max="100" value="${result.breakdown[key]}" aria-label="${label}占聯集面積"></meter><strong>${result.breakdown[key].toFixed(2)}%</strong></div>`).join('')}</div>`}</div>`;
   }
   $('#map-overlay').hidden = !['countdown', 'scoring', 'error'].includes(state.phase);
   $('#map-overlay').textContent = state.phase === 'countdown' ? '準備圈選…' : state.phase === 'error' ? state.error : state.phase === 'scoring' ? (state.free ? waitingStatus() : '圈選已保留，計分中…') : '';
@@ -545,13 +565,13 @@ function flushDraft(submit = false, full = false) {
 }
 function renderResults() {
   if (state.mode === 'multi') resetAssets();
-  show('results'); const mine = state.standings.find(p => p.id === state.you);
+  show('results'); const mine = state.standings.find(p => p.id === state.you), landmark = state.settings.challenge === 'landmark';
   if (state.mode === 'single') {
     const key = state.history.map(q => q.id).join(',');
     if (resultKey !== key) {
       resultKey = key;
       const skips = state.history.filter(q => q.results[state.you].status === 'skipped').length;
-    $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">本局平均吻合度</div><div class="score-card-value">${mine.score.toFixed(2)}<small>%</small></div><p>總作答 ${totalTime(mine.time)}${skips ? ` · ${skips} 題跳過` : ''}</p></div><div class="report-copy"><h1>單人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p><div class="summary-actions"><button type="button" class="primary" data-action="share">下載圈選對照圖 ↓</button><button type="button" data-action="replay">再玩一局</button><button type="button" data-action="leave">回首頁</button></div></div></div><div class="summary-content"><div class="section-heading"><h2>逐題成績</h2><p>橙色實線：你的圈選 · 綠色虛線：正解</p></div><div class="summary-list">${state.history.map((q, i) => { const r = q.results[state.you]; return `<article class="summary-item"><canvas width="440" height="320" data-comparison="${i}" data-action="zoom-review" data-index="${i}" aria-label="${esc(q.name)}的真實圈選與正解對照（點選放大）"></canvas><div class="summary-item-copy"><small>Q${String(i + 1).padStart(2, '0')}</small><h3>${esc(q.name)}</h3><strong>${score(r.score)}</strong><p>${r.status === 'skipped' ? '已跳過 · ' : ''}用時 ${seconds(r.elapsed)}</p><button type="button" class="text-link zoom-review-btn" data-action="zoom-review" data-index="${i}">放大檢視 ↗</button></div></article>`; }).join('')}</div></div>`;
+    $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">本局平均${landmark ? '得分' : '吻合度'}</div><div class="score-card-value">${mine.score.toFixed(2)}<small>${landmark ? '分' : '%'}</small></div><p>總作答 ${totalTime(mine.time)}${skips ? ` · ${skips} 題跳過` : ''}</p></div><div class="report-copy"><h1>單人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p><div class="summary-actions"><button type="button" class="primary" data-action="share">下載圈選對照圖 ↓</button><button type="button" data-action="replay">再玩一局</button><button type="button" data-action="leave">回首頁</button></div></div></div><div class="summary-content"><div class="section-heading"><h2>逐題成績</h2><p>${landmark ? '橙色實線：你的圈選 · 紅色圖針：景點' : '橙色實線：你的圈選 · 綠色虛線：正解'}</p></div><div class="summary-list">${state.history.map((q, i) => { const r = q.results[state.you]; return `<article class="summary-item"><canvas width="440" height="320" data-comparison="${i}" data-action="zoom-review" data-index="${i}" aria-label="${esc(q.name)}的真實圈選與正解對照（點選放大）"></canvas><div class="summary-item-copy"><small>Q${String(i + 1).padStart(2, '0')}</small><h3>${esc(q.name)}</h3><strong>${score(r.score)}</strong><p>${r.status === 'skipped' ? '已跳過 · ' : ''}用時 ${seconds(r.elapsed)}</p>${landmark ? `<p>${esc(landmarkDetails(r.landmark))}</p>` : ''}<button type="button" class="text-link zoom-review-btn" data-action="zoom-review" data-index="${i}">放大檢視 ↗</button></div></article>`; }).join('')}</div></div>`;
       $('#results').insertAdjacentHTML('beforeend', '<p id="history-status" role="status"></p>');
     }
     for (const canvas of $('#results').querySelectorAll('[data-comparison]')) {
@@ -564,9 +584,9 @@ function renderResults() {
     return;
   }
   const host = state.hostId === state.you;
-  $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">${mine?.rank == null ? '本局無有效成績' : `本局第 ${mine.rank} 名 · 你的積分`}</div><div class="score-card-value">${mine?.rank == null ? '—' : `${mine.points}<small> 點</small>`}</div><p>${mine ? `平均吻合度 ${score(mine.score)} · 總作答 ${totalTime(mine.time)}` : `共 ${state.standings.length} 位參賽者完成本局`}</p></div><div class="report-copy"><h1>多人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p>${!host && state.free ? '<p>等待房主返回大廳，請手動查看狀態。</p>' : ''}<div class="summary-actions"><button type="button" class="primary" data-action="replay">${!host && state.free ? '查看大廳狀態' : '返回大廳'}</button><button type="button" data-action="share">下載成績圖 ↓</button><button type="button" data-action="leave">離開／重新開房</button></div></div></div>
-    <div class="summary-content"><div class="section-heading"><h2>整局排名</h2><p>${esc(multiplayerRulesText(state.rulesVersion))}</p></div><div class="table-wrap results-ranking"><table><thead><tr><th>名次／玩家</th><th>積分</th><th>平均</th><th>總時間</th>${state.history.map((q, i) => `<th class="desktop-rounds">${i + 1}. ${esc(q.name)}</th>`).join('')}</tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td><strong class="rank-num">${p.rank == null ? '—' : '#' + p.rank}</strong><span class="player-name" data-text-color="${p.color}"><i class="dot" data-color="${p.color}"></i>${playerIdentity(p)}</span>${p.left ? '（已離開／未完成）' : ''}</td><td><strong>${p.points} 點</strong></td><td>${score(p.score)}</td><td>${totalTime(p.time)}</td>${p.perQuestion.map(q => `<td class="desktop-rounds">${esc(roundScoreText(q))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
-    <details class="mobile-rounds"><summary>逐題成績（${state.history.length} 題）</summary>${state.history.map((q, i) => `<section><h3>${i + 1}. ${esc(q.name)}</h3><table aria-label="${esc(q.name)}逐題成績"><thead><tr><th>玩家</th><th>成績</th></tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td>${playerIdentity(p)}</td><td>${esc(roundScoreText(p.perQuestion[i]))}</td></tr>`).join('')}</tbody></table></section>`).join('')}</details></div>`;
+  $('#results').innerHTML = `<div class="report-hero"><div class="score-card"><div class="score-card-label">${mine?.rank == null ? '本局無有效成績' : `本局第 ${mine.rank} 名 · 你的積分`}</div><div class="score-card-value">${mine?.rank == null ? '—' : `${mine.points}<small> 點</small>`}</div><p>${mine ? `平均${landmark ? '得分' : '吻合度'} ${score(mine.score)} · 總作答 ${totalTime(mine.time)}` : `共 ${state.standings.length} 位參賽者完成本局`}</p></div><div class="report-copy"><h1>多人結算</h1><p class="settings-summary">${esc(settingsSummary(state.settings, state.history.length))}</p>${!host && state.free ? '<p>等待房主返回大廳，請手動查看狀態。</p>' : ''}<div class="summary-actions"><button type="button" class="primary" data-action="replay">${!host && state.free ? '查看大廳狀態' : '返回大廳'}</button><button type="button" data-action="share">下載成績圖 ↓</button><button type="button" data-action="leave">離開／重新開房</button></div></div></div>
+    <div class="summary-content"><div class="section-heading"><h2>整局排名</h2><p>${esc(multiplayerRulesText(state.rulesVersion, state.settings.challenge))}</p></div><div class="table-wrap results-ranking"><table><thead><tr><th>名次／玩家</th><th>積分</th><th>平均</th><th>總時間</th>${state.history.map((q, i) => `<th class="desktop-rounds">${i + 1}. ${esc(q.name)}</th>`).join('')}</tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td><strong class="rank-num">${p.rank == null ? '—' : '#' + p.rank}</strong><span class="player-name" data-text-color="${p.color}"><i class="dot" data-color="${p.color}"></i>${playerIdentity(p)}</span>${p.left ? '（已離開／未完成）' : ''}</td><td><strong>${p.points} 點</strong></td><td>${score(p.score)}</td><td>${totalTime(p.time)}</td>${p.perQuestion.map(q => `<td class="desktop-rounds">${esc(roundScoreText(q, state.settings.challenge))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+    <details class="mobile-rounds"><summary>逐題成績（${state.history.length} 題）</summary>${state.history.map((q, i) => `<section><h3>${i + 1}. ${esc(q.name)}</h3><table aria-label="${esc(q.name)}逐題成績"><thead><tr><th>玩家</th><th>成績</th></tr></thead><tbody>${state.standings.map(p => `<tr class="${p.id === state.you ? 'is-you' : ''}"><td>${playerIdentity(p)}</td><td>${esc(roundScoreText(p.perQuestion[i], state.settings.challenge))}</td></tr>`).join('')}</tbody></table></section>`).join('')}</details></div>`;
   for (const el of $('#results').querySelectorAll('[data-color]')) el.style.backgroundColor = el.dataset.color;
   for (const el of $('#results').querySelectorAll('[data-text-color]')) el.style.color = el.dataset.textColor;
 }
@@ -576,9 +596,10 @@ function openReviewModal(index) {
   if (!review) { message('對照圖尚在載入中，請稍候。', 'info'); return; }
   const r = q.results[state.you];
   $('#review-dialog-title').textContent = `Q${String(index + 1).padStart(2, '0')} · ${q.name}`;
-  $('#review-dialog-meta').textContent = `吻合度 ${score(r.score)}${r.status === 'skipped' ? '（已跳過）' : ''} · 用時 ${seconds(r.elapsed)}`;
+  $('#review-dialog-meta').textContent = `${state.settings.challenge === 'landmark' ? '得分' : '吻合度'} ${score(r.score)}${r.status === 'skipped' ? '（已跳過）' : ''} · 用時 ${seconds(r.elapsed)}`;
   const canvas = $('#review-dialog-canvas');
   comparison(canvas.getContext('2d'), data, review, state.you, 0, 0, canvas.width, canvas.height);
+  $('#review-dialog .pool-note').textContent = review.targetPoint ? landmarkDetails(r.landmark) + '；紅色圖針為景點，虛線連至圈選最近位置。' : '橙色實線：你的圈選 · 綠色虛線：正確邊界 · 金色：圈對 · 橙色：多圈 · 藍灰：漏圈 · 灰色：中立區';
   $('#review-dialog').showModal();
 }
 function downloadScore() {
@@ -648,7 +669,11 @@ document.addEventListener('click', async e => {
     if (action === 'help') {
       const multi = (state?.mode || mode) === 'multi';
       $('#help-single').hidden = multi; $('#help-multi').hidden = !multi;
-      $('#multi-scoring-rule').textContent = multiplayerRulesText(state?.rulesVersion);
+      const landmark = (state?.settings || settings).challenge === 'landmark', unit = landmark ? '分' : '%';
+      $('#help-administrative').hidden = landmark; $('#help-landmark').hidden = !landmark;
+      $('#help-clues').textContent = landmark ? '景點初階提供縣市邊界輔助線，高階只留海岸線；兩者都隱藏地名，使用相同計分規則。' : '行政區初階提供地形、河川與道路，高階只留海岸輪廓；兩者都隱藏地名與行政界線，計分相同。';
+      $('#multi-scoring-rule').textContent = multiplayerRulesText(state?.rulesVersion, landmark ? 'landmark' : 'county');
+      $('#multi-scoring-details').textContent = `每題以兩位小數的成績排名，並列採 1、1、3。名次分依開局人數由 8 至 1 點分配，且不超過成績每滿 10${unit} 的點數；再加神準獎勵：75${unit} 起加 1 點，90${unit} 起改加 2 點。未作答或無效筆畫為 0 點，離場不改變本局人數；時間只供檢視。`;
       $('#multi-scoring-details').hidden = state?.rulesVersion === 'circle-taiwan-0.5';
       $('#help-dialog').showModal();
     }
@@ -694,7 +719,14 @@ document.addEventListener('click', async e => {
     else if (['draw', 'move'].includes(action)) { map.mode = action; renderState(); }
     else if (action === 'zoom-in') map.zoom(1.4);
     else if (action === 'zoom-out') map.zoom(1 / 1.4);
-    else if (action === 'home-map') map.fit();
+    else if (action === 'home-map') {
+      const r = map.reveal;
+      if (r?.targetPoint) {
+        const points = r.players.filter(p => !r.focus || r.focus === p.id).flatMap(p => p.points);
+        map.fit(points.length ? comparisonBounds([], points, r.targetPoint) : data.bounds);
+      }
+      else map.fit(state.question.extent);
+    }
     else if (action === 'compare') { const target = button.dataset.player || null; focus = target && focus === target ? null : target; renderState(); }
     else if (action === 'kick' && confirm('確定要移除這位玩家？')) send({ type: 'kick', playerId: button.dataset.player });
     else if (action === 'leave' || action === 'home') { if (state?.free) { socket.removePending(); socket.command({ type: 'leave' }).catch(() => {}); } else if (state) await send({ type: 'leave' }); leaveHome(); }
@@ -723,7 +755,7 @@ async function runLocal() {
   bootstrapRetry = runLocal;
   show('lobby'); $('#lobby').setAttribute('aria-label', '準備單人挑戰');
   $('#lobby').innerHTML = `<div class="card"><h1>準備單人挑戰</h1><p id="startup-status" role="status"></p><button data-action="back-home">返回設定</button></div>`;
-  const stages = { 題目: '準備中', ...(settings.difficulty === 'easy' ? { 地形: '等待中', 道路與河川: '等待地形' } : {}) };
+  const stages = { 題目: '準備中', ...(settings.difficulty === 'easy' ? settings.challenge === 'landmark' ? { 縣市邊界: '等待中' } : { 地形: '等待中', 道路與河川: '等待地形' } : {}) };
   let clueFailure = false, failedStage = '';
   const current = () => generation === bootstrapGeneration && bootstrappingLocal;
   const progress = (stage, done = false) => {

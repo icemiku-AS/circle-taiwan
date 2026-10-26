@@ -13,7 +13,7 @@ function nickname(value) {
 function plan(input) {
   const s = input.settings, q = input.questions, v = input.versions;
   if (!s || !COUNTS.multi.includes(s.count) || !TIMES.includes(s.seconds) || !Number.isInteger(s.capacity) || s.capacity < 2 || s.capacity > 8 ||
-    !['county', 'town', 'village'].includes(s.challenge) || !['easy', 'hard'].includes(s.difficulty) || !['mainland', 'county', 'town'].includes(s.scope)) throw fail('遊戲設定無效');
+    !['county', 'town', 'village', 'landmark'].includes(s.challenge) || !['easy', 'hard'].includes(s.difficulty) || !['mainland', 'county', 'town'].includes(s.scope)) throw fail('遊戲設定無效');
   if (!Array.isArray(q) || !q.length || q.length > s.count || new Set(q).size !== q.length || q.some(id => typeof id !== 'string' || !/^[\w-]{1,40}$/.test(id))) throw fail('題目清單無效');
   if (!v || ['dataVersion', 'rulesVersion', 'runtimeVersion'].some(k => typeof v[k] !== 'string' || v[k].length > 128 || !v[k])) throw fail('圖資版本無效');
   if (v.rulesVersion !== RULES_VERSION) throw fail('計分規則已更新，請重新整理後再開新局。',409,'version_mismatch');

@@ -69,4 +69,32 @@ test('房間 API：新版積分、固定開局人數、缺件、作廢與舊局�
   await db.prepare('UPDATE rooms SET versions=?,metadata_version=metadata_version+1 WHERE id=?').bind(JSON.stringify({ ...versions, rulesVersion: 'circle-taiwan-0.5' }), roomId).run();
   const legacy = await command({ type: 'resume' }, players[0]);
   assert.deepEqual(legacy.details.cumulativeStandings.map(p => [p.points, p.rank]), [[1, 1], [1, 2], [1, 3], [0, 4]]);
+  for (const difficulty of ['easy', 'hard']) await t.test(`景點 ${difficulty}：既有收件、回執、揭曉、結算與重開`, async () => {
+    const config = { ...settings, challenge: 'landmark', difficulty, count: 1, capacity: 2 };
+    const host = await command({ ...plan, settings: config, questions: ['lm-taipei-101'] });
+    const guest = await command({ type: 'join', code: host.details.code, nickname: '景點 B', versions });
+    for (const session of [host.session, guest.session]) {
+      await command({ type: 'loaded', revision: 1, versions }, session);
+      await command({ type: 'ready', revision: 1, ready: true }, session);
+    }
+    let current = await command({ type: 'start', revision: 1 }, host.session);
+    await db.prepare('UPDATE rooms SET start_at=? WHERE id=?').bind(Date.now() - 1000, current.summary.room).run();
+    const submit = { type: 'submit', gameId: current.summary.game, questionId: current.summary.round,
+      answer: { submissionId: crypto.randomUUID(), status: 'ok', score: 10, elapsed: 1000, points: [[0, 0], [1, 0], [0, 1]] } };
+    await command({ ...submit, answer: { ...submit.answer, score: 101 } }, host.session, 400);
+    const first = await command(submit, host.session), repeated = await command(submit, host.session);
+    assert.deepEqual(repeated.receipt, first.receipt);
+    // API accepts the client's score; it does not look up POIs or recompute these coordinates.
+    current = await command({ ...submit, answer: { ...submit.answer, submissionId: crypto.randomUUID(), score: 0 } }, guest.session);
+    assert.equal(current.summary.phase, 'reveal');
+    assert.deepEqual(current.details.roundStandings.map(p => [p.score, p.points]), [[10, 1], [0, 0]]);
+    const drawings = await mf.dispatchFetch(`http://localhost/api/round?code=${host.details.code}&game=${current.summary.game}&question=${current.summary.round}`,
+      { headers: { Authorization: `Bearer ${host.session.token}` } });
+    assert.equal(drawings.status, 200); assert.equal((await drawings.json()).drawings.length, 2);
+    current = await command({ type: 'next', gameId: current.summary.game, questionId: current.summary.round }, host.session);
+    assert.equal(current.summary.phase, 'results');
+    assert.deepEqual(current.details.cumulativeStandings.map(p => p.points), [1, 0]);
+    current = await command({ type: 'replay', gameId: current.summary.game, settings: config, questions: ['lm-taipei-101'], versions }, host.session);
+    assert.equal(current.summary.phase, 'lobby'); assert.equal(current.details.settings.difficulty, difficulty);
+  });
 });

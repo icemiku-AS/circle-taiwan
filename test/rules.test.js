@@ -97,8 +97,10 @@ test('單人仍按吻合度與時間排序，原始分數嚴格大於 50 才計�
   assert.deepEqual(rows.map(p => [p.id, p.points, p.score, p.rank]), [['0', 0, 50, 1], ['1', 1, 50, 2]]);
 });
 
-test('既有 0.5 房間保留舊積分與時間破同分，新版使用 0.6', () => {
-  assert.equal(RULES_VERSION, 'circle-taiwan-0.6');
+test('既有 0.5 房間保留舊積分；0.7 景點與 0.6 行政區共用名次規則', () => {
+  assert.equal(RULES_VERSION, 'circle-taiwan-0.7');
+  assert.deepEqual(standings(roster(2), [round([95, 95])], 20, 'multi', RULES_VERSION),
+    standings(roster(2), [round([95, 95])], 20, 'multi', 'circle-taiwan-0.6'));
   const rows = standings(roster(2), [round([95, 95])], 20, 'multi', 'circle-taiwan-0.5');
   assert.deepEqual(rows.map(p => [p.points, p.rank]), [[1, 1], [1, 2]]);
   assert.equal(standings(roster(2), [round([50.001, 50])], 20, 'multi', 'circle-taiwan-0.5')[0].points, 1);

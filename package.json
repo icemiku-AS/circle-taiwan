@@ -15,6 +15,7 @@
     "build:static": "node scripts/build-static.js",
     "start:static": "node server/static.js",
     "data:prepare": "node scripts/prepare-data.js",
+    "data:landmarks": "node scripts/prepare-landmarks.js",
     "data:basemap": "node scripts/prepare-basemap.js"
   },
   "dependencies": {

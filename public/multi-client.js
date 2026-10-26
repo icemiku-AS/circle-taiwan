@@ -178,13 +178,13 @@ export class MultiplayerHTTP {
     if(this.summary.round!==q)throw new DOMException('回合已更新','AbortError');
     if(asset==='drawings')return this.details.players.map(p=>({...p,points:packet.drawings.find(a=>a.id===p.id)?.points||[]}));
     const engine=await this.loadEngine();
-    if(asset==='target'||asset==='neutral'){
+    if(asset==='target'||asset==='targetPoint'||asset==='neutral'){
       const k=`${q}:geometry`;if(!this.detailsCache.has(k))this.detailsCache.set(k,engine.geometry(regionId).catch(error=>{this.detailsCache.delete(k);throw error;}));
       return(await this.detailsCache.get(k))[asset];
     }
     const cacheKey=`${q}:${player}`;
     if(!this.detailsCache.has(cacheKey))this.detailsCache.set(cacheKey,await engine.score(regionId,packet.drawings.find(a=>a.id===player)?.points||[],this.data.playBounds));
-    const value=this.detailsCache.get(cacheKey);return{...value.result,neutral:value.neutral};
+    const value=this.detailsCache.get(cacheKey);return{...value.result,neutral:value.neutral,...(value.targetPoint?{answer:value.answer,targetPoint:value.targetPoint}:{})};
   }
   close(){this.readyState=3;this.stopPolling();this.engine?.close();this.doc?.removeEventListener('visibilitychange',this.visibility);for(const item of this.queue.splice(0))item.resolve(false);}
 }

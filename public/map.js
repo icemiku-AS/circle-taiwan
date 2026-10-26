@@ -8,6 +8,23 @@ export function drawPath(context, geometry) {
   }
 }
 
+export function drawLandmarkTarget(c, point, detail, scale) {
+  if (!point) return;
+  const px = 1 / scale;
+  c.save();
+  if (detail?.hit === false && detail.nearestPoint) {
+    c.beginPath(); c.moveTo(...point); c.lineTo(...detail.nearestPoint);
+    c.strokeStyle = '#ffffff'; c.lineWidth = 5 * px; c.stroke();
+    c.strokeStyle = '#7d3927'; c.lineWidth = 2 * px; c.setLineDash([6 * px, 4 * px]); c.stroke(); c.setLineDash([]);
+  }
+  c.translate(...point); c.scale(px, px);
+  c.beginPath(); c.moveTo(0, 0); c.bezierCurveTo(-4, 6, -11, 12, -11, 20);
+  c.arc(0, 20, 11, Math.PI, 0, true); c.bezierCurveTo(11, 12, 4, 6, 0, 0); c.closePath();
+  c.fillStyle = '#a43825'; c.strokeStyle = '#fffdf7'; c.lineWidth = 3; c.fill(); c.stroke();
+  c.beginPath(); c.arc(0, 20, 3.5, 0, Math.PI * 2); c.fillStyle = '#fffdf7'; c.fill();
+  c.restore();
+}
+
 export class GameMap {
   constructor(canvas, data, { onChange, onMessage, onViewChange }) {
     this.canvas = canvas; this.ctx = canvas.getContext('2d'); this.data = data;
@@ -183,8 +200,8 @@ export class GameMap {
   }
   paintBase() {
     const v = this.view, d = this.dpr, px = 1 / v.scale;
-    const contentKey = [this.width, this.height, d, this.cluesVisible, this.clues?.generation].join(':');
-    const key = [this.width, this.height, d, v.x, v.y, v.scale, this.cluesVisible, this.clues?.generation].join(':');
+    const contentKey = [this.width, this.height, d, this.cluesVisible, this.countiesVisible, this.clues?.generation].join(':');
+    const key = [this.width, this.height, d, v.x, v.y, v.scale, this.cluesVisible, this.countiesVisible, this.clues?.generation].join(':');
     if (this.baseKey === key) return;
     // Panning does not change pixel density; keep exact-scale pixels until coverage or content changes.
     if ((this.interacting || this.baseView?.scale === v.scale) && this.baseContentKey === contentKey) {
@@ -225,6 +242,7 @@ export class GameMap {
       }
       c.restore();
     }
+    if (this.countiesVisible && this.countyBoundaries) { drawPath(c, this.countyBoundaries); c.strokeStyle = '#718477'; c.lineWidth = 1.1 * px; c.stroke(); }
     drawPath(c, this.data.land); c.strokeStyle = '#738477'; c.lineWidth = px; c.stroke();
   }
   baseTransform() {
@@ -247,7 +265,7 @@ export class GameMap {
     c.lineJoin = 'round'; c.lineCap = 'round';
     const r = this.reveal;
     // Keep only the displayed comparison; original coordinates remain available for sharing.
-    const geometries = r ? [r.neutral, r.target, ...Object.values(r.results || {}).flatMap(v => [v.hit, v.extra, v.miss])].filter(Boolean) : [];
+    const geometries = r ? [r.neutral, r.target, ...Object.values(r.results || {}).flatMap(v => [v.hit, v.extra, v.miss, v.answer])].filter(Boolean) : [];
     this.revealPaths ||= new Map();
     for (const geometry of this.revealPaths.keys()) if (!geometries.includes(geometry)) this.revealPaths.delete(geometry);
     const retainedPath = geometry => {
@@ -264,9 +282,10 @@ export class GameMap {
     if (r) {
       if (r.neutral?.length) { c.fillStyle = '#D5D5D5'; c.fill(retainedPath(r.neutral), 'nonzero'); }
       const focused = r.results?.[r.focus];
-      if (focused) for (const [key, color] of [['hit', '#b6975888'], ['extra', '#c56e4666'], ['miss', '#65798e55']]) { c.fillStyle = color; c.fill(retainedPath(focused[key]), 'nonzero'); }
+      if (focused?.landmark) { c.fillStyle = `${r.players.find(p => p.id === r.focus)?.color || '#c56e46'}35`; c.fill(retainedPath(focused.answer), 'nonzero'); }
+      else if (focused) for (const [key, color] of [['hit', '#b6975888'], ['extra', '#c56e4666'], ['miss', '#65798e55']]) { c.fillStyle = color; c.fill(retainedPath(focused[key]), 'nonzero'); }
       else if (r.target && r.players.length > 1) { c.fillStyle = '#3e654e24'; c.fill(retainedPath(r.target), 'nonzero'); }
-      for (const p of r.players) if (!r.focus || r.focus === p.id) this.line(p.points, p.color, false, !r.target);
+      for (const p of r.players) if (!r.focus || r.focus === p.id) this.line(p.points, p.color, false, !r.target && !r.targetPoint);
       if (r.target) {
         if (!focused && r.players.length > 1) { c.strokeStyle = '#ffffffcc'; c.lineWidth = 4.6 * px; c.setLineDash([8 * px, 5 * px]); c.stroke(retainedPath(r.target)); }
         c.strokeStyle = '#3e654e'; c.lineWidth = 2.6 * px; c.setLineDash([8 * px, 5 * px]); c.stroke(retainedPath(r.target)); c.setLineDash([]);
@@ -307,6 +326,7 @@ export class GameMap {
         }
         c.restore();
       }
+      drawLandmarkTarget(c, r.targetPoint, r.landmark, v.scale);
     } else this.line(this.points, this.strokeColor || '#c56e46', false, true, !this.gesture?.drawing && !this.keyboardDrawing);
     if (document.activeElement === this.canvas && this.mode === 'draw' && this.editable) {
       const [x, y] = this.cursor; c.beginPath(); c.moveTo(x - 8 * px, y); c.lineTo(x + 8 * px, y); c.moveTo(x, y - 8 * px); c.lineTo(x, y + 8 * px); c.strokeStyle = '#3e654e'; c.lineWidth = 1.5 * px; c.stroke();

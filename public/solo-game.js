@@ -47,7 +47,7 @@ export class SoloGame {
         this.record.phase = 'answering'; q.submittedAt = null; q.skipped = false;
         this.onMessage('圈選沒有有效面積；筆畫已保留，請重畫或跳過');
       } else {
-        q.result = { score: result.score, status: result.status, elapsed: result.elapsed, breakdown: result.breakdown };
+        q.result = { score: result.score, status: result.status, elapsed: result.elapsed, breakdown: result.breakdown, ...(result.landmark ? { landmark: result.landmark } : {}) };
         this.reviews.set(q.id, review); this.record.phase = 'reveal-scores';
       }
     } catch (error) {
@@ -82,7 +82,8 @@ export class SoloGame {
     const result = { ...summary, elapsed: Math.max(0, q.submittedAt - q.start) };
     if (q.skipped) { result.status = 'skipped'; result.score = 0; }
     const region = this.byId.get(q.regionId);
-    return { name: region.name, points: q.points, target: value.target, neutral: value.neutral, neutralNames: region.neutralNames || [], results: { solo: result } };
+    return { name: region.name, points: q.points, target: value.target, neutral: value.neutral, neutralNames: region.neutralNames || [], results: { solo: result },
+      ...(value.targetPoint ? { targetPoint: value.targetPoint, answer: value.answer } : {}) };
   }
   async review(id) {
     if (!this.active) throw new Error('本局已結束');
