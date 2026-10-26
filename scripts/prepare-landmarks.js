@@ -84,6 +84,58 @@ export function prepareLandmarks(records, selection, sourceInfo, { projection, b
   return { schemaVersion: 1, version, crs: 'EPSG:3826', projection, landmarks };
 }
 
+export function prepareLandmarkPools(records, selection, sourceInfo, administrative, version) {
+  const counties = administrative.regions.filter(r => r.level === 'county');
+  const context = { projection: administrative.manifest.projection, bounds: administrative.bounds, counties: counties.map(r => r.id) };
+  const curated = prepareLandmarks(records, selection, sourceInfo, context, version);
+  assert.equal(curated.landmarks.length, 100, '全島經典選題必須保留 100 題');
+  assert.ok(Array.isArray(administrative.land) && administrative.land.length, '缺少本島幾何');
+  const mainland = [administrative.land.reduce((largest, polygon) => area([polygon]) > area([largest]) ? polygon : largest)];
+  const countyById = new Map(counties.map(r => [r.id, r])), curatedBySource = new Map(curated.landmarks.map(r => [r.source.recordId, r]));
+  const transform = proj4('EPSG:4326', context.projection), bounds = context.bounds, ids = new Set(), sourceIds = new Set(), landmarks = [];
+  const excludedCounts = { nonMainlandCounty: 0, invalidRequiredFields: 0, outsideBounds: 0, outsideMainland: 0, outsideDeclaredCounty: 0 };
+  for (const record of records) {
+    if (text(record?.AttractionID)) {
+      assert.ok(!sourceIds.has(record.AttractionID), `觀光來源紀錄重複：${record.AttractionID}`); sourceIds.add(record.AttractionID);
+    }
+    const county = countyById.get(record?.PostalAddress?.CityCode);
+    if (!county) { excludedCounts.nonMainlandCounty++; continue; }
+    const lon = record.PositionLon, lat = record.PositionLat, old = curatedBySource.get(record.AttractionID);
+    const id = old?.id || (text(record.AttractionID) ? 'lm-' + record.AttractionID.replace(/^Attraction_/, '').toLowerCase().replaceAll('_', '-') : '');
+    if (!/^lm-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || id.length > 40 || !text(record.AttractionName) || record.AttractionName.trim().length > 80 ||
+      !Number.isFinite(lon) || !Number.isFinite(lat) || Math.abs(lon) > 180 || Math.abs(lat) > 90 || (record.UpdateTime !== undefined && !text(record.UpdateTime))) {
+      excludedCounts.invalidRequiredFields++; continue;
+    }
+    const point = transform.forward([lon, lat]);
+    if (!point.every(Number.isFinite) || point[0] < bounds[0] || point[0] > bounds[2] || point[1] < bounds[1] || point[1] > bounds[3]) { excludedCounts.outsideBounds++; continue; }
+    if (locatePointInGeometry(point, mainland).relation === 'outside') { excludedCounts.outsideMainland++; continue; }
+    if (locatePointInGeometry(point, county.geometry).relation === 'outside') { excludedCounts.outsideDeclaredCounty++; continue; }
+    assert.ok(!ids.has(id), `景點 ID 重複：${id}`); ids.add(id);
+    landmarks.push({ ...(old || { id, name: record.AttractionName.trim(), county: county.id, anchorLabel: '官方登錄代表點', wgs84: [lon, lat], point,
+      source: { datasetUrl, recordId: record.AttractionID, licenseUrl, retrievedAt: sourceInfo.retrievedAt, snapshotSha256: sourceInfo.sourceSha256,
+        ...(record.UpdateTime === undefined ? {} : { updatedAt: record.UpdateTime }) } }),
+    officialName: record.AttractionName.trim(), classicMainland: Boolean(old), classicCounty: Boolean(old) });
+  }
+  for (const item of curated.landmarks) assert.ok(ids.has(item.id), `經典景點未通過本島／所屬縣市檢查：${item.id}`);
+  const countyCounts = {};
+  for (const county of counties) {
+    const items = landmarks.filter(r => r.county === county.id).sort((a, b) => a.source.recordId < b.source.recordId ? -1 : a.source.recordId > b.source.recordId ? 1 : 0);
+    const chosen = items.filter(r => r.classicMainland), names = new Set(chosen.map(r => r.officialName));
+    assert.ok(chosen.length <= 20, `縣市原經典題超過 20 題：${county.id}`);
+    for (const item of items) {
+      if (chosen.length === 20) break;
+      if (item.classicCounty || names.has(item.officialName)) continue;
+      item.classicCounty = true; chosen.push(item); names.add(item.officialName);
+    }
+    assert.equal(chosen.length, 20, `縣市不足 20 個不同名稱的有效景點：${county.id}`);
+    countyCounts[county.id] = { all: items.length, classic: chosen.length };
+  }
+  landmarks.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  assert.ok(landmarks.length <= 10000, '全量景點超過 10000 筆');
+  return { catalog: { ...curated, schemaVersion: 2, landmarks }, summary: { sourceCount: records.length, excludedCounts,
+    poolCounts: { all: landmarks.length, classicMainland: 100, classicCounty: counties.length * 20 }, countyCounts } };
+}
+
 export async function writeLandmarks(catalog, manifest, output) {
   const content = Buffer.from(JSON.stringify(catalog, null, 2) + '\n');
   assert.equal(manifest.outputSha256, sha(content), '題庫產物雜湊不符');
@@ -116,16 +168,11 @@ async function main() {
   const administrative = JSON.parse(administrativeBytes);
   assert.equal(administrativeManifest.crs, 'EPSG:3826');
   assert.equal(administrative.manifest.projection, administrativeManifest.projection, '行政圖資投影不符');
-  const catalog = prepareLandmarks(decodeTourismSource(source, /\.zip$/i.test(values.source)), JSON.parse(selectionBytes), sourceInfo, {
-    projection: administrativeManifest.projection, bounds: administrative.bounds,
-    counties: administrative.regions.filter(r => r.level === 'county').map(r => r.id)
-  }, values.version);
-  const mainland = [administrative.land.reduce((largest, polygon) => area([polygon]) > area([largest]) ? polygon : largest)];
-  for (const item of catalog.landmarks) assert.notEqual(locatePointInGeometry(item.point, mainland).relation, 'outside', `景點不在台灣本島：${item.id}`);
-  const manifest = { schemaVersion: 1, version: catalog.version, count: catalog.landmarks.length, crs: catalog.crs,
+  const { catalog, summary } = prepareLandmarkPools(decodeTourismSource(source, /\.zip$/i.test(values.source)), JSON.parse(selectionBytes), sourceInfo, administrative, values.version);
+  const manifest = { schemaVersion: 2, version: catalog.version, count: catalog.landmarks.length, crs: catalog.crs,
     sourceUrl: sourceInfo.sourceUrl, retrievedAt: sourceInfo.retrievedAt, sourceSha256: sha(source), selectionSha256: sha(selectionBytes),
     projectionSha256: sha(catalog.projection), scriptSha256: sha(await readFile(fileURLToPath(import.meta.url))),
-    outputSha256: sha(JSON.stringify(catalog, null, 2) + '\n'), licenseUrl };
+    outputSha256: sha(JSON.stringify(catalog, null, 2) + '\n'), licenseUrl, ...summary };
   const output = values.output || join(root, '.cache/landmarks', catalog.version);
   await writeLandmarks(catalog, manifest, output);
   console.log(JSON.stringify({ output: resolve(output), count: manifest.count, outputSha256: manifest.outputSha256 }));

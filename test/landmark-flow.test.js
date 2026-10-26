@@ -6,14 +6,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import clipping from 'polygon-clipping';
-import { area, createScoring, locatePointInGeometry } from '../shared/scoring.js';
+import { area, createScoring, locatePointInGeometry, landmarkRulesForSettings } from '../shared/scoring.js';
 import { questionPool } from '../shared/rules.js';
 import { loadCatalog } from '../server/catalog.js';
-import { decodeTourismSource, prepareLandmarks } from '../scripts/prepare-landmarks.js';
 import { buildFreeLocal } from '../scripts/build-cloudflare.js';
 import { createSoloRecord, selectQuestions, SoloGame } from '../public/solo-game.js';
 import { SoloAssets } from '../public/solo-assets.js';
-import { comparisonBounds, landmarkDetails, roundScoreText, scoreText } from '../public/share.js';
+import { SoloEngine } from '../public/solo-engine.js';
+import { comparisonBounds, landmarkDetails, landmarkFeedback, landmarkSummary, questionName, challengeScope, roundScoreText, scoreText } from '../public/share.js';
 
 const read = path => readFile(new URL('../' + path, import.meta.url));
 const json = async path => JSON.parse(await read(path));
@@ -22,21 +22,26 @@ const catalog = loadCatalog(), data = catalog.publicData();
 const { prepareLandmarkScorer } = createScoring(clipping);
 const square = ([x, y], radius = 100) => [[x - radius, y - radius], [x + radius, y - radius], [x + radius, y + radius], [x - radius, y + radius]];
 
-test('正式題庫：本島 19 縣市共 100 題、來源與轉檔可重現', async () => {
+test('正式題庫：本島 5554 題、經典 100 題與縣市各 20 題，來源版本一致', async () => {
   const landmarks = await json('data/landmarks.json'), manifest = await json('data/landmarks-manifest.json');
   const bytes = await read('data/landmarks-source.zip'), info = await json('data/landmarks-source-info.json');
-  const records = decodeTourismSource(bytes, true), selection = await json('data/landmarks-selection.json');
-  const counties = data.regions.filter(r => r.level === 'county').map(r => r.id);
+  const selection = await json('data/landmarks-selection.json');
   assert.equal(sha(bytes), info.sourceSha256);
   assert.equal(sha(await read('data/landmarks-selection.json')), manifest.selectionSha256);
   assert.equal(sha(await read('scripts/prepare-landmarks.js')), manifest.scriptSha256);
   assert.equal(sha(await read('data/landmarks.json')), manifest.outputSha256);
-  assert.deepEqual(prepareLandmarks(records, selection, info, { projection: landmarks.projection, bounds: data.bounds, counties }, landmarks.version), landmarks);
-  assert.equal(landmarks.landmarks.length, 100);
-  assert.equal(new Set(landmarks.landmarks.map(r => r.id)).size, 100);
+  assert.equal(landmarks.landmarks.length, 5554);
+  assert.equal(new Set(landmarks.landmarks.map(r => r.id)).size, 5554);
   assert.equal(new Set(landmarks.landmarks.map(r => r.county)).size, 19);
+  const classic = landmarks.landmarks.filter(r => r.classicMainland);
+  assert.equal(classic.length, 100);
+  assert.deepEqual(classic.map(r => r.id).sort(), selection.map(r => r.id).sort());
+  for (const county of data.regions.filter(r => r.level === 'county')) {
+    assert.equal(landmarks.landmarks.filter(r => r.county === county.id && r.classicCounty).length, 20);
+    assert.equal(county.areaM2, area(catalog.byId.get(county.id).geometry));
+  }
   const mainland = [data.land.reduce((a, b) => area([a]) > area([b]) ? a : b)];
-  for (const item of landmarks.landmarks) {
+  for (const item of classic) {
     assert.ok(!['09007', '09020', '10016'].includes(item.county), item.id);
     assert.notEqual(locatePointInGeometry(item.point, mainland).relation, 'outside', item.id);
     assert.notEqual(locatePointInGeometry(item.point, catalog.byId.get(item.county).geometry).relation, 'outside', item.id);
@@ -44,14 +49,16 @@ test('正式題庫：本島 19 縣市共 100 題、來源與轉檔可重現', as
   }
 });
 
-test('設定與題庫：景點 Easy/Hard、舊行政區選題，公開 metadata 不混入答案點', () => {
-  for (const difficulty of ['easy', 'hard']) for (const mode of ['single', 'multi']) {
-    const { settings, questions } = selectQuestions(data, { challenge: 'landmark', difficulty, count: 5, scope: 'county', county: '63000', town: 'old' }, () => .5, mode);
+test('設定與題庫：Scope／Pool／Difficulty 獨立，單人多人與行政區相容', () => {
+  for (const difficulty of ['easy', 'hard']) for (const mode of ['single', 'multi']) for (const scope of ['mainland', 'county']) for (const pool of ['classic', 'all']) {
+    const { settings, questions } = selectQuestions(data, { challenge: 'landmark', difficulty, pool, count: 5, scope, county: '65000', town: 'old' }, () => .5, mode);
     assert.equal(settings.difficulty, difficulty);
-    assert.deepEqual([settings.scope, settings.county, settings.town], ['mainland', '', '']);
+    assert.deepEqual([settings.scope, settings.county, settings.town], [scope, scope === 'county' ? '65000' : '', '']);
+    assert.equal(questionPool(settings, data.regions).length, scope === 'county' ? pool === 'all' ? 650 : 20 : pool === 'all' ? 5554 : 100);
     assert.equal(questions.length, 5);
     assert.equal(new Set(questions).size, 5);
     assert.ok(questions.every(id => catalog.byId.get(id).kind === 'landmark'));
+    if (scope === 'county') assert.ok(questions.every(id => catalog.byId.get(id).county === '65000'));
   }
   for (const r of questionPool({ challenge: 'landmark' }, data.regions)) {
     assert.equal(r.point, undefined); assert.equal(r.geometry, undefined);
@@ -62,6 +69,45 @@ test('設定與題庫：景點 Easy/Hard、舊行政區選題，公開 metadata 
     const selected = selectQuestions(data, settings);
     assert.ok(selected.questions.every(id => catalog.byId.get(id).level === settings.challenge));
   }
+});
+
+test('Worker 初始化：縣市規則固定，重啟後不退回全島尺度', async t => {
+  const previous = globalThis.Worker, sent = [];
+  t.after(() => { if (previous === undefined) delete globalThis.Worker; else globalThis.Worker = previous; });
+  globalThis.Worker = class {
+    postMessage(message) { sent.push(structuredClone(message)); queueMicrotask(() => this.onmessage({ data: { id: message.id, value: true } })); }
+    terminate() {}
+  };
+  const settings = { challenge: 'landmark', scope: 'county', county: '10020' }, areaM2 = data.regions.find(r => r.id === settings.county).areaM2;
+  const rules = landmarkRulesForSettings(settings, areaM2), engine = new SoloEngine({ runtimeVersion: 'test' }, data, ['lm-test'], rules);
+  t.after(() => engine.close());
+  await engine.ready(); engine.close(); rules.maxAreaM2 = 1;
+  await engine.ready();
+  assert.equal(sent.length, 2);
+  assert.equal(sent[0].landmarkRules.maxAreaM2, areaM2);
+  assert.deepEqual(sent[1].landmarkRules, sent[0].landmarkRules);
+});
+
+test('全量抽題：保留來源紀錄但同局不重複同縣同名景點', () => {
+  const region = data.regions.find(r => r.level === 'landmark');
+  const sample = { ...data, regions: [...data.regions.filter(r => r.level === 'county'),
+    ...Array.from({ length: 12 }, (_, i) => ({ ...region, id: `lm-sample-${i}`, officialName: `景點${Math.floor(i / 2)}` }))] };
+  const { questions } = selectQuestions(sample, { challenge: 'landmark', pool: 'all', count: 5 }, () => .9);
+  assert.equal(questions.length, 5);
+  assert.equal(new Set(questions.map(id => sample.regions.find(r => r.id === id).officialName)).size, 5);
+});
+
+test('景點結算：低分命中也計入，跳過列分母，作廢排除；文案與設定一致', () => {
+  const round = (score, hit, status = 'valid') => ({ results: { solo: { score, status, landmark: { hit } } } });
+  const history = [round(10, true), round(0, false), round(0, null, 'skipped'), { ...round(100, true), voided: true }, round(null, null, 'calculation_failed')];
+  assert.equal(landmarkSummary(history, 'solo'), '🎯 命中率：1 / 3 題（33%）');
+  assert.equal(landmarkSummary([], 'solo'), '🎯 命中率：0 / 0 題（—）');
+  assert.equal(questionName({ name: '舊題名', officialName: '台北101', anchorLabel: '主塔' }), '台北101（主塔）');
+  assert.equal(questionName({ name: '臺北市' }), '臺北市');
+  assert.equal(landmarkFeedback({ status: 'valid', score: 10, landmark: { hit: true, areaM2: 59721560 } }), '🟢 10.00 分 · 命中！（圈選面積 59.7 km²）');
+  assert.equal(landmarkFeedback({ status: 'valid', score: 0, landmark: { hit: false, outsideDistanceM: 900 } }), '🔴 0 分 · 未命中（離景點最近 0.9 km）');
+  assert.equal(landmarkFeedback({ status: 'skipped' }), '已跳過 · 0 分');
+  assert.equal(challengeScope(data, { challenge: 'landmark', scope: 'county', county: '65000', pool: 'all' }), '景點挑戰 · 新北市 · 全部題庫');
 });
 
 function solo() {
@@ -145,7 +191,7 @@ test('打包：景點獨立答案包；Cloudflare 僅入口、收件 API、規�
   const built = await buildFreeLocal(out), manifest = JSON.parse(await readFile(join(built.client, 'assets/current.json')));
   const unpack = async asset => JSON.parse(gunzipSync(await readFile(join(built.client, asset.url))));
   const points = await unpack(manifest.answerPacks.landmark), counties = await unpack(manifest.answerPacks.county);
-  assert.equal(points.length, 100);
+  assert.equal(points.length, 5554);
   for (const r of points) {
     assert.deepEqual(Object.keys(r).sort(), ['id', 'kind', 'point']);
     assert.equal(r.kind, 'landmark'); assert.equal(manifest.regionPacks[r.id], 'landmark');

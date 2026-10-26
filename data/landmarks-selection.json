@@ -40,19 +40,19 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-beitou-library",
-    "recordId": "Attraction_379000000A_000212",
-    "name": "北投圖書館",
+    "id": "lm-379000000a-000351",
+    "recordId": "Attraction_379000000A_000351",
+    "name": "臺北市立兒童新樂園",
     "county": "63000",
-    "anchorLabel": "北投分館",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-beitou-hot-spring-museum",
-    "recordId": "Attraction_379000000A_000033",
-    "name": "北投溫泉博物館",
+    "id": "lm-379000000a-000271",
+    "recordId": "Attraction_379000000A_000271",
+    "name": "臺北小巨蛋",
     "county": "63000",
-    "anchorLabel": "館舍",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -112,11 +112,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-cimin-visitor-center",
-    "recordId": "Attraction_376430000A_000381",
-    "name": "慈湖遊客中心",
+    "id": "lm-376430000a-000347",
+    "recordId": "Attraction_376430000A_000347",
+    "name": "小人國",
     "county": "68000",
-    "anchorLabel": "遊客中心",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -200,11 +200,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-taichung-confucius-temple",
-    "recordId": "Attraction_387000000A_000041",
-    "name": "臺中孔廟",
+    "id": "lm-387000000a-000048",
+    "recordId": "Attraction_387000000A_000048",
+    "name": "麗寶樂園渡假區",
     "county": "66000",
-    "anchorLabel": "孔廟",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -256,19 +256,19 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-sicao-dazhong-temple",
-    "recordId": "Attraction_A15011100H_000086",
-    "name": "四草大眾廟",
+    "id": "lm-395000000a-000476",
+    "recordId": "Attraction_395000000A_000476",
+    "name": "頑皮世界野生動物園",
     "county": "67000",
-    "anchorLabel": "寺廟",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-eternal-golden-castle",
-    "recordId": "Attraction_395000000A_000673",
-    "name": "億載金城",
+    "id": "lm-395000000a-000816",
+    "recordId": "Attraction_395000000A_000816",
+    "name": "十鼓文創園區",
     "county": "67000",
-    "anchorLabel": "砲臺",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -304,11 +304,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-kaohsiung-fine-arts-museum",
-    "recordId": "Attraction_397000000A_000158",
-    "name": "高雄市立美術館",
+    "id": "lm-397000000a-000608",
+    "recordId": "Attraction_397000000A_000608",
+    "name": "義大世界",
     "county": "64000",
-    "anchorLabel": "主館",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -432,11 +432,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-xinpu-yimin-temple",
-    "recordId": "Attraction_376440000A_000116",
-    "name": "新埔義民廟",
+    "id": "lm-376440000a-000200",
+    "recordId": "Attraction_376440000A_000200",
+    "name": "小叮噹科學主題樂園",
     "county": "10004",
-    "anchorLabel": "寺廟",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -464,11 +464,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-nanzhuang-post-office",
-    "recordId": "Attraction_A15010700H_000027",
-    "name": "南庄老郵局",
+    "id": "lm-376450000a-000062",
+    "recordId": "Attraction_376450000A_000062",
+    "name": "飛牛牧場",
     "county": "10005",
-    "anchorLabel": "郵局",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -520,27 +520,27 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-wenwu-temple",
-    "recordId": "Attraction_A15010600H_000033",
-    "name": "日月潭文武廟",
+    "id": "lm-a15010600h-000055",
+    "recordId": "Attraction_A15010600H_000055",
+    "name": "埔里酒廠",
     "county": "10008",
-    "anchorLabel": "寺廟",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-xuanguang-temple",
-    "recordId": "Attraction_A15010600H_000014",
-    "name": "日月潭玄光寺",
+    "id": "lm-376480000a-000312",
+    "recordId": "Attraction_376480000A_000312",
+    "name": "九族文化村",
     "county": "10008",
-    "anchorLabel": "寺廟",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-chung-tai-monastery",
-    "recordId": "Attraction_A15010600H_000084",
-    "name": "中台禪寺",
+    "id": "lm-376480000a-000253",
+    "recordId": "Attraction_376480000A_000253",
+    "name": "清境農場",
     "county": "10008",
-    "anchorLabel": "寺院",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -584,11 +584,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-gukeng-green-tunnel",
-    "recordId": "Attraction_376490000A_000015",
-    "name": "古坑綠色隧道",
+    "id": "lm-376490000a-000191",
+    "recordId": "Attraction_376490000A_000191",
+    "name": "劍湖山世界主題樂園",
     "county": "10009",
-    "anchorLabel": "綠色隧道公園",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -712,11 +712,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-jimmy-plaza",
-    "recordId": "Attraction_376420000A_000232",
-    "name": "宜蘭幾米廣場",
+    "id": "lm-376420000a-000258",
+    "recordId": "Attraction_376420000A_000258",
+    "name": "冬山河親水公園",
     "county": "10002",
-    "anchorLabel": "廣場",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -728,11 +728,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-xincheng-catholic-church",
-    "recordId": "Attraction_376550000A_000071",
-    "name": "新城天主堂",
+    "id": "lm-376550000a-001258",
+    "recordId": "Attraction_376550000A_001258",
+    "name": "遠雄海洋公園",
     "county": "10015",
-    "anchorLabel": "教堂",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -752,11 +752,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-ruisui-tropic-marker",
-    "recordId": "Attraction_376550000A_000333",
-    "name": "瑞穗北回歸線標誌",
+    "id": "lm-376550000a-001466",
+    "recordId": "Attraction_376550000A_001466",
+    "name": "瑞穗牧場",
     "county": "10015",
-    "anchorLabel": "日晷紀念碑",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   },
   {
@@ -792,11 +792,11 @@
     "reviewedAt": "2026-10-26"
   },
   {
-    "id": "lm-taitung-art-museum",
-    "recordId": "Attraction_376540000A_000313",
-    "name": "臺東美術館",
+    "id": "lm-376540000a-000285",
+    "recordId": "Attraction_376540000A_000285",
+    "name": "初鹿牧場",
     "county": "10014",
-    "anchorLabel": "館舍",
+    "anchorLabel": "官方代表點",
     "reviewedAt": "2026-10-26"
   }
 ]

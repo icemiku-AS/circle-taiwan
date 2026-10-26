@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { questionPool, RULES_VERSION, TIMES, COUNTS, MAX_POINTS } from '../shared/rules.js';
+import { questionPool, extentForSettings, RULES_VERSION, TIMES, COUNTS, MAX_POINTS } from '../shared/rules.js';
 import clipping from 'polygon-clipping';
 import { area } from '../shared/scoring.js';
 
@@ -12,7 +12,8 @@ export function loadCatalog() {
   const landmarkManifest = JSON.parse(readFileSync(new URL('../data/landmarks-manifest.json', import.meta.url)));
   if (createHash('sha256').update(landmarkBytes).digest('hex') !== landmarkManifest.outputSha256) throw new Error('景點題庫雜湊不符，請重新產製題庫');
   const landmarks = JSON.parse(landmarkBytes);
-  if (landmarks.version !== landmarkManifest.version || landmarks.landmarks.length !== landmarkManifest.count || landmarks.crs !== 'EPSG:3826' || landmarks.projection !== manifest.projection) throw new Error('景點題庫版本或投影不符');
+  if (![1, 2].includes(landmarks.schemaVersion) || landmarks.schemaVersion !== landmarkManifest.schemaVersion ||
+    landmarks.version !== landmarkManifest.version || landmarks.landmarks.length !== landmarkManifest.count || landmarks.crs !== 'EPSG:3826' || landmarks.projection !== manifest.projection) throw new Error('景點題庫版本或投影不符');
   return createCatalog(JSON.parse(bytes), landmarks);
 }
 
@@ -20,7 +21,7 @@ export function createCatalog(data, landmarks = null) {
   const byId = new Map(data.regions.map(r => [r.id, { ...r, neutral: [], neutralNames: [] }]));
   if (byId.size !== data.regions.length) throw new Error('圖資行政代碼重複');
   const regions = data.regions.filter(r => r.level !== 'village' || (r.label?.trim() && r.label !== byId.get(r.town)?.label))
-    .map(({ geometry, ...r }) => r);
+    .map(({ geometry, ...r }) => r.level === 'county' ? { ...r, areaM2: area(geometry) } : r);
   for (const region of byId.values()) {
     const enclosed = new Map();
     for (const polygon of region.geometry) for (const ring of polygon.slice(1)) {
@@ -38,7 +39,10 @@ export function createCatalog(data, landmarks = null) {
   // POIs join metadata only after all administrative geometry processing is complete.
   for (const item of landmarks?.landmarks || []) {
     if (byId.has(item.id) || item.point.length !== 2 || !item.point.every(Number.isFinite) || byId.get(item.county)?.level !== 'county') throw new Error('景點題庫 ID、座標或縣市無效');
-    const meta = { id: item.id, name: item.name, label: item.name, level: 'landmark', county: item.county, anchorLabel: item.anchorLabel };
+    if (landmarks.schemaVersion === 2 && (typeof item.classicMainland !== 'boolean' || typeof item.classicCounty !== 'boolean' ||
+      typeof item.officialName !== 'string' || !item.officialName.trim())) throw new Error('景點題庫精選或名稱欄位無效');
+    const meta = { id: item.id, name: item.name, label: item.name, level: 'landmark', county: item.county, anchorLabel: item.anchorLabel,
+      officialName: item.officialName || item.name, classicMainland: item.classicMainland ?? true, classicCounty: item.classicCounty ?? true };
     regions.push(meta); byId.set(item.id, { ...meta, kind: 'landmark', point: item.point, neutralNames: [] });
   }
   const manifest = landmarks ? { ...data.manifest, version: `${data.manifest.version}+${landmarks.version}`, landmarkVersion: landmarks.version } : data.manifest;
@@ -46,11 +50,7 @@ export function createCatalog(data, landmarks = null) {
   return {
     ...data, manifest, regions, byId, playBounds: [x0 - margin, y0 - margin, x1 + margin, y1 + margin],
     pool: settings => questionPool(settings, regions),
-    extent(settings) {
-      if (settings.challenge === 'village') return byId.get(settings.town).bounds;
-      if (settings.challenge === 'town' && settings.scope === 'county') return byId.get(settings.county).bounds;
-      return data.bounds;
-    },
+    extent: settings => extentForSettings(settings, regions, data.bounds),
     publicData() { return { manifest, rulesVersion: RULES_VERSION, land: data.land, bounds: data.bounds,
       playBounds: this.playBounds, regions, times: TIMES, counts: COUNTS, maxPoints: MAX_POINTS }; }
   };

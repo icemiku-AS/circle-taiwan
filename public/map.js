@@ -30,6 +30,7 @@ export class GameMap {
     this.canvas = canvas; this.ctx = canvas.getContext('2d'); this.data = data;
     this.onChange = onChange; this.onMessage = onMessage; this.points = []; this.reveal = null;
     this.onViewChange = onViewChange; this.background = document.createElement('canvas'); this.cluesVisible = false; this.clues = null;
+    this.scopeOutline = this.internalBoundaries = null;
     this.extent = data.bounds; this.mode = 'draw'; this.editable = false; this.pointers = new Map(); this.view = null;
     this.cursor = [(data.bounds[0] + data.bounds[2]) / 2, (data.bounds[1] + data.bounds[3]) / 2];
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(canvas);
@@ -200,8 +201,12 @@ export class GameMap {
   }
   paintBase() {
     const v = this.view, d = this.dpr, px = 1 / v.scale;
-    const contentKey = [this.width, this.height, d, this.cluesVisible, this.countiesVisible, this.clues?.generation].join(':');
-    const key = [this.width, this.height, d, v.x, v.y, v.scale, this.cluesVisible, this.countiesVisible, this.clues?.generation].join(':');
+    if (this.baseData !== this.data || this.baseScopeOutline !== this.scopeOutline || this.baseInternalBoundaries !== this.internalBoundaries || this.baseCountyBoundaries !== this.countyBoundaries) {
+      this.baseData = this.data; this.baseScopeOutline = this.scopeOutline; this.baseInternalBoundaries = this.internalBoundaries; this.baseCountyBoundaries = this.countyBoundaries;
+      this.boundaryRevision = (this.boundaryRevision || 0) + 1;
+    }
+    const contentKey = [this.width, this.height, d, this.cluesVisible, this.countiesVisible, this.clues?.generation, this.boundaryRevision].join(':');
+    const key = [this.width, this.height, d, v.x, v.y, v.scale, this.cluesVisible, this.countiesVisible, this.clues?.generation, this.boundaryRevision].join(':');
     if (this.baseKey === key) return;
     // Panning does not change pixel density; keep exact-scale pixels until coverage or content changes.
     if ((this.interacting || this.baseView?.scale === v.scale) && this.baseContentKey === contentKey) {
@@ -243,7 +248,9 @@ export class GameMap {
       c.restore();
     }
     if (this.countiesVisible && this.countyBoundaries) { drawPath(c, this.countyBoundaries); c.strokeStyle = '#718477'; c.lineWidth = 1.1 * px; c.stroke(); }
+    if (this.internalBoundaries?.length) { drawPath(c, this.internalBoundaries); c.strokeStyle = '#87978c'; c.lineWidth = 1.1 * px; c.stroke(); }
     drawPath(c, this.data.land); c.strokeStyle = '#738477'; c.lineWidth = px; c.stroke();
+    if (this.scopeOutline?.length) { drawPath(c, this.scopeOutline); c.strokeStyle = '#667a6b'; c.lineWidth = 1.6 * px; c.stroke(); }
   }
   baseTransform() {
     const b = this.baseView, v = this.view, scale = v.scale / b.scale * this.dpr / b.dpr;

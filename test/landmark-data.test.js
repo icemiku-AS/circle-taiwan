@@ -5,7 +5,7 @@ import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { zipSync } from 'fflate';
-import { readTourismRecords, decodeTourismSource, prepareLandmarks, writeLandmarks } from '../scripts/prepare-landmarks.js';
+import { readTourismRecords, decodeTourismSource, prepareLandmarks, prepareLandmarkPools, writeLandmarks } from '../scripts/prepare-landmarks.js';
 
 const fixture = JSON.parse(await readFile(new URL('./fixtures/landmarks-tourism.json', import.meta.url)));
 const { projection } = JSON.parse(await readFile(new URL('../data/manifest.json', import.meta.url)));
@@ -48,7 +48,8 @@ test('轉檔：穩定排序、保留來源與原始座標；兩份 Schema 可解
   const schema = JSON.parse(await readFile(new URL('../data/landmarks.schema.json', import.meta.url)));
   for (const record of fixture.Attractions) for (const key of sourceSchema.required) assert.ok(Object.hasOwn(record, key));
   assert.deepEqual(Object.keys(result).sort(), schema.required.toSorted());
-  for (const item of result.landmarks) assert.deepEqual(Object.keys(item).sort(), schema.$defs.landmark.required.toSorted());
+  for (const item of result.landmarks) assert.deepEqual(Object.keys(item).sort(), ['id', 'name', 'county', 'anchorLabel', 'wgs84', 'point', 'source', 'reviewedAt'].sort());
+  assert.equal(schema.properties.schemaVersion.const, 2);
 });
 
 test('投影：中央經線赤道控制點及湖泊點不作陸地裁切', () => {
@@ -115,4 +116,58 @@ test('產檔：輸入一致可重建；座標改變更新雜湊；失敗不覆�
   await assert.rejects(writeLandmarks(catalog, { ...manifest, outputSha256: 'wrong' }, join(temp, 'bad')), /雜湊/);
   assert.equal(sha(await readFile(join(first, 'landmarks.json'))), manifest.outputSha256);
   assert.deepEqual((await readdir(temp)).sort(), ['first', 'second']);
+});
+
+test('全量題庫：原100題不變、各縣自動20題、5554筆來源與穩定重建', async () => {
+  const read = path => readFile(new URL('../data/' + path, import.meta.url));
+  const [source, choices, info, administrative, stored, manifest, schema] = await Promise.all([
+    read('landmarks-source.zip'), ...['landmarks-selection.json', 'landmarks-source-info.json', 'taiwan.json', 'landmarks.json', 'landmarks-manifest.json', 'landmarks.schema.json'].map(async path => JSON.parse(await read(path)))
+  ]);
+  const records = decodeTourismSource(source, true), bySource = new Map(records.map(r => [r.AttractionID, r]));
+  const result = prepareLandmarkPools(records, choices, info, administrative, stored.version);
+  assert.deepEqual(result.catalog, stored);
+  assert.equal(sha(source), manifest.sourceSha256);
+  assert.equal(sha(await read('landmarks-selection.json')), manifest.selectionSha256);
+  assert.equal(sha(bytesOf(stored)), manifest.outputSha256);
+  assert.equal(sha(await readFile(new URL('../scripts/prepare-landmarks.js', import.meta.url))), manifest.scriptSha256);
+  assert.equal(result.summary.sourceCount, 6182);
+  assert.deepEqual(result.summary.excludedCounts, { nonMainlandCounty: 450, invalidRequiredFields: 0, outsideBounds: 1, outsideMainland: 152, outsideDeclaredCounty: 25 });
+  assert.deepEqual(result.summary.poolCounts, { all: 5554, classicMainland: 100, classicCounty: 380 });
+  assert.deepEqual(result.summary.countyCounts, manifest.countyCounts);
+  const all = result.catalog.landmarks, byId = new Map(all.map(r => [r.id, r]));
+  assert.equal(byId.size, 5554);
+  for (const choice of choices) {
+    const item = byId.get(choice.id);
+    for (const key of ['name', 'county', 'anchorLabel', 'reviewedAt']) assert.equal(item[key], choice[key]);
+    assert.equal(item.source.recordId, choice.recordId);
+    assert.equal(item.classicMainland, true); assert.equal(item.classicCounty, true);
+  }
+  for (const item of all) {
+    const record = bySource.get(item.source.recordId);
+    for (const key of schema.$defs.landmark.required) assert.ok(Object.hasOwn(item, key), `${item.id}: ${key}`);
+    assert.ok(Object.keys(item).every(key => Object.hasOwn(schema.$defs.landmark.properties, key)));
+    assert.match(item.id, /^lm-[a-z0-9]+(?:-[a-z0-9]+)*$/); assert.ok(item.id.length <= 40);
+    assert.equal(item.officialName, record.AttractionName.trim());
+    assert.deepEqual(item.wgs84, [record.PositionLon, record.PositionLat]);
+    assert.equal(typeof item.classicMainland, 'boolean'); assert.equal(typeof item.classicCounty, 'boolean');
+    if (!item.classicMainland) {
+      assert.equal(item.name, record.AttractionName.trim()); assert.equal(item.anchorLabel, '官方登錄代表點');
+      assert.equal(Object.hasOwn(item, 'reviewedAt'), false);
+    }
+  }
+  for (const county of Object.keys(result.summary.countyCounts)) {
+    const classic = all.filter(r => r.county === county && r.classicCounty);
+    assert.equal(classic.length, 20); assert.equal(new Set(classic.map(r => r.officialName)).size, 20);
+  }
+  // Invalid automatic rows are excluded; reordering the source never changes eligible IDs or automatic picks.
+  const bad = { ...records[0], AttractionID: 'Attraction_test_1', PositionLon: '121' };
+  const malformed = { ...records[0], AttractionID: 'Attraction_test_2', AttractionName: ' ' };
+  const noCounty = { ...records[0], AttractionID: 'Attraction_test_3', PostalAddress: {} };
+  const outside = { ...records[0], AttractionID: 'Attraction_test_4', PositionLon: 0, PositionLat: 0 };
+  const reordered = prepareLandmarkPools([bad, malformed, noCounty, outside, ...records.toReversed()], choices.toReversed(), info, administrative, stored.version);
+  assert.deepEqual(reordered.catalog, stored);
+  assert.deepEqual(reordered.summary.excludedCounts, { nonMainlandCounty: 451, invalidRequiredFields: 2, outsideBounds: 2, outsideMainland: 152, outsideDeclaredCounty: 25 });
+  assert.throws(() => prepareLandmarkPools([records[0], records[0], ...records.slice(1)], choices, info, administrative, stored.version), /紀錄重複/);
+  assert.throws(() => prepareLandmarkPools(records, choices.slice(1), info, administrative, stored.version), /100 題/);
+  assert.throws(() => prepareLandmarkPools(records, choices, info, { ...administrative, land: [] }, stored.version), /本島幾何/);
 });

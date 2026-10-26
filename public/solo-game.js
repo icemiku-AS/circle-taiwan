@@ -1,4 +1,4 @@
-import { validateSettings, questionPool, standings } from '../shared/rules.js';
+import { validateSettings, questionPool, extentForSettings, standings } from '../shared/rules.js';
 import { validatePoints } from '../shared/scoring.js';
 
 let sequence = 0;
@@ -8,9 +8,15 @@ function localId() {
 }
 
 export function selectQuestions(data, input, random = Math.random, mode = 'single') {
-  const settings = validateSettings(input, mode, data.regions), pool = questionPool(settings, data.regions).map(r => r.id);
+  const settings = validateSettings(input, mode, data.regions), pool = questionPool(settings, data.regions);
   for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-  return { settings, questions: pool.slice(0, settings.count) };
+  const seen = new Set();
+  const unique = settings.challenge !== 'landmark' ? pool : pool.filter(r => {
+    const key = `${r.county}:${r.officialName || r.name}`;
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+  return { settings, questions: unique.slice(0, settings.count).map(r => r.id) };
 }
 export function createSoloRecord(settings, questions, nickname, now = Date.now(), id = localId) {
   return { id: id(), settings, questions, nickname, phase: 'answering', index: 0,
@@ -25,7 +31,7 @@ export class SoloGame {
   }
   prewarm() { this.engine.prepare?.(this.current.regionId).catch(() => {}); }
   get current() { return this.record.rounds.at(-1); }
-  get extent() { const s = this.record.settings; return s.challenge === 'village' ? this.byId.get(s.town).bounds : s.challenge === 'town' && s.scope === 'county' ? this.byId.get(s.county).bounds : this.data.bounds; }
+  get extent() { return extentForSettings(this.record.settings, this.data.regions, this.data.bounds); }
   publish() { if (this.active) this.onChange(this.view()); }
   draft(points, closed = true) {
     if (!this.active || this.record.phase !== 'answering') return;
@@ -82,7 +88,8 @@ export class SoloGame {
     const result = { ...summary, elapsed: Math.max(0, q.submittedAt - q.start) };
     if (q.skipped) { result.status = 'skipped'; result.score = 0; }
     const region = this.byId.get(q.regionId);
-    return { name: region.name, points: q.points, target: value.target, neutral: value.neutral, neutralNames: region.neutralNames || [], results: { solo: result },
+    return { name: region.name, officialName: region.officialName, anchorLabel: region.anchorLabel,
+      points: q.points, target: value.target, neutral: value.neutral, neutralNames: region.neutralNames || [], results: { solo: result },
       ...(value.targetPoint ? { targetPoint: value.targetPoint, answer: value.answer } : {}) };
   }
   async review(id) {
@@ -96,9 +103,11 @@ export class SoloGame {
     const region = this.byId.get(q.regionId);
     return { local: true, type: 'state', mode: 'single', code: r.id, phase: r.phase, settings: r.settings, settingsRevision: 1, you: 'solo', hostId: 'solo', players: [player],
       serverNow: this.now(), error: '背景計分失敗；圈選與原提交時間已保留，可重新計分或重畫。', notices: [],
-      question: r.phase === 'results' ? null : { id: q.id, name: region.name, number: r.index + 1, count: r.questions.length, start: q.start, deadline: null,
+      question: r.phase === 'results' ? null : { id: q.id, name: region.name, officialName: region.officialName, anchorLabel: region.anchorLabel,
+        number: r.index + 1, count: r.questions.length, start: q.start, deadline: null,
         points: q.points, closed: q.closed, extent: this.extent, revision: q.revision, locked: r.phase !== 'answering', checking: false, neutralNames: region.neutralNames || [], results: revealed ? { solo: q.result } : null },
-      history: r.phase === 'results' ? r.rounds.map(q => ({ id: q.id, name: this.byId.get(q.regionId).name, results: { solo: q.result } })) : null,
+      history: r.phase === 'results' ? r.rounds.map(q => { const region = this.byId.get(q.regionId); return {
+        id: q.id, name: region.name, officialName: region.officialName, anchorLabel: region.anchorLabel, results: { solo: q.result } }; }) : null,
       standings: r.phase === 'results' ? standings([player], r.rounds.map(q => ({ results: { solo: q.result } })), 0, 'single') : null };
   }
   stop() { this.active = false; this.reviews.clear(); this.engine.close(); }

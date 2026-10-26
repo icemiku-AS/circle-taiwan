@@ -1,6 +1,19 @@
 import { drawPath, drawLandmarkTarget } from './map.js';
 
 export const scoreText = (value, challenge = 'county') => Number.isFinite(value) ? `${value.toFixed(2)}${challenge === 'landmark' ? ' 分' : '%'}` : '—';
+export const questionName = question => question.anchorLabel ? `${question.officialName || question.name}（${question.anchorLabel}）` : question.name;
+export function landmarkSummary(history, playerId) {
+  const rounds = history.filter(q => !q.voided && !Object.values(q.results || {}).some(r => r.status === 'calculation_failed'));
+  const hits = rounds.filter(q => ['valid', 'ok'].includes(q.results[playerId]?.status) && q.results[playerId].landmark?.hit === true).length;
+  return `🎯 命中率：${hits} / ${rounds.length} 題（${rounds.length ? Math.round(100 * hits / rounds.length) + '%' : '—'}）`;
+}
+export function landmarkFeedback(result) {
+  if (result.status === 'skipped') return '已跳過 · 0 分';
+  const detail = result.landmark;
+  if (!detail || detail.hit === null) return '無有效圈選 · 0 分';
+  return detail.hit ? `🟢 ${result.score.toFixed(2)} 分 · 命中！（圈選面積 ${(detail.areaM2 / 1e6).toFixed(1)} km²）`
+    : `🔴 0 分 · 未命中（離景點最近 ${(detail.outsideDistanceM / 1000).toFixed(1)} km）`;
+}
 export function landmarkDetails(detail) {
   if (!detail || detail.hit === null) return '無有效圈選';
   const area = detail.areaM2 < 10000 ? `${detail.areaM2.toFixed(2)} m²` : `${(detail.areaM2 / 1e6).toLocaleString('zh-TW', { maximumFractionDigits: 2 })} km²`;
@@ -9,7 +22,7 @@ export function landmarkDetails(detail) {
 }
 
 export function challengeScope(data, settings) {
-  if (settings.challenge === 'landmark') return '景點挑戰 · 台灣本島經典景點';
+  if (settings.challenge === 'landmark') return `景點挑戰 · ${settings.scope === 'county' ? data.regions.find(r => r.id === settings.county)?.name || '指定縣市' : '台灣本島'} · ${settings.pool === 'all' ? '全部題庫' : '經典精選'}`;
   if (settings.challenge === 'county') return '縣市挑戰 · 台灣本島與核准近岸範圍';
   const region = data.regions.find(r => r.id === (settings.challenge === 'village' ? settings.town : settings.county));
   return `${settings.challenge === 'village' ? '村里' : '鄉鎮'}挑戰 · ${region?.name || '全台灣（遊戲範圍）'}`;
@@ -38,9 +51,10 @@ export function comparisonBounds(target = [], points = [], targetPoint = null) {
   return [box[0] - margin, box[1] - margin, box[2] + margin, box[3] + margin];
 }
 
-export function comparison(context, data, round, playerId, x, y, width, height) {
+export function comparison(context, data, round, playerId, x, y, width, height, scope = {}) {
   const points = round.points, result = round.results[playerId];
-  const b = round.targetPoint && !points.length ? data.bounds : comparisonBounds(round.target, points, round.targetPoint);
+  const b = round.targetPoint && scope.scopeOutline?.length ? comparisonBounds(scope.scopeOutline, points, round.targetPoint)
+    : round.targetPoint && !points.length ? scope.extent || data.bounds : comparisonBounds(round.target, points, round.targetPoint);
   const inset = round.targetPoint ? 20 : 0; // Leave room for the fixed-size pin at the edge of a comparison.
   const scale = Math.min((width - inset * 2) / (b[2] - b[0]), (height - inset * 2) / (b[3] - b[1]));
   context.save(); context.beginPath(); context.rect(x, y, width, height); context.clip();
@@ -51,6 +65,9 @@ export function comparison(context, data, round, playerId, x, y, width, height) 
   if (round.targetPoint && round.answer) fill(round.answer, '#c56e4635');
   for (const [key, color] of [['hit', '#b6975888'], ['extra', '#c56e4666'], ['miss', '#65798e55']]) if (result[key]) fill(result[key], color);
   if (round.neutral?.length) fill(round.neutral, '#D5D5D5');
+  if (round.targetPoint && scope.scopeOutline?.length) {
+    drawPath(context, scope.scopeOutline); context.strokeStyle = '#718477'; context.lineWidth = 1.2 / scale; context.stroke();
+  }
   context.lineJoin = 'round'; context.lineWidth = 2 / scale;
   if (points.length) { drawPath(context, [[points]]); context.strokeStyle = '#c56e46'; context.stroke(); }
   if (round.targetPoint) drawLandmarkTarget(context, round.targetPoint, result.landmark, scale);
@@ -58,22 +75,24 @@ export function comparison(context, data, round, playerId, x, y, width, height) 
   context.restore();
 }
 
-export function scoreImage(data, state) {
+export function scoreImage(data, state, scope = {}) {
   const landmark = state.settings.challenge === 'landmark';
   const mine = state.standings.find(p => p.id === state.you), rows = Math.ceil(state.history.length / 2);
-  const canvas = document.createElement('canvas'); canvas.width = 1200; canvas.height = 330 + rows * 430;
+  const header = landmark ? 310 : 260;
+  const canvas = document.createElement('canvas'); canvas.width = 1200; canvas.height = header + 70 + rows * 430;
   const c = canvas.getContext('2d'); c.fillStyle = '#f2efe7'; c.fillRect(0, 0, canvas.width, canvas.height);
   c.fillStyle = '#1f2a23'; c.font = 'bold 40px sans-serif'; c.fillText('圈出台灣｜我的圈選與正確答案', 40, 65);
   c.font = '23px sans-serif'; c.fillText(challengeScope(data, state.settings), 40, 108, 1120);
   c.fillText(`${mine.name}・${state.settings.difficulty === 'easy' ? '初階' : '高階'}・不限時・${state.history.length} 題`, 40, 146, 1120);
-  c.font = 'bold 34px sans-serif'; c.fillText(`平均 ${scoreText(mine.score, state.settings.challenge)}　作答 ${mine.time.toFixed(1)} 秒`, 40, 195);
-  c.font = '20px sans-serif'; c.fillText(landmark ? '橙色實線：我的圈選　紅色圖針：景點　虛線：距圈選最近位置' : '橙色實線：我的圈選　綠色虛線：正確邊界　金色：圈對　灰色：內部中立區', 40, 235);
+  if (landmark) { c.font = 'bold 34px sans-serif'; c.fillText(landmarkSummary(state.history, state.you), 40, 195, 1120); }
+  c.font = 'bold 34px sans-serif'; c.fillText(`${landmark ? '平均得分' : '平均'} ${scoreText(mine.score, state.settings.challenge)}　作答 ${mine.time.toFixed(1)} 秒`, 40, header - 65, 1120);
+  c.font = '20px sans-serif'; c.fillText(landmark ? '橙色實線：我的圈選　紅色圖針：景點　虛線：距圈選最近位置' : '橙色實線：我的圈選　綠色虛線：正確邊界　金色：圈對　灰色：內部中立區', 40, header - 25);
   state.history.forEach((round, i) => {
-    const x = 30 + (i % 2) * 585, y = 260 + Math.floor(i / 2) * 430, r = round.results[state.you];
+    const x = 30 + (i % 2) * 585, y = header + Math.floor(i / 2) * 430, r = round.results[state.you];
     c.fillStyle = '#fffdf7'; c.fillRect(x, y, 555, 410); c.fillStyle = '#1f2a23'; c.font = 'bold 22px sans-serif';
-    c.fillText(`${i + 1}. ${round.name}`, x + 14, y + 34, 525);
+    c.fillText(`${i + 1}. ${questionName(round)}`, x + 14, y + 34, 525);
     c.font = '20px sans-serif'; c.fillText(`${scoreText(r.score, state.settings.challenge)}${r.status === 'skipped' ? '・已跳過' : ''}　${(Math.round(r.elapsed / 100) / 10).toFixed(1)} 秒`, x + 14, y + 65);
-    comparison(c, data, round, state.you, x + 14, y + 82, 527, 287);
+    comparison(c, data, round, state.you, x + 14, y + 82, 527, 287, scope);
     c.fillStyle = '#657466'; c.font = '15px sans-serif';
     c.fillText(landmark ? landmarkDetails(r.landmark) : round.neutralNames?.length ? `${round.neutralNames.join('、')}不計分；海面不計分` : '海面不計分；兩條輪廓使用相同位置與比例', x + 14, y + 395, 525);
   });
@@ -100,7 +119,7 @@ export function multiplayerScoreImage(data, state) {
     const entries = players.slice(group * 4, group * 4 + 4);
     const names = entries.map(p => wrap(playerName(p), cellWidth - 24));
     const rows = state.history.map((q, index) => {
-      const title = wrap(`${index + 1}. ${q.name}`, 245), cells = entries.map(p => wrap(roundScoreText(p.perQuestion[index], state.settings.challenge), cellWidth - 24));
+      const title = wrap(`${index + 1}. ${questionName(q)}`, 245), cells = entries.map(p => wrap(roundScoreText(p.perQuestion[index], state.settings.challenge), cellWidth - 24));
       return { title, cells, height: 24 + Math.max(title.length, ...cells.map(lines => lines.length)) * lineHeight };
     });
     return { entries, names, rows, headerHeight: 24 + Math.max(...names.map(lines => lines.length)) * lineHeight };

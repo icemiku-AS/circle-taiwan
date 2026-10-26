@@ -3,7 +3,7 @@ import test from 'node:test';
 import clipping from 'polygon-clipping';
 import * as fallback from 'polyclip-ts';
 import { LANDMARK_RULES, roundScore, standings } from '../shared/rules.js';
-import { area, createScoring, landmarkScoreForArea, locatePointInGeometry, validatePoints } from '../shared/scoring.js';
+import { area, createScoring, landmarkRulesForSettings, landmarkScoreForArea, locatePointInGeometry, validatePoints } from '../shared/scoring.js';
 
 const engine = createScoring(clipping, fallback);
 const square = [[0, 0], [10, 0], [10, 10], [0, 10]];
@@ -36,6 +36,35 @@ test('S 曲線：拒絕無效面積與規則，幾何有效性門檻獨立', () 
   assert.equal(scoreAt([0.5, 0.5], [[0, 0], [2, 0], [2, 1], [0, 1]]).score, 100);
   assert.equal(scoreAt([20, 20]).score, 0);
   assert.equal(scoreAt([20, 20]).status, 'valid');
+});
+
+test('縣市尺度：滿分與中點不變，圈滿全縣保底，其他設定不影響曲線', () => {
+  for (const areaM2 of [60e6, 4600e6]) {
+    const settings = { challenge: 'landmark', scope: 'county', pool: 'classic', difficulty: 'easy' };
+    const rules = landmarkRulesForSettings(settings, areaM2);
+    assert.equal(rules.minAreaM2, LANDMARK_RULES.minAreaM2); assert.equal(rules.maxAreaM2, areaM2);
+    assert.equal(landmarkScoreForArea(rules.minAreaM2, rules), 100);
+    near(landmarkScoreForArea(Math.sqrt(rules.minAreaM2 * areaM2), rules), 55);
+    assert.equal(landmarkScoreForArea(areaM2, rules), 10);
+    assert.equal(landmarkScoreForArea(areaM2 * 2, rules), 10);
+    assert.deepEqual(landmarkRulesForSettings({ ...settings, pool: 'all', difficulty: 'hard' }, areaM2), rules);
+    let last = 100;
+    for (let i = 0; i <= 10; i++) {
+      const score = landmarkScoreForArea(rules.minAreaM2 * (areaM2 / rules.minAreaM2) ** (i / 10), rules);
+      assert.ok(score >= 10 && score <= last); last = score;
+    }
+  }
+  assert.deepEqual(landmarkRulesForSettings({ challenge: 'landmark', scope: 'mainland' }), LANDMARK_RULES);
+  assert.deepEqual(landmarkRulesForSettings({ challenge: 'town', scope: 'county' }), LANDMARK_RULES);
+  for (const invalid of [undefined, 0, NaN, Infinity, LANDMARK_RULES.minAreaM2]) {
+    assert.throws(() => landmarkRulesForSettings({ challenge: 'landmark', scope: 'county' }, invalid));
+  }
+  const rules = landmarkRulesForSettings({ challenge: 'landmark', scope: 'county' }, 60e6);
+  const scorer = engine.prepareLandmarkScorer([5000, 3000], rules);
+  rules.maxAreaM2 = LANDMARK_RULES.maxAreaM2;
+  const answer = [[0, 0], [10000, 0], [10000, 6000], [0, 6000]], result = scorer(answer);
+  assert.equal(result.score, 10); assert.equal(result.landmark.areaM2, 60e6); assert.equal(result.landmark.hit, true);
+  assert.deepEqual(scorer(answer), result);
 });
 
 test('PIP：內部、水平／垂直邊、頂點與小量邊界容差', () => {

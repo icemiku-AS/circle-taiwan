@@ -28,6 +28,13 @@ function validateLandmarkRules(rules) {
     minScore <= 0 || minScore >= 100 || boundaryEpsilonM < 0) throw new Error('景點計分規則無效');
 }
 
+export function landmarkRulesForSettings(settings, countyAreaM2) {
+  const rules = { ...LANDMARK_RULES };
+  if (settings.challenge === 'landmark' && settings.scope === 'county') rules.maxAreaM2 = countyAreaM2;
+  validateLandmarkRules(rules);
+  return rules;
+}
+
 export function landmarkScoreForArea(areaM2, rules = LANDMARK_RULES) {
   validateLandmarkRules(rules);
   if (!Number.isFinite(areaM2) || areaM2 <= 0) throw new Error('圈選面積無效');

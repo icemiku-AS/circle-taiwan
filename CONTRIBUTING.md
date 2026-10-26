@@ -11,4 +11,6 @@
 
 景點題庫的來源格式、Schema 與轉檔指令見 [data/SOURCES.md](data/SOURCES.md#景點題庫轉檔)。`npm test` 包含 S 曲線、點與圈選區域的關係、最近距離及轉檔測試；`npm run build` 另檢查 Cloudflare API 不引入幾何計分依賴。
 
+景點須保留全島 classic 100 題、全量 5,554 筆與各縣自動 classic 20 題的固定快照測試；更新來源後需明確核對數量變更。範圍、題庫與難度各自驗證，並檢查縣市 Worker 重啟、命中率、邊界快取及行政區回歸。手機操作須以實體裝置另行確認，桌面 viewport 模擬不視為實機驗收。
+
 程式碼貢獻採 AGPL-3.0-only，圖資保留原來源署名與授權。

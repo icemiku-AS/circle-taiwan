@@ -1,14 +1,105 @@
 {
-  "schemaVersion": 1,
-  "version": "landmarks-2026-10-26-03",
-  "count": 100,
+  "schemaVersion": 2,
+  "version": "landmarks-2026-10-26-05",
+  "count": 5554,
   "crs": "EPSG:3826",
   "sourceUrl": "https://media.taiwan.net.tw/XMLReleaseAll_public/v2.0/Zh_tw/Attraction-json.zip",
   "retrievedAt": "2026-10-26T07:16:03.222Z",
   "sourceSha256": "b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246",
-  "selectionSha256": "7cb24a3d4fb5ec7a6eb4b1ade1be0ea3fdd6353dee71561fbc7d0b64faa668df",
+  "selectionSha256": "8e82b504f341f78f42d97e06d2caa2c2cd6cb85ffba96a7e3d4a12b8df5a1879",
   "projectionSha256": "127a4b9e98d24eef4679f27f50244fb1fea52c54a0ebb80b2b0dba9b9a68bbd3",
-  "scriptSha256": "b47e1dbfeb6bbfb0a2c389dc5a15410407df2e227c6017b50db3df80a6230f2a",
-  "outputSha256": "3a2ebe11eb0f21cf6054211f4eec0ee5e1267a316ff9180e9454a24ef7c609c0",
-  "licenseUrl": "https://data.gov.tw/license"
+  "scriptSha256": "7a74b06f624ff6bf13f65eae12706775c9eb9fc182f812e4f262f254a162bfb0",
+  "outputSha256": "f09b9371e6b282e32d3aaac4e83346d2b8cf8d7232f43fcf8b7cfc3a86ffd12a",
+  "licenseUrl": "https://data.gov.tw/license",
+  "sourceCount": 6182,
+  "excludedCounts": {
+    "nonMainlandCounty": 450,
+    "invalidRequiredFields": 0,
+    "outsideBounds": 1,
+    "outsideMainland": 152,
+    "outsideDeclaredCounty": 25
+  },
+  "poolCounts": {
+    "all": 5554,
+    "classicMainland": 100,
+    "classicCounty": 380
+  },
+  "countyCounts": {
+    "10002": {
+      "all": 171,
+      "classic": 20
+    },
+    "10004": {
+      "all": 501,
+      "classic": 20
+    },
+    "10005": {
+      "all": 213,
+      "classic": 20
+    },
+    "10007": {
+      "all": 298,
+      "classic": 20
+    },
+    "10008": {
+      "all": 174,
+      "classic": 20
+    },
+    "10009": {
+      "all": 358,
+      "classic": 20
+    },
+    "10010": {
+      "all": 240,
+      "classic": 20
+    },
+    "10013": {
+      "all": 109,
+      "classic": 20
+    },
+    "10014": {
+      "all": 231,
+      "classic": 20
+    },
+    "10015": {
+      "all": 341,
+      "classic": 20
+    },
+    "10017": {
+      "all": 107,
+      "classic": 20
+    },
+    "10018": {
+      "all": 55,
+      "classic": 20
+    },
+    "10020": {
+      "all": 78,
+      "classic": 20
+    },
+    "63000": {
+      "all": 377,
+      "classic": 20
+    },
+    "64000": {
+      "all": 322,
+      "classic": 20
+    },
+    "65000": {
+      "all": 650,
+      "classic": 20
+    },
+    "66000": {
+      "all": 509,
+      "classic": 20
+    },
+    "67000": {
+      "all": 541,
+      "classic": 20
+    },
+    "68000": {
+      "all": 279,
+      "classic": 20
+    }
+  }
 }
