@@ -248,9 +248,9 @@ export class GameMap {
       c.restore();
     }
     if (this.countiesVisible && this.countyBoundaries) { drawPath(c, this.countyBoundaries); c.strokeStyle = '#718477'; c.lineWidth = 1.1 * px; c.stroke(); }
-    if (this.internalBoundaries?.length) { drawPath(c, this.internalBoundaries); c.strokeStyle = '#87978c'; c.lineWidth = 1.1 * px; c.stroke(); }
+    if (this.internalBoundaries?.length) { drawPath(c, this.internalBoundaries); c.strokeStyle = this.cluesVisible ? '#4e6155' : '#87978c'; c.lineWidth = (this.cluesVisible ? 1.4 : 1.1) * px; c.stroke(); }
     drawPath(c, this.data.land); c.strokeStyle = '#738477'; c.lineWidth = px; c.stroke();
-    if (this.scopeOutline?.length) { drawPath(c, this.scopeOutline); c.strokeStyle = '#667a6b'; c.lineWidth = 1.6 * px; c.stroke(); }
+    if (this.scopeOutline?.length) { drawPath(c, this.scopeOutline); c.strokeStyle = this.cluesVisible ? '#384c40' : '#667a6b'; c.lineWidth = (this.cluesVisible ? 1.8 : 1.6) * px; c.stroke(); }
   }
   baseTransform() {
     const b = this.baseView, v = this.view, scale = v.scale / b.scale * this.dpr / b.dpr;

@@ -94,12 +94,12 @@ test('地圖載入錯誤：保留雜湊與大小校驗，簡短訊息附原始�
   assert.deepEqual(new Uint8Array(await compressedBytes(asset)), new Uint8Array(decoded));
 });
 
-test('範圍背景：保留洞邊界、重用筆畫背景，切換縣市／資料會重繪', () => {
+test('範圍背景：保留洞邊界、重用背景，切換難度樣式／縣市／資料會重繪', () => {
   const context = {
-    fills: 0, strokes: [], path: [],
+    fills: 0, strokes: [], styles: [], path: [],
     setTransform() {}, fillRect() { this.fills++; }, fill() {},
     beginPath() { this.path = []; }, moveTo(x, y) { this.path.push(['M', x, y]); }, lineTo() {}, closePath() {},
-    stroke() { this.strokes.push(this.path.slice()); }
+    stroke() { this.strokes.push(this.path.slice()); this.styles.push([this.strokeStyle, this.lineWidth]); }
   };
   const map = Object.assign(Object.create(GameMap.prototype), {
     view: { x: 10, y: 5, scale: 1 }, dpr: 1, width: 100, height: 100, canvas: { width: 100, height: 100 },
@@ -108,6 +108,15 @@ test('範圍背景：保留洞邊界、重用筆畫背景，切換縣市／資�
   });
   map.paintBase();
   assert.deepEqual(context.strokes.at(-1), [['M', 0, 0], ['M', 3, 3]], 'Scope outline includes the county hole');
+  const subtle = [['#87978c', 1.1], ['#738477', 1], ['#667a6b', 1.6]];
+  assert.deepEqual(context.styles.slice(-3), subtle, 'Hard keeps the original boundary styles');
+  const beforeDifficulty = context.fills;
+  map.cluesVisible = true; map.paintBase();
+  assert.equal(context.fills, beforeDifficulty + 1, 'Easy invalidates the cached background');
+  assert.deepEqual(context.styles.slice(-3), [['#4e6155', 1.4], ['#738477', 1], ['#384c40', 1.8]], 'Easy emphasizes internal boundaries and the thicker scope outline');
+  map.cluesVisible = false; map.paintBase();
+  assert.equal(context.fills, beforeDifficulty + 2, 'Hard invalidates the cached Easy background');
+  assert.deepEqual(context.styles.slice(-3), subtle, 'Switching back to Hard restores the original styles');
   const count = context.fills;
   map.points = rectangle(1, 1, 2, 2); map.paintBase();
   assert.equal(context.fills, count, 'Drawing reuses the background');
