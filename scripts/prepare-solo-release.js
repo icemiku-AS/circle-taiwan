@@ -14,8 +14,10 @@ const sha = value => createHash('sha256').update(value).digest('hex');
 export const SOLO_SOURCE_FILES = [...['app.js', 'basemap.js', 'clue-tiles.js', 'draft.js', 'index.html', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'og-image-v1.0.1.png', 'map.js', 'sha256.js', 'share.js',
   'solo-assets.js', 'solo-engine.js', 'solo-game.js', 'solo-worker.js', 'multi-client.js', 'style.css'].map(file => 'public/' + file),
   'shared/rules.js', 'shared/scoring.js', 'server/catalog.js', 'server/basemap.js', 'server/static.js',
-  'scripts/build-static.js', 'scripts/prepare-solo-release.js', 'scripts/prepare-data.js', 'scripts/prepare-basemap.js', 'scripts/mainland-mask.js',
-  'package.json', 'package-lock.json', '.gitignore', 'README.md', 'CHANGELOG.md', 'test/rules.test.js', 'test/rooms.test.js', 'CONTRIBUTING.md', 'ARCHITECTURE.md', '.github/ISSUE_TEMPLATE/bug_report.md', '.github/ISSUE_TEMPLATE/feature_request.md', '.github/pull_request_template.md', 'LICENSE', 'data/SOURCES.md', 'data/manifest.json', 'data/basemap-manifest.json', 'data/coast-manifest.json', 'data/coast-source.zip', 'data/nearshore-manifest.json',
+  'scripts/build-static.js', 'scripts/prepare-solo-release.js', 'scripts/prepare-data.js', 'scripts/prepare-landmarks.js', 'scripts/prepare-basemap.js', 'scripts/mainland-mask.js',
+  'test/landmarks.test.js', 'test/landmark-data.test.js', 'test/landmark-flow.test.js', 'test/landmark-map.test.js', 'test/fixtures/landmarks-tourism.json', 'data/landmarks-source.schema.json', 'data/landmarks.schema.json',
+  'data/landmarks.json', 'data/landmarks-manifest.json', 'data/landmarks-selection.json', 'data/landmarks-source.zip', 'data/landmarks-source-info.json',
+  'package.json', 'package-lock.json', '.gitignore', '.gitattributes', 'README.md', 'CHANGELOG.md', 'test/rules.test.js', 'test/rooms.test.js', 'CONTRIBUTING.md', 'ARCHITECTURE.md', '.github/ISSUE_TEMPLATE/bug_report.md', '.github/ISSUE_TEMPLATE/feature_request.md', '.github/pull_request_template.md', 'LICENSE', 'data/SOURCES.md', 'data/manifest.json', 'data/basemap-manifest.json', 'data/coast-manifest.json', 'data/coast-source.zip', 'data/nearshore-manifest.json',
   'data/display-tiles/manifest.json'];
 
 export function preservePublishedAssets(previous, out) {

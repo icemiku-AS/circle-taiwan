@@ -1,5 +1,57 @@
 # 遊戲圖資與來源
 
+## 景點題庫轉檔
+
+來源為交通部觀光署的[景點－觀光資訊資料庫](https://data.gov.tw/dataset/7777)，依[政府資料開放授權條款第 1 版](https://data.gov.tw/license)使用。繁體中文下載為 [Attraction-json.zip](https://media.taiwan.net.tw/XMLReleaseAll_public/v2.0/Zh_tw/Attraction-json.zip)。先保存來源快照，再離線轉檔，不在遊玩時呼叫觀光 API。
+
+`scripts/prepare-landmarks.js` 讀取 ZIP 內的 `AttractionList.json`，或已解開的同格式 JSON；根物件須含非空 `Attractions` 陣列。每筆來源紀錄依 [landmarks-source.schema.json](landmarks-source.schema.json) 的必要欄位驗證，經緯度必須為 JSON number。先依有效座標、本島最大連通面與所屬縣市篩選全量紀錄，再套用全島經典 100 題的名稱與錨點覆寫。輸出格式見 [landmarks.schema.json](landmarks.schema.json)。正式題庫 [landmarks.json](landmarks.json) 為 `landmarks-2026-10-26-05`，收錄本島 19 縣市共 5,554 筆，全島 classic 100 題，各縣 classic 自動補足 20 題，排除金門、連江、澎湖及其他分離島嶼。
+
+正式來源快照為 [landmarks-source.zip](landmarks-source.zip)，2026-10-26 取得，3,111,006 bytes、6,182 筆 Attractions；SHA-256 為 `b929a8c8b64f1fa107aedcd04ecaba6e3aba4d10b6213dd652813bc747ba1246`。來源資訊及選題分別保存於 [landmarks-source-info.json](landmarks-source-info.json)、[landmarks-selection.json](landmarks-selection.json)。新批次先在 `.cache/landmarks/` 保存並核對。來源資訊格式如下，時間與雜湊須填入該次快照的實際值；若輸入已解開的 JSON，雜湊也須改為該 JSON 的雜湊。
+
+```json
+{
+  "sourceUrl": "https://media.taiwan.net.tw/XMLReleaseAll_public/v2.0/Zh_tw/Attraction-json.zip",
+  "retrievedAt": "2026-10-26T07:16:03.222Z",
+  "sourceSha256": "<來源檔案的 64 位 SHA-256>"
+}
+```
+
+選題清單 `landmarks-selection.json` 為下列物件的陣列；全島經典以童年、畢旅與假期回憶為主題，納入 17 個園區／場館替換，保留鹿野高台。縣市 classic 先保留這些題目，再按來源 ID 排序自動補足 20 題，避免同縣同名；不另增人工審查。範例只說明格式；正式收錄前須核對題名、代表點、縣市及遊戲覆蓋範圍。大型景區採官方代表點時必須明示，不能未查核就改稱某個入口或核心設施。
+
+```json
+[
+  {
+    "id": "lm-taipei-101",
+    "recordId": "Attraction_379000000A_000217",
+    "name": "台北101",
+    "county": "63000",
+    "anchorLabel": "主塔",
+    "reviewedAt": "2026-10-26"
+  }
+]
+```
+
+在專案根目錄執行：
+
+```sh
+npm run data:landmarks -- --source data/landmarks-source.zip --selection data/landmarks-selection.json --source-info data/landmarks-source-info.json --version landmarks-2026-10-26-05
+```
+
+工具驗證來源與行政圖資雜湊，沿用 `data/manifest.json` 的投影，把 `[PositionLon, PositionLat]` 轉為 EPSG:3826 公尺座標，不另外四捨五入。100 題選中紀錄缺漏或不合格時停止，不靜默遺失經典題；自動來源將無效欄位、非本島縣市、bounds 外、本島面外與所屬縣市不符分類排除。此快照從 6,182 筆依序排除非 19 縣市 450 筆、bounds 外 1 筆、本島面外 152 筆、所屬縣市不符 25 筆，產出 5,554 筆；必要欄位無效為 0。遮罩只扣海洋，沒有扣內陸湖泊，並不代表排除點都經現地判定為海面。
+
+代表點以官方紀錄的原始座標為準；100 題已核對題名、描述、縣市與定位對象，新增的 17 題標註「官方代表點」。清境農場保留農場整體題義，仍只以指定代表點判定命中；不宣稱該點為某個入口。自動補充題與 all 其餘題直接使用「官方登錄代表點」，不填人工審查日期。這是資料及圖資檢查，並非現地測量。公園、園區及博物館複合建物仍以資料所定代表點出題，不能把整座景區任何位置都算命中；沒有自行吸附、移動座標或使用 Google 擷取座標。
+
+預設輸出到**全新**的 `.cache/landmarks/<version>/`，亦可用 `--output <全新目錄>` 指定位置。先完整驗證才寫入暫存檔，題庫改名完成後最後寫入 manifest；目錄已存在就停止，不覆寫已產出的版本。中斷目錄不可拿來發布，重建請指定新的空間。輸出為：
+
+- `landmarks.json`：按穩定 ID 排序的題庫，保留 WGS84 原值、投影座標、代表點說明、官方名稱、來源、classicMainland／classicCounty 旗標；只有人工核對的原題保留審查日期。
+- `landmarks-manifest.json`：題數、版本、來源網址與取得時間，以及來源、選題、投影、腳本和產物 SHA-256，以及來源排除數與各縣題數。
+
+相同輸入與版本可重建相同產物；修改選題、座標或計分規則時須依版本規則更新題庫或引擎版本。確認固定數量、排除報告與重建測試後把兩個產物放回 `data/`，`build-static.js` 會核對雜湊並建立獨立的景點答案包，將題庫版本納入 `dataVersion`／fingerprint。瀏覽器 Worker 取得點答案；API 不載入景點座標或幾何 scorer。
+
+`.gitattributes` 將景點 JSON 與轉檔腳本固定為 LF 換行，避免 Windows checkout 改寫換行後使來源或產物雜湊失效。
+
+`test/fixtures/landmarks-tourism.json` 僅摘錄 2026-10-26 官方快照中台北101與奇美博物館的必要欄位，來源、時間及原 ZIP 雜湊記於 `_source`，沿用上述開放資料授權。它用於格式及座標轉換測試，不代表這兩個代表點已通過正式出題審查。
+
 ## 遊戲範圍
 
 遊戲範圍為臺灣本島，加旗津本體、和平島主要陸塊、漁光島主要陸塊、彰濱鹿港區主要陸塊、布袋商港主要分離陸塊及三仙台主島，共六組，新增約 22.367276 km²。其他沿岸島塊、沙洲、遠方離島與未核准部件不自動納入；海洋水面不補成土地，也不畫連接陸橋。
@@ -46,7 +98,7 @@
 
 ## 初階線索底圖
 
-初階使用真實地形、道路及水系；高階保留海岸輪廓，不載入線索。線索獨立於答案資料，**不參與 IoU、不改動陸域及行政邊界**。不因繪出河川或湖泊而排除內陸水面計分。
+行政區初階使用真實地形、道路及水系；景點全島初階僅顯示縣市邊界，縣市初階顯示所選外框與鄉鎮界。景點全島高階保留海岸輪廓，縣市高階只增加所選縣市外框；均不使用地形與道路線索。線索**不參與計分、不改動陸域及行政邊界**。不因繪出河川或湖泊而排除內陸水面計分。
 
 - 地形：[內政部 2025 年版 20 公尺網格 DTM](https://data.gov.tw/dataset/176927)。來源 ZIP `不分幅_全台20MDEM(2025).zip`，實際 TIFF 名為 `DEM_tawiwan_V2025.tif`，10035×18852，20 m 網格，NoData -32767。
 - 地形 TIFF 為 TM2／121°、中央經線比例 .9999，PixelIsPoint；檔內橢球標為 WGS84。顯示沿用公尺制座標，未做精密參考框架改正。以 5 倍間距取樣為 **100 m 顯示網格**（2007×3770），保留原本 NoData，不人工補山形；輸出的 bounds 依網格中心轉為像元外緣。

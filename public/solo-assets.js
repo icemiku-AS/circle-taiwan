@@ -18,7 +18,7 @@ export async function compressedJSON(asset, signal) {
   return JSON.parse(new TextDecoder().decode(await compressedBytes(asset, signal)));
 }
 export class SoloAssets {
-  constructor(manifest) { this.manifest = manifest; this.cache = new Map(); this.cacheBytes = 0; this.terrain = null; this.tileCache = new Map(); this.tileBytes = 0; this.tileRevision = 0; }
+  constructor(manifest) { this.manifest = manifest; this.cache = new Map(); this.cacheBytes = 0; this.terrain = null; this.tileCache = new Map(); this.tileBytes = 0; this.tileRevision = 0; this.boundaryPacks = new Map(); this.landmarkViews = new Map(); }
   tileKey(bounds, mpp, dpr) {
     if (typeof createImageBitmap !== 'function') return null;
     return tilePlan(this.manifest.clues.tiles, bounds, mpp, dpr)?.level.id || null;
@@ -66,6 +66,40 @@ export class SoloAssets {
     finally { signal?.removeEventListener('abort', abort); }
   }
   async catalog() { return compressedJSON(this.manifest.catalog); }
+  async boundaryPack(key) {
+    if (!this.boundaryPacks.has(key)) {
+      const asset = this.manifest.answerPacks[key];
+      if (!asset) throw new Error('範圍邊界資料不完整，請重新載入');
+      if (key.startsWith('town-') && key !== `town-${this.townBoundaryCounty}`) return compressedJSON(asset);
+      const loading = compressedJSON(asset).catch(error => { if (this.boundaryPacks.get(key) === loading) this.boundaryPacks.delete(key); throw error; });
+      this.boundaryPacks.set(key, loading);
+    }
+    return this.boundaryPacks.get(key);
+  }
+  async countyBoundaries() {
+    if (!this.counties) this.counties = this.boundaryPack('county')
+      .then(regions => regions.flatMap(r => r.geometry)).catch(error => { this.counties = null; throw error; });
+    return this.counties;
+  }
+  async landmarkBoundaries({ scope, county, difficulty }) {
+    const key = `${scope === 'county' ? county : 'mainland'}:${difficulty}`;
+    if (scope === 'county' && difficulty === 'easy' && this.townBoundaryCounty !== county) {
+      // A county's detailed town lines can decode to several MB; retain only the latest county.
+      this.boundaryPacks.delete(`town-${this.townBoundaryCounty}`); this.landmarkViews.delete(`${this.townBoundaryCounty}:easy`);
+      this.townBoundaryCounty = county;
+    }
+    if (!this.landmarkViews.has(key)) {
+      const loading = (async () => {
+        if (scope !== 'county') return { scopeOutline: [], internalBoundaries: difficulty === 'easy' ? await this.countyBoundaries() : [] };
+        const regions = await this.boundaryPack('county'), selected = regions.find(r => r.id === county);
+        if (!selected?.geometry?.length) throw new Error('所選縣市邊界資料不完整，請重新載入');
+        const towns = difficulty === 'easy' ? await this.boundaryPack(`town-${county}`) : [];
+        return { scopeOutline: selected.geometry, internalBoundaries: towns.flatMap(r => r.geometry) };
+      })().catch(error => { if (this.landmarkViews.get(key) === loading) this.landmarkViews.delete(key); throw error; });
+      this.landmarkViews.set(key, loading);
+    }
+    return this.landmarkViews.get(key);
+  }
   async terrainCanvas(overview = false) {
     const info = this.manifest.clues, asset = overview ? info.overviewTerrain : info.terrainAsset;
     const bytes = await compressedBytes(asset), { width, height } = overview ? asset : info.terrain;

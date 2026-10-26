@@ -25,7 +25,10 @@ export function buildStatic(out = join(root, 'dist'), { catalog, basemap, multip
   if (display && (display.inputs.vectorsSha256 !== clueManifest.vectorsSha256 || display.inputs.terrainFileSha256 !== clueManifest.terrainFileSha256)) throw new Error('顯示圖塊與正式線索版本不符，請重新產生');
   if (!catalog && sha(readFileSync(join(root, 'data/taiwan.json'))) !== sourceManifest.outputSha256) throw new Error('行政圖資雜湊不符');
   if (!basemap && (sha(readFileSync(join(root, 'data/terrain.bin.gz'))) !== clueManifest.terrainFileSha256 || sha(readFileSync(join(root, 'data/basemap.json.gz'))) !== clueManifest.vectorsSha256)) throw new Error('線索圖資雜湊不符');
-  const fingerprint = sha(Buffer.concat(['data/manifest.json', 'data/basemap-manifest.json', 'scripts/build-static.js', 'server/catalog.js'].map(f => readFileSync(join(root, f))).concat(displayBytes, Buffer.from(engineVersion + runtimeVersion))));
+  const landmarkBytes = readFileSync(join(root, 'data/landmarks.json'));
+  const landmarkManifest = JSON.parse(readFileSync(join(root, 'data/landmarks-manifest.json')));
+  if (sha(landmarkBytes) !== landmarkManifest.outputSha256) throw new Error('景點題庫雜湊不符');
+  const fingerprint = sha(Buffer.concat(['data/manifest.json', 'data/landmarks-manifest.json', 'data/basemap-manifest.json', 'scripts/build-static.js', 'server/catalog.js'].map(f => readFileSync(join(root, f))).concat(landmarkBytes, displayBytes, Buffer.from(engineVersion + runtimeVersion))));
   const currentFile = join(out, 'assets', 'current.json');
   let manifest = existsSync(currentFile) ? JSON.parse(readFileSync(currentFile, 'utf8')) : null;
   if (catalog || basemap || manifest?.fingerprint !== fingerprint) {
@@ -40,9 +43,10 @@ export function buildStatic(out = join(root, 'dist'), { catalog, basemap, multip
     publicData.regions = publicData.regions.map(r => ({ ...r, neutralNames: catalog.byId.get(r.id).neutralNames }));
     const groups = new Map(), regionPacks = {};
     for (const meta of publicData.regions) {
-      const key = meta.level === 'village' ? `village-${meta.town}` : meta.level === 'town' ? `town-${meta.county}` : 'county';
+      const key = meta.level === 'landmark' ? 'landmark' : meta.level === 'village' ? `village-${meta.town}` : meta.level === 'town' ? `town-${meta.county}` : 'county';
       if (!groups.has(key)) groups.set(key, []);
-      const r = catalog.byId.get(meta.id); groups.get(key).push({ id: r.id, geometry: r.geometry, neutral: r.neutral }); regionPacks[r.id] = key;
+      const r = catalog.byId.get(meta.id);
+      groups.get(key).push(r.kind === 'landmark' ? { id: r.id, kind: 'landmark', point: r.point } : { id: r.id, geometry: r.geometry, neutral: r.neutral }); regionPacks[r.id] = key;
     }
     const answerPacks = Object.fromEntries([...groups].map(([key, values]) => [key, pack(`${key}.json.gz`, values)]));
     const vectorGroups = new Map();

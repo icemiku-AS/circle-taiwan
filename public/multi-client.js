@@ -1,5 +1,7 @@
 import { SoloEngine } from './solo-engine.js';
 import { selectQuestions } from './solo-game.js';
+import { extentForSettings } from '../shared/rules.js';
+import { landmarkRulesForSettings } from '../shared/scoring.js';
 
 const newId=()=>crypto.randomUUID();
 export class MultiplayerHTTP {
@@ -65,21 +67,24 @@ export class MultiplayerHTTP {
     let phase=s.phase==='reveal'?'reveal-scores':s.phase;
     if(s.phase==='playing')phase=this.now()<s.start?'countdown':this.localError?'error':this.pending||me.submitted||this.now()>=s.deadline?'scoring':'answering';
     const id=d.questions[s.index],region=this.data.regions.find(r=>r.id===id),current=d.rounds.find(r=>r.id===s.round),settings=d.settings;
-    const extent=settings.challenge==='village'?this.data.regions.find(r=>r.id===settings.town)?.bounds:settings.challenge==='town'&&settings.scope==='county'?this.data.regions.find(r=>r.id===settings.county)?.bounds:this.data.bounds;
-    const q=s.round?{id:s.round,regionId:id,name:region?.name||id,number:s.index+1,count:d.questions.length,start:s.start,deadline:s.deadline,extent:extent||this.data.bounds,
+    const extent=extentForSettings(settings,this.data.regions,this.data.bounds);
+    const q=s.round?{id:s.round,regionId:id,name:region?.name||id,officialName:region?.officialName,anchorLabel:region?.anchorLabel,number:s.index+1,count:d.questions.length,start:s.start,deadline:s.deadline,extent,
       points:this.pending?.points||this.draftPoints,revision:0,locked:Boolean(this.pending||me.submitted||this.now()>=s.deadline),checking:this.calculating,
       results:current?.results||null,voided:current?.voided||false,neutralNames:region?.neutralNames||[],scoredAt:s.now,nextAt:null}:null;
     const state={type:'state',free:true,code:d.code,mode:'multi',rulesVersion:d.versions.rulesVersion,phase,gameId:s.game,hostId:players.find(p=>p.seat===s.host)?.id,you:me.id,players,settings,settingsRevision:s.plan,
       serverNow:this.now(),question:q,notices:[],expiresAt:s.expires,localFailure:this.localError,canReportFailure:this.localError==='calculation'&&(this.pending?.attempts||0)>=2,
       error:this.localError==='upload'?'圈選與成績已保留，請重新送出。':'背景計分失敗，原筆跡與作答時間已保留，請重新計分。',
       roundStandings:d.roundStandings,cumulativeStandings:d.cumulativeStandings,standings:s.phase==='results'?d.cumulativeStandings:null,
-      history:s.phase==='results'?d.rounds.map(r=>({...r,name:this.data.regions.find(q=>q.id===r.regionId)?.name||r.regionId})):null};
+      history:s.phase==='results'?d.rounds.map(r=>{const region=this.data.regions.find(q=>q.id===r.regionId);return{...r,name:region?.name||r.regionId,officialName:region?.officialName,anchorLabel:region?.anchorLabel};}):null};
     this.state=state;this.lastPhase=phase;this.emit(state);
   }
   async loadEngine() {
     const d=this.details,key=`${this.summary.room}:${this.summary.plan}`;
-    if(this.engineKey!==key){this.engine?.close();this.engineKey=key;this.engine=this.engineFactory(this.manifest,this.data,d.questions);}
     if(JSON.stringify(d.versions)!==JSON.stringify(this.versions))throw new Error('遊戲圖資或計分版本不同，請重新整理。');
+    if(this.engineKey!==key){
+      const rules=landmarkRulesForSettings(d.settings,this.data.regions.find(r=>r.id===d.settings.county)?.areaM2);
+      this.engine?.close();this.engineKey=key;this.engine=this.engineFactory(this.manifest,this.data,d.questions,rules);
+    }
     await this.engine.ready();return this.engine;
   }
   draft(points){if(this.summary?.phase==='playing'&&!this.pending&&!this.state?.players.find(p=>p.id===this.state.you)?.submitted&&this.now()<this.summary.deadline)this.draftPoints=points.map(p=>p.slice());}
@@ -178,13 +183,13 @@ export class MultiplayerHTTP {
     if(this.summary.round!==q)throw new DOMException('回合已更新','AbortError');
     if(asset==='drawings')return this.details.players.map(p=>({...p,points:packet.drawings.find(a=>a.id===p.id)?.points||[]}));
     const engine=await this.loadEngine();
-    if(asset==='target'||asset==='neutral'){
+    if(asset==='target'||asset==='targetPoint'||asset==='neutral'){
       const k=`${q}:geometry`;if(!this.detailsCache.has(k))this.detailsCache.set(k,engine.geometry(regionId).catch(error=>{this.detailsCache.delete(k);throw error;}));
       return(await this.detailsCache.get(k))[asset];
     }
     const cacheKey=`${q}:${player}`;
     if(!this.detailsCache.has(cacheKey))this.detailsCache.set(cacheKey,await engine.score(regionId,packet.drawings.find(a=>a.id===player)?.points||[],this.data.playBounds));
-    const value=this.detailsCache.get(cacheKey);return{...value.result,neutral:value.neutral};
+    const value=this.detailsCache.get(cacheKey);return{...value.result,neutral:value.neutral,...(value.targetPoint?{answer:value.answer,targetPoint:value.targetPoint}:{})};
   }
   close(){this.readyState=3;this.stopPolling();this.engine?.close();this.doc?.removeEventListener('visibilitychange',this.visibility);for(const item of this.queue.splice(0))item.resolve(false);}
 }

@@ -1,5 +1,8 @@
 export class SoloEngine {
-  constructor(manifest, data, ids) { this.init = { manifest, land: data.land, ids }; this.pending = new Map(); this.sequence = 0; }
+  constructor(manifest, data, ids, landmarkRules) {
+    this.init = { manifest, land: data.land, ids, ...(landmarkRules ? { landmarkRules: { ...landmarkRules } } : {}) };
+    this.pending = new Map(); this.sequence = 0;
+  }
   request(action, payload) {
     return new Promise((resolve, reject) => {
       const id = ++this.sequence;

@@ -1,0 +1,802 @@
+[
+  {
+    "id": "lm-taipei-101",
+    "recordId": "Attraction_379000000A_000217",
+    "name": "台北101",
+    "county": "63000",
+    "anchorLabel": "主塔",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-chiang-kai-shek-memorial",
+    "recordId": "Attraction_379000000A_000023",
+    "name": "中正紀念堂",
+    "county": "63000",
+    "anchorLabel": "紀念堂",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-sun-yat-sen-memorial",
+    "recordId": "Attraction_379000000A_000024",
+    "name": "國父紀念館",
+    "county": "63000",
+    "anchorLabel": "紀念館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-national-palace-museum",
+    "recordId": "Attraction_379000000A_000019",
+    "name": "國立故宮博物院",
+    "county": "63000",
+    "anchorLabel": "正館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-longshan-temple",
+    "recordId": "Attraction_379000000A_000068",
+    "name": "艋舺龍山寺",
+    "county": "63000",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-379000000a-000351",
+    "recordId": "Attraction_379000000A_000351",
+    "name": "臺北市立兒童新樂園",
+    "county": "63000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-379000000a-000271",
+    "recordId": "Attraction_379000000A_000271",
+    "name": "臺北小巨蛋",
+    "county": "63000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-fort-san-domingo",
+    "recordId": "Attraction_382000000A_109672",
+    "name": "淡水紅毛城",
+    "county": "65000",
+    "anchorLabel": "紅毛城主堡",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-lin-family-garden",
+    "recordId": "Attraction_382000000A_109673",
+    "name": "板橋林家花園",
+    "county": "65000",
+    "anchorLabel": "林本源園邸",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-yeliu-lighthouse",
+    "recordId": "Attraction_382000000A_109751",
+    "name": "野柳燈塔",
+    "county": "65000",
+    "anchorLabel": "燈塔",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-gold-museum",
+    "recordId": "Attraction_382000000A_109620",
+    "name": "金瓜石黃金博物館",
+    "county": "65000",
+    "anchorLabel": "博物館園區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-yingge-ceramics-museum",
+    "recordId": "Attraction_382000000A_109616",
+    "name": "鶯歌陶瓷博物館",
+    "county": "65000",
+    "anchorLabel": "主館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-sanxia-zushi-temple",
+    "recordId": "Attraction_382000000A_109622",
+    "name": "三峽清水祖師廟",
+    "county": "65000",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-shifen-waterfall",
+    "recordId": "Attraction_382000000A_109612",
+    "name": "十分瀑布",
+    "county": "65000",
+    "anchorLabel": "瀑布",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376430000a-000347",
+    "recordId": "Attraction_376430000A_000347",
+    "name": "小人國",
+    "county": "68000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-daxi-wude-hall",
+    "recordId": "Attraction_376430000A_000392",
+    "name": "大溪武德殿",
+    "county": "68000",
+    "anchorLabel": "館舍",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-taoyuan-shrine",
+    "recordId": "Attraction_376430000A_000012",
+    "name": "桃園神社",
+    "county": "68000",
+    "anchorLabel": "神社",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-zhongli-renhai-temple",
+    "recordId": "Attraction_376430000A_000993",
+    "name": "中壢仁海宮",
+    "county": "68000",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-daxi-bridge",
+    "recordId": "Attraction_376430000A_001003",
+    "name": "大溪橋",
+    "county": "68000",
+    "anchorLabel": "橋身",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-national-taichung-theater",
+    "recordId": "Attraction_387000000A_000942",
+    "name": "臺中國家歌劇院",
+    "county": "66000",
+    "anchorLabel": "劇院",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-science-museum",
+    "recordId": "Attraction_387000000A_000418",
+    "name": "國立自然科學博物館",
+    "county": "66000",
+    "anchorLabel": "本館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-dajia-jenn-lann-temple",
+    "recordId": "Attraction_387000000A_000609",
+    "name": "大甲鎮瀾宮",
+    "county": "66000",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-wufeng-lin-mansion",
+    "recordId": "Attraction_387000000A_000935",
+    "name": "霧峰林家宮保第",
+    "county": "66000",
+    "anchorLabel": "宮保第",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-gaomei-visitor-center",
+    "recordId": "Attraction_387000000A_001416",
+    "name": "高美濕地遊客中心",
+    "county": "66000",
+    "anchorLabel": "遊客服務中心",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-gaomei-lighthouse",
+    "recordId": "Attraction_387000000A_000948",
+    "name": "高美燈塔",
+    "county": "66000",
+    "anchorLabel": "燈塔",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-387000000a-000048",
+    "recordId": "Attraction_387000000A_000048",
+    "name": "麗寶樂園渡假區",
+    "county": "66000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-chimei-museum",
+    "recordId": "Attraction_395000000A_000572",
+    "name": "奇美博物館",
+    "county": "67000",
+    "anchorLabel": "主館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-anping-fort",
+    "recordId": "Attraction_395000000A_000671",
+    "name": "安平古堡",
+    "county": "67000",
+    "anchorLabel": "古堡",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-chihkan-tower",
+    "recordId": "Attraction_395000000A_000674",
+    "name": "赤崁樓",
+    "county": "67000",
+    "anchorLabel": "樓閣",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-tainan-confucius-temple",
+    "recordId": "Attraction_395000000A_000800",
+    "name": "臺南孔廟",
+    "county": "67000",
+    "anchorLabel": "孔廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-hayashi-store",
+    "recordId": "Attraction_A25000000E_000052",
+    "name": "林百貨",
+    "county": "67000",
+    "anchorLabel": "百貨建築",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-jingzaijiao-salt-fields",
+    "recordId": "Attraction_A15011100H_000369",
+    "name": "井仔腳瓦盤鹽田",
+    "county": "67000",
+    "anchorLabel": "鹽田展區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-395000000a-000476",
+    "recordId": "Attraction_395000000A_000476",
+    "name": "頑皮世界野生動物園",
+    "county": "67000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-395000000a-000816",
+    "recordId": "Attraction_395000000A_000816",
+    "name": "十鼓文創園區",
+    "county": "67000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-buddha-museum",
+    "recordId": "Attraction_397000000A_000579",
+    "name": "佛光山佛陀紀念館",
+    "county": "64000",
+    "anchorLabel": "紀念館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-formosa-boulevard",
+    "recordId": "Attraction_397000000A_000226",
+    "name": "美麗島站光之穹頂",
+    "county": "64000",
+    "anchorLabel": "車站大廳",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-weiwuying",
+    "recordId": "Attraction_397000000A_000247",
+    "name": "衛武營國家藝術文化中心",
+    "county": "64000",
+    "anchorLabel": "劇院建築",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-qishan-station",
+    "recordId": "Attraction_397000000A_000614",
+    "name": "旗山車站",
+    "county": "64000",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-397000000a-000608",
+    "recordId": "Attraction_397000000A_000608",
+    "name": "義大世界",
+    "county": "64000",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-science-technology-museum",
+    "recordId": "Attraction_397000000A_000652",
+    "name": "國立科學工藝博物館",
+    "county": "64000",
+    "anchorLabel": "本館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-old-takao-station",
+    "recordId": "Attraction_397000000A_001215",
+    "name": "舊打狗驛故事館",
+    "county": "64000",
+    "anchorLabel": "車站館舍",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-zhengbin-color-houses",
+    "recordId": "Attraction_376570000A_000052",
+    "name": "正濱漁港色彩屋",
+    "county": "10017",
+    "anchorLabel": "彩色屋街區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-keelung-zhongzheng-park",
+    "recordId": "Attraction_376570000A_000384",
+    "name": "基隆中正公園",
+    "county": "10017",
+    "anchorLabel": "公園代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-marine-science-museum",
+    "recordId": "Attraction_376570000A_000395",
+    "name": "國立海洋科技博物館",
+    "county": "10017",
+    "anchorLabel": "主題館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-dianji-temple",
+    "recordId": "Attraction_376570000A_000441",
+    "name": "基隆奠濟宮",
+    "county": "10017",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-hsinchu-east-gate",
+    "recordId": "Attraction_376580000A_000029",
+    "name": "新竹迎曦門",
+    "county": "10018",
+    "anchorLabel": "東門城",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-hsinchu-city-god-temple",
+    "recordId": "Attraction_376580000A_000030",
+    "name": "新竹都城隍廟",
+    "county": "10018",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-hsinchu-zoo",
+    "recordId": "Attraction_376580000A_000055",
+    "name": "新竹市立動物園",
+    "county": "10018",
+    "anchorLabel": "動物園",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-hinoki-village",
+    "recordId": "Attraction_376600000A_000015",
+    "name": "檜意森活村",
+    "county": "10020",
+    "anchorLabel": "木造宿舍群",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-chiayi-sun-shooting-tower",
+    "recordId": "Attraction_376600000A_000020",
+    "name": "嘉義射日塔",
+    "county": "10020",
+    "anchorLabel": "塔樓",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-beimen-station",
+    "recordId": "Attraction_376600000A_000057",
+    "name": "嘉義北門驛",
+    "county": "10020",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-neiwan-station",
+    "recordId": "Attraction_376440000A_000416",
+    "name": "內灣車站",
+    "county": "10004",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-beipu-citian-temple",
+    "recordId": "Attraction_376440000A_000087",
+    "name": "北埔慈天宮",
+    "county": "10004",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-leofoo-village",
+    "recordId": "Attraction_376440000A_000038",
+    "name": "六福村",
+    "county": "10004",
+    "anchorLabel": "遊樂園",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376440000a-000200",
+    "recordId": "Attraction_376440000A_000200",
+    "name": "小叮噹科學主題樂園",
+    "county": "10004",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-shengxing-station",
+    "recordId": "Attraction_376450000A_000030",
+    "name": "勝興車站",
+    "county": "10005",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-longteng-bridge",
+    "recordId": "Attraction_376450000A_000035",
+    "name": "龍騰斷橋",
+    "county": "10005",
+    "anchorLabel": "北段斷橋",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-taiwan-hakka-museum",
+    "recordId": "Attraction_376450000A_000391",
+    "name": "臺灣客家文化館",
+    "county": "10005",
+    "anchorLabel": "主館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376450000a-000062",
+    "recordId": "Attraction_376450000A_000062",
+    "name": "飛牛牧場",
+    "county": "10005",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-baguashan-buddha",
+    "recordId": "Attraction_376470000A_000004",
+    "name": "八卦山大佛",
+    "county": "10007",
+    "anchorLabel": "大佛",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-changhua-roundhouse",
+    "recordId": "Attraction_376470000A_000017",
+    "name": "彰化扇形車庫",
+    "county": "10007",
+    "anchorLabel": "車庫",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-xihu-sugar-factory",
+    "recordId": "Attraction_376470000A_000018",
+    "name": "溪湖糖廠",
+    "county": "10007",
+    "anchorLabel": "糖廠主園區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-lukang-tianhou-temple",
+    "recordId": "Attraction_376470000A_000091",
+    "name": "鹿港天后宮",
+    "county": "10007",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-lukang-longshan-temple",
+    "recordId": "Attraction_376470000A_000079",
+    "name": "鹿港龍山寺",
+    "county": "10007",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-xiangshan-visitor-center",
+    "recordId": "Attraction_A15010600H_000078",
+    "name": "日月潭向山遊客中心",
+    "county": "10008",
+    "anchorLabel": "遊客中心",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-a15010600h-000055",
+    "recordId": "Attraction_A15010600H_000055",
+    "name": "埔里酒廠",
+    "county": "10008",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376480000a-000312",
+    "recordId": "Attraction_376480000A_000312",
+    "name": "九族文化村",
+    "county": "10008",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376480000a-000253",
+    "recordId": "Attraction_376480000A_000253",
+    "name": "清境農場",
+    "county": "10008",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-checheng-station",
+    "recordId": "Attraction_A15010600H_000113",
+    "name": "車埕車站",
+    "county": "10008",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-jiji-station",
+    "recordId": "Attraction_A15010600H_000046",
+    "name": "集集車站",
+    "county": "10008",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-beigang-chaotian-temple",
+    "recordId": "Attraction_376490000A_000002",
+    "name": "北港朝天宮",
+    "county": "10009",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-xiluo-fuxing-temple",
+    "recordId": "Attraction_376490000A_000084",
+    "name": "西螺福興宮",
+    "county": "10009",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-huwei-iron-bridge",
+    "recordId": "Attraction_376490000A_000021",
+    "name": "虎尾鐵橋",
+    "county": "10009",
+    "anchorLabel": "鐵橋",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376490000a-000191",
+    "recordId": "Attraction_376490000A_000191",
+    "name": "劍湖山世界主題樂園",
+    "county": "10009",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-southern-palace-museum",
+    "recordId": "Attraction_A15011100H_000490",
+    "name": "故宮南院",
+    "county": "10010",
+    "anchorLabel": "博物館主館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-puzi-peitian-temple",
+    "recordId": "Attraction_376500000A_000002",
+    "name": "朴子配天宮",
+    "county": "10010",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-dongshi-fisherman-wharf",
+    "recordId": "Attraction_A15011100H_000035",
+    "name": "東石漁人碼頭",
+    "county": "10010",
+    "anchorLabel": "碼頭廣場",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-alishan-shouzhen-temple",
+    "recordId": "Attraction_A15010800H_000252",
+    "name": "阿里山受鎮宮",
+    "county": "10010",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-xingang-fengtian-temple",
+    "recordId": "Attraction_376500000A_000072",
+    "name": "新港奉天宮",
+    "county": "10010",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-donggang-donglong-temple",
+    "recordId": "Attraction_A15010400H_000427",
+    "name": "東港東隆宮",
+    "county": "10013",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-dapeng-visitor-center",
+    "recordId": "Attraction_A15010400H_000429",
+    "name": "大鵬灣遊客中心",
+    "county": "10013",
+    "anchorLabel": "遊客中心",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-pingtung-tobacco-museum",
+    "recordId": "Attraction_376530000A_000003",
+    "name": "屏菸1936文化基地",
+    "county": "10013",
+    "anchorLabel": "主展館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-pingtung-library",
+    "recordId": "Attraction_376530000A_000004",
+    "name": "屏東縣立圖書館總館",
+    "county": "10013",
+    "anchorLabel": "總館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-pingtung-cifong-temple",
+    "recordId": "Attraction_376530000A_000023",
+    "name": "屏東慈鳳宮",
+    "county": "10013",
+    "anchorLabel": "寺廟",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-kenting-forest",
+    "recordId": "Attraction_345040000G_000014",
+    "name": "墾丁森林遊樂區入口",
+    "county": "10013",
+    "anchorLabel": "入口服務區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-lanyang-museum",
+    "recordId": "Attraction_376420000A_000321",
+    "name": "蘭陽博物館",
+    "county": "10002",
+    "anchorLabel": "主館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-yilan-traditional-arts",
+    "recordId": "Attraction_A15011300H_010087",
+    "name": "宜蘭傳藝中心",
+    "county": "10002",
+    "anchorLabel": "傳藝園區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-luodong-forestry",
+    "recordId": "Attraction_376420000A_000426",
+    "name": "羅東林業文化園區",
+    "county": "10002",
+    "anchorLabel": "林場園區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-tangweigou-park",
+    "recordId": "Attraction_376420000A_000092",
+    "name": "礁溪湯圍溝公園",
+    "county": "10002",
+    "anchorLabel": "溫泉公園",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376420000a-000258",
+    "recordId": "Attraction_376420000A_000258",
+    "name": "冬山河親水公園",
+    "county": "10002",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-pine-garden",
+    "recordId": "Attraction_376550000A_000012",
+    "name": "花蓮松園別館",
+    "county": "10015",
+    "anchorLabel": "館舍",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376550000a-001258",
+    "recordId": "Attraction_376550000A_001258",
+    "name": "遠雄海洋公園",
+    "county": "10015",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-guangfu-sugar-factory",
+    "recordId": "Attraction_A15010300H_000020",
+    "name": "光復糖廠",
+    "county": "10015",
+    "anchorLabel": "糖廠展售區",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-changchun-shrine",
+    "recordId": "Attraction_376550000A_009394",
+    "name": "太魯閣長春祠",
+    "county": "10015",
+    "anchorLabel": "祠堂",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376550000a-001466",
+    "recordId": "Attraction_376550000A_001466",
+    "name": "瑞穗牧場",
+    "county": "10015",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-prehistory-museum",
+    "recordId": "Attraction_376540000A_000309",
+    "name": "國立臺灣史前文化博物館",
+    "county": "10014",
+    "anchorLabel": "康樂本館",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-duoliang-station",
+    "recordId": "Attraction_376540000A_000429",
+    "name": "多良車站",
+    "county": "10014",
+    "anchorLabel": "車站",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-luye-highland",
+    "recordId": "Attraction_376540000A_000450",
+    "name": "鹿野高台",
+    "county": "10014",
+    "anchorLabel": "熱氣球草坪",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-sanxiantai-visitor-center",
+    "recordId": "Attraction_A15010100H_000211",
+    "name": "三仙台遊客中心",
+    "county": "10014",
+    "anchorLabel": "本島遊客中心",
+    "reviewedAt": "2026-10-26"
+  },
+  {
+    "id": "lm-376540000a-000285",
+    "recordId": "Attraction_376540000A_000285",
+    "name": "初鹿牧場",
+    "county": "10014",
+    "anchorLabel": "官方代表點",
+    "reviewedAt": "2026-10-26"
+  }
+]

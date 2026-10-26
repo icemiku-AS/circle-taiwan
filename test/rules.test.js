@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { RULES_VERSION, standings } from '../shared/rules.js';
+import { RULES_VERSION, extentForSettings, questionPool, standings, validateSettings } from '../shared/rules.js';
 import { multiplayerRulesText, roundScoreText } from '../public/share.js';
 
 const roster = count => Array.from({ length: count }, (_, i) => ({ id: String(i) }));
@@ -97,11 +97,44 @@ test('單人仍按吻合度與時間排序，原始分數嚴格大於 50 才計�
   assert.deepEqual(rows.map(p => [p.id, p.points, p.score, p.rank]), [['0', 0, 50, 1], ['1', 1, 50, 2]]);
 });
 
-test('既有 0.5 房間保留舊積分與時間破同分，新版使用 0.6', () => {
-  assert.equal(RULES_VERSION, 'circle-taiwan-0.6');
+test('既有 0.5 房間保留舊積分；0.8 與 0.6／0.7 共用名次規則', () => {
+  assert.equal(RULES_VERSION, 'circle-taiwan-0.8');
+  for (const version of ['circle-taiwan-0.6', 'circle-taiwan-0.7']) assert.deepEqual(
+    standings(roster(2), [round([95, 95])], 20, 'multi', RULES_VERSION),
+    standings(roster(2), [round([95, 95])], 20, 'multi', version));
   const rows = standings(roster(2), [round([95, 95])], 20, 'multi', 'circle-taiwan-0.5');
   assert.deepEqual(rows.map(p => [p.points, p.rank]), [[1, 1], [1, 2]]);
   assert.equal(standings(roster(2), [round([50.001, 50])], 20, 'multi', 'circle-taiwan-0.5')[0].points, 1);
+});
+
+test('景點 scope／pool／difficulty 獨立；行政區與預設 classic 相容', () => {
+  const regions = [
+    { id: '10004', level: 'county', bounds: [1, 2, 3, 4] }, { id: '65000', level: 'county', bounds: [5, 6, 7, 8] },
+    { id: 'town-a', level: 'town', county: '10004', bounds: [1, 2, 2, 3] },
+    { id: 'village-a', level: 'village', county: '10004', town: 'town-a' },
+    ...['10004', '65000'].flatMap(county => [0, 1, 2].map(i => ({ id: `lm-${county}-${i}`, county, level: 'landmark',
+      classicMainland: i === 0, classicCounty: i < 2 })))
+  ], bounds = [0, 0, 10, 10];
+  for (const mode of ['single', 'multi']) for (const scope of ['mainland', 'county']) for (const pool of ['classic', 'all']) {
+    let previous;
+    for (const difficulty of ['easy', 'hard']) {
+      const settings = validateSettings({ challenge: 'landmark', scope, pool, county: '10004', town: 'town-a', difficulty }, mode, regions);
+      const ids = questionPool(settings, regions).map(r => r.id);
+      assert.equal(ids.length, scope === 'mainland' ? pool === 'classic' ? 2 : 6 : pool === 'classic' ? 2 : 3);
+      assert.equal(settings.town, ''); assert.equal(settings.county, scope === 'county' ? '10004' : '');
+      assert.deepEqual(extentForSettings(settings, regions, bounds), scope === 'county' ? regions[0].bounds : bounds);
+      if (previous) assert.deepEqual(ids, previous); previous = ids;
+    }
+  }
+  assert.equal(validateSettings({ challenge: 'landmark' }, 'single', regions).pool, 'classic');
+  for (const input of [{ scope: 'town' }, { pool: 'invalid' }, { scope: 'county', county: '09020' }]) {
+    assert.throws(() => validateSettings({ challenge: 'landmark', ...input }, 'single', regions));
+  }
+  const town = validateSettings({ challenge: 'town', scope: 'county', county: '10004', pool: 'all' }, 'single', regions);
+  assert.equal(town.pool, 'classic'); assert.deepEqual(questionPool(town, regions).map(r => r.id), ['town-a']);
+  assert.deepEqual(extentForSettings(town, regions, bounds), regions[0].bounds);
+  const village = validateSettings({ challenge: 'village', county: '10004', town: 'town-a' }, 'single', regions);
+  assert.deepEqual(extentForSettings(village, regions, bounds), regions[2].bounds);
 });
 
 test('逐題文字支援動態點數，保留缺件與作廢回饋', () => {

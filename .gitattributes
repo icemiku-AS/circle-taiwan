@@ -1,0 +1,3 @@
+# Keep content-hashed landmark inputs identical across operating systems.
+data/landmarks*.json text eol=lf
+scripts/prepare-landmarks.js text eol=lf

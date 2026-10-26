@@ -1,6 +1,6 @@
 {
   "name": "circle-taiwan",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "license": "AGPL-3.0-only",
@@ -15,6 +15,7 @@
     "build:static": "node scripts/build-static.js",
     "start:static": "node server/static.js",
     "data:prepare": "node scripts/prepare-data.js",
+    "data:landmarks": "node scripts/prepare-landmarks.js",
     "data:basemap": "node scripts/prepare-basemap.js"
   },
   "dependencies": {

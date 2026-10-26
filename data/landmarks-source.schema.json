@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Circle Taiwan tourism attraction input subset",
+  "type": "object",
+  "required": [
+    "AttractionID",
+    "AttractionName",
+    "PositionLon",
+    "PositionLat"
+  ],
+  "properties": {
+    "AttractionID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "AttractionName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "PositionLon": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "PositionLat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "UpdateTime": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": true
+}

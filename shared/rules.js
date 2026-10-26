@@ -1,19 +1,32 @@
-export const RULES_VERSION = 'circle-taiwan-0.6';
+export const RULES_VERSION = 'circle-taiwan-0.8';
 export const TIMES = [10, 20, 30, 45, 60];
 export const COUNTS = { single: [5, 10], multi: [1, 3, 5, 10] };
-export const DEFAULTS = { challenge: 'county', scope: 'mainland', county: '', town: '', count: 5, seconds: 20, capacity: 5, difficulty: 'easy' };
+export const DEFAULTS = { challenge: 'county', scope: 'mainland', county: '', town: '', pool: 'classic', count: 5, seconds: 20, capacity: 5, difficulty: 'easy' };
 export const MAX_POINTS = 2048;
+// Omit browser-only scoring constants from the API bundle, including the Math.PI reads.
+export const LANDMARK_RULES = /* @__PURE__ */ (() => Object.freeze({
+  minAreaM2: Math.PI * 1000 ** 2, maxAreaM2: Math.PI * 200000 ** 2,
+  minScore: 10, invalidAreaM2: 1, boundaryEpsilonM: 1e-6
+}))();
 
 export function validateSettings(input, mode, regions) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('遊戲設定格式錯誤');
   const s = { ...DEFAULTS, ...input };
-  if (!['single', 'multi'].includes(mode) || !['county', 'town', 'village'].includes(s.challenge)) throw new Error('請選擇有效的挑戰類型');
+  if (!['single', 'multi'].includes(mode) || !['county', 'town', 'village', 'landmark'].includes(s.challenge)) throw new Error('請選擇有效的挑戰類型');
   if (!COUNTS[mode].includes(s.count)) throw new Error('題數選項無效');
   if (!['easy', 'hard'].includes(s.difficulty)) throw new Error('難度選項無效');
   if (mode === 'single') s.seconds = null;
   else if (!TIMES.includes(s.seconds)) throw new Error('時間選項無效');
   if (!Number.isInteger(s.capacity) || s.capacity < 2 || s.capacity > 8) throw new Error('房間容量需為 2～8 人');
+  if (s.challenge !== 'landmark') s.pool = 'classic';
+  else if (!['classic', 'all'].includes(s.pool)) throw new Error('請選擇有效的題庫');
   if (s.challenge === 'county') { s.scope = 'mainland'; s.county = ''; s.town = ''; }
+  if (s.challenge === 'landmark') {
+    if (!['mainland', 'county'].includes(s.scope)) throw new Error('請選擇出題範圍');
+    if (s.scope === 'county' && !regions.some(r => r.level === 'county' && r.id === s.county)) throw new Error('縣市不存在');
+    if (s.scope === 'mainland') s.county = '';
+    s.town = '';
+  }
   if (s.challenge === 'town') {
     if (!['county', 'mainland'].includes(s.scope)) throw new Error('請選擇出題範圍');
     if (s.scope === 'county' && !regions.some(r => r.level === 'county' && r.id === s.county)) throw new Error('縣市不存在');
@@ -31,7 +44,15 @@ export function validateSettings(input, mode, regions) {
 export function questionPool(s, regions) {
   return regions.filter(r => r.level === s.challenge &&
     (s.challenge !== 'town' || s.scope === 'mainland' || r.county === s.county) &&
-    (s.challenge !== 'village' || r.town === s.town));
+    (s.challenge !== 'village' || r.town === s.town) &&
+    (s.challenge !== 'landmark' || ((s.scope !== 'county' || r.county === s.county) &&
+      (s.pool === 'all' || r[s.scope === 'county' ? 'classicCounty' : 'classicMainland'] === true))));
+}
+
+export function extentForSettings(settings, regions, bounds) {
+  const id = settings.challenge === 'village' ? settings.town :
+    ['town', 'landmark'].includes(settings.challenge) && settings.scope === 'county' ? settings.county : null;
+  return id ? regions.find(r => r.id === id)?.bounds || bounds : bounds;
 }
 
 export const roundScore = n => Math.round((n + Number.EPSILON * Math.max(1, Math.abs(n))) * 100) / 100;
