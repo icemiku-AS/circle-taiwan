@@ -15,7 +15,7 @@ export const SOLO_SOURCE_FILES = [...['app.js', 'basemap.js', 'clue-tiles.js', '
   'solo-assets.js', 'solo-engine.js', 'solo-game.js', 'solo-worker.js', 'multi-client.js', 'style.css'].map(file => 'public/' + file),
   'shared/rules.js', 'shared/scoring.js', 'server/catalog.js', 'server/basemap.js', 'server/static.js',
   'scripts/build-static.js', 'scripts/prepare-solo-release.js', 'scripts/prepare-data.js', 'scripts/prepare-landmarks.js', 'scripts/prepare-basemap.js', 'scripts/mainland-mask.js',
-  'test/landmarks.test.js', 'test/landmark-data.test.js', 'test/landmark-flow.test.js', 'test/landmark-map.test.js', 'test/fixtures/landmarks-tourism.json', 'data/landmarks-source.schema.json', 'data/landmarks.schema.json',
+  'test/landmarks.test.js', 'test/landmark-data.test.js', 'test/landmark-flow.test.js', 'test/landmark-map.test.js', 'test/multi-client.test.js', 'test/fixtures/landmarks-tourism.json', 'data/landmarks-source.schema.json', 'data/landmarks.schema.json',
   'data/landmarks.json', 'data/landmarks-manifest.json', 'data/landmarks-selection.json', 'data/landmarks-source.zip', 'data/landmarks-source-info.json',
   'package.json', 'package-lock.json', '.gitignore', '.gitattributes', 'README.md', 'CHANGELOG.md', 'test/rules.test.js', 'test/rooms.test.js', 'CONTRIBUTING.md', 'ARCHITECTURE.md', '.github/ISSUE_TEMPLATE/bug_report.md', '.github/ISSUE_TEMPLATE/feature_request.md', '.github/pull_request_template.md', 'LICENSE', 'data/SOURCES.md', 'data/manifest.json', 'data/basemap-manifest.json', 'data/coast-manifest.json', 'data/coast-source.zip', 'data/nearshore-manifest.json',
   'data/display-tiles/manifest.json'];
@@ -131,8 +131,8 @@ console.log('圖資還原完成');
   copyFileSync(join(root, 'data/SOURCES.md'), join(out, 'data-notes.txt'));
   const html = readFileSync(join(out, 'index.html'), 'utf8').replace('href="/LICENSE"', 'href="/license.txt"').replace('href="/data-notes"', 'href="/data-notes.html"').replace('</head>', '<meta name="robots" content="noindex,nofollow">\n</head>');
   writeFileSync(join(out, 'index.html'), html);
-  const notes = readFileSync(join(root, 'data/SOURCES.md'), 'utf8').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-  writeFileSync(join(out, 'data-notes.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="only light"><meta name="robots" content="noindex,nofollow"><title>圖資與限制｜圈出台灣</title><link rel="stylesheet" href="/style.css"></head><body><main class="page-shell data-notes"><a href="/">返回首頁</a><h1>圖資與限制</h1><p><a href="/source-code.tar.gz">遊戲程式原始碼</a> · <a href="/source-build.txt">原始資料與重建方式</a></p><pre>${notes}</pre></main></body></html>`);
+  const notesPage = readFileSync(join(out, 'data-notes.html'), 'utf8').replace('<details>', '<p><a href="/source-code.tar.gz">本版原始碼下載</a> · <a href="/source-build.txt">原始資料與重建方式</a></p><details>');
+  writeFileSync(join(out, 'data-notes.html'), notesPage);
   writeFileSync(join(out, 'robots.txt'), 'User-agent: *\nAllow: /\n');
   const assets = staticAssets(manifest);
   for (const asset of assets) {

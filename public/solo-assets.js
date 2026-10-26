@@ -5,13 +5,13 @@ import { tilePlan, TILE_CACHE_BYTES } from './clue-tiles.js';
 export async function compressedBytes(asset, signal) {
   let response;
   try { response = await fetch(asset.url, { signal }); }
-  catch (error) { if (error.name === 'AbortError') throw error; throw new Error('圖資下載中斷，請檢查網路並重試'); }
-  if (!response.ok) throw new Error('必要圖資載入失敗，請重試');
+  catch (error) { if (error.name === 'AbortError') throw error; throw new Error('地圖下載中斷，請重試', { cause: error }); }
+  if (!response.ok) throw new Error('地圖載入失敗，請重試', { cause: new Error(`HTTP ${response.status}: ${asset.name || asset.url}`) });
   const bytes = await response.arrayBuffer();
-  if (await sha256(bytes) !== asset.sha256) throw new Error('圖資雜湊不符，請重試載入');
-  if (!globalThis.DecompressionStream) throw new Error('此瀏覽器不支援圖資解壓縮，請使用新版瀏覽器');
+  if (await sha256(bytes) !== asset.sha256) throw new Error('地圖資料有誤，請重新載入', { cause: new Error(`圖資雜湊不符: ${asset.name || asset.url}`) });
+  if (!globalThis.DecompressionStream) throw new Error('請更新瀏覽器後再試', { cause: new Error('DecompressionStream unavailable') });
   const decoded = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
-  if (decoded.byteLength !== asset.decodedBytes) throw new Error('圖資資料大小不符，請重試載入');
+  if (decoded.byteLength !== asset.decodedBytes) throw new Error('地圖資料有誤，請重新載入', { cause: new Error(`圖資資料大小不符: ${asset.name || asset.url}`) });
   return decoded;
 }
 export async function compressedJSON(asset, signal) {
@@ -29,7 +29,7 @@ export class SoloAssets {
   }
   async tileView(bounds, mpp, dpr, signal) {
     const plan = tilePlan(this.manifest.clues.tiles, bounds, mpp, dpr);
-    if (!plan) throw new Error('目前視野沒有對應圖塊');
+    if (!plan) throw new Error('地圖載入失敗，請重試', { cause: new Error('目前視野沒有對應圖塊') });
     const layers = [plan, ...(plan.terrain ? [plan.terrain] : [])];
     const downloads = [...new Map(layers.flatMap(layer => layer.tiles.map(tile => [tile.url, { tile, layer }]))).values()];
     const pinned = new Set(downloads.map(t => t.tile.url)), controller = new AbortController();
@@ -42,12 +42,12 @@ export class SoloAssets {
           let value = this.tileCache.get(tile.url);
           if (!value) {
             const response = await fetch(tile.url, { signal: controller.signal });
-            if (!response.ok) throw new Error('地圖圖塊下載失敗，請重試');
+            if (!response.ok) throw new Error('地圖載入失敗，請重試', { cause: new Error(`HTTP ${response.status}: ${tile.name || tile.url}`) });
             const bytes = await response.arrayBuffer(); controller.signal.throwIfAborted();
-            if (bytes.byteLength !== tile.bytes || await sha256(bytes) !== tile.sha256) throw new Error('地圖圖塊雜湊不符，請重試');
+            if (bytes.byteLength !== tile.bytes || await sha256(bytes) !== tile.sha256) throw new Error('地圖資料有誤，請重新載入', { cause: new Error(`地圖圖塊雜湊或大小不符: ${tile.name || tile.url}`) });
             const bitmap = await createImageBitmap(new Blob([bytes], { type: 'image/webp' }));
             if (controller.signal.aborted || bitmap.width !== (layer.size + 2 * layer.gutter) * layer.level.dpr || bitmap.height !== bitmap.width) {
-              bitmap.close(); controller.signal.throwIfAborted(); throw new Error('地圖圖塊尺寸不符');
+              bitmap.close(); controller.signal.throwIfAborted(); throw new Error('地圖資料有誤，請重新載入', { cause: new Error(`地圖圖塊尺寸不符: ${tile.name || tile.url}`) });
             }
             value = { bitmap, bytes: layer.pixels };
             for (const [key, item] of this.tileCache) {
@@ -69,7 +69,7 @@ export class SoloAssets {
   async boundaryPack(key) {
     if (!this.boundaryPacks.has(key)) {
       const asset = this.manifest.answerPacks[key];
-      if (!asset) throw new Error('範圍邊界資料不完整，請重新載入');
+      if (!asset) throw new Error('邊界載入失敗，請重試', { cause: new Error(`範圍邊界資料不完整: ${key}`) });
       if (key.startsWith('town-') && key !== `town-${this.townBoundaryCounty}`) return compressedJSON(asset);
       const loading = compressedJSON(asset).catch(error => { if (this.boundaryPacks.get(key) === loading) this.boundaryPacks.delete(key); throw error; });
       this.boundaryPacks.set(key, loading);
@@ -81,19 +81,19 @@ export class SoloAssets {
       .then(regions => regions.flatMap(r => r.geometry)).catch(error => { this.counties = null; throw error; });
     return this.counties;
   }
-  async landmarkBoundaries({ scope, county, difficulty }) {
-    const key = `${scope === 'county' ? county : 'mainland'}:${difficulty}`;
-    if (scope === 'county' && difficulty === 'easy' && this.townBoundaryCounty !== county) {
+  async landmarkBoundaries({ scope, county }) {
+    const key = scope === 'county' ? county : 'mainland';
+    if (scope === 'county' && this.townBoundaryCounty !== county) {
       // A county's detailed town lines can decode to several MB; retain only the latest county.
-      this.boundaryPacks.delete(`town-${this.townBoundaryCounty}`); this.landmarkViews.delete(`${this.townBoundaryCounty}:easy`);
+      this.boundaryPacks.delete(`town-${this.townBoundaryCounty}`); this.landmarkViews.delete(this.townBoundaryCounty);
       this.townBoundaryCounty = county;
     }
     if (!this.landmarkViews.has(key)) {
       const loading = (async () => {
-        if (scope !== 'county') return { scopeOutline: [], internalBoundaries: difficulty === 'easy' ? await this.countyBoundaries() : [] };
+        if (scope !== 'county') return { scopeOutline: [], internalBoundaries: await this.countyBoundaries() };
         const regions = await this.boundaryPack('county'), selected = regions.find(r => r.id === county);
-        if (!selected?.geometry?.length) throw new Error('所選縣市邊界資料不完整，請重新載入');
-        const towns = difficulty === 'easy' ? await this.boundaryPack(`town-${county}`) : [];
+        if (!selected?.geometry?.length) throw new Error('邊界載入失敗，請重試', { cause: new Error(`所選縣市邊界資料不完整: ${county}`) });
+        const towns = await this.boundaryPack(`town-${county}`);
         return { scopeOutline: selected.geometry, internalBoundaries: towns.flatMap(r => r.geometry) };
       })().catch(error => { if (this.landmarkViews.get(key) === loading) this.landmarkViews.delete(key); throw error; });
       this.landmarkViews.set(key, loading);
@@ -103,7 +103,7 @@ export class SoloAssets {
   async terrainCanvas(overview = false) {
     const info = this.manifest.clues, asset = overview ? info.overviewTerrain : info.terrainAsset;
     const bytes = await compressedBytes(asset), { width, height } = overview ? asset : info.terrain;
-    if (info.crs !== 'EPSG:3826' || bytes.byteLength !== width * height * (overview ? 4 : 2) || (!overview && await sha256(bytes) !== info.terrainSha256)) throw new Error('地形版本或資料大小不符');
+    if (info.crs !== 'EPSG:3826' || bytes.byteLength !== width * height * (overview ? 4 : 2) || (!overview && await sha256(bytes) !== info.terrainSha256)) throw new Error('地圖資料有誤，請重新載入', { cause: new Error('地形版本或資料大小不符') });
     let pixels = new Uint8ClampedArray(bytes);
     if (!overview) {
       const view = new DataView(bytes), heights = new Uint16Array(bytes.byteLength / 2);

@@ -1,11 +1,12 @@
 import { COUNTS, TIMES, MAX_POINTS, RULES_VERSION, standings } from '../shared/rules.js';
 
-const TTL = 30 * 60 * 1000, BUFFER = 6000, GRACE = 10000, BODY_LIMIT = 128 * 1024;
+const TTL = 30 * 60 * 1000, BUFFER = 6000, GRACE = 10000, REVEAL = 10000, BODY_LIMIT = 128 * 1024;
 const COLORS = ['#D55E00', '#0072B2', '#CC79A7', '#9A7300', '#5B3F8C', '#009E73', '#B14444', '#495057'];
 const json = (value, status = 200) => Response.json(value, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 const fail = (message, status = 400, code = 'invalid') => Object.assign(new Error(message), { status, code });
 const ident = value => typeof value === 'string' && /^[a-f0-9-]{36}$/.test(value);
 const key = () => crypto.randomUUID();
+const autoNext = room => JSON.parse(room.versions).rulesVersion === 'circle-taiwan-0.9';
 function nickname(value) {
   if (typeof value !== 'string' || !value.trim() || [...value.trim()].length > 16 || /[\u0000-\u001f\u007f]/u.test(value)) throw fail('暱稱需為 1～16 個可顯示字元');
   return value.trim();
@@ -19,7 +20,7 @@ function plan(input) {
     (s.scope === 'county' && (typeof s.county !== 'string' || !/^[0-9]{5}$/.test(s.county))))) throw fail('景點設定無效');
   if (!Array.isArray(q) || !q.length || q.length > s.count || new Set(q).size !== q.length || q.some(id => typeof id !== 'string' || !/^[\w-]{1,40}$/.test(id))) throw fail('題目清單無效');
   if (!v || ['dataVersion', 'rulesVersion', 'runtimeVersion'].some(k => typeof v[k] !== 'string' || v[k].length > 128 || !v[k])) throw fail('圖資版本無效');
-  if (v.rulesVersion !== RULES_VERSION) throw fail('計分規則已更新，請重新整理後再開新局。',409,'version_mismatch');
+  if (v.rulesVersion !== RULES_VERSION) throw fail('遊戲已更新，請重新整理後開新局。',409,'version_mismatch');
   const settings = { challenge: s.challenge, difficulty: s.difficulty, scope: s.scope, pool, county: String(s.county || '').slice(0,40), town: String(s.town || '').slice(0,40), count:s.count, seconds:s.seconds, capacity:s.capacity };
   return [JSON.stringify(settings), JSON.stringify(q), JSON.stringify(v)];
 }
@@ -49,9 +50,9 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
     const r = rs.results[0], players = ps.results;
     if (!r || r.expires_at <= now()) throw fail('房間已過期或關閉，請重新開房。', 410, 'room_closed');
     const me = players.find(p => p.token === token && !p.left);
-    if (!me) throw fail('房間身分已失效，請重新加入。', 403, 'identity_lost');
+    if (!me) throw fail('你已離開房間，請重新加入。', 403, 'identity_lost');
     const summary = { room:r.id, game:r.game_id, round:r.round_id, phase:r.phase, index:r.round_index, start:r.start_at, deadline:r.deadline,
-      expires:r.expires_at, now:now(), version:r.version, metadata:r.metadata_version, plan:r.plan_version,
+      expires:r.expires_at, now:now(), nextAt:r.phase==='reveal'&&autoNext(r)?r.deadline:null, version:r.version, metadata:r.metadata_version, plan:r.plan_version,
       host:players.find(p=>p.id===r.host_id)?.seat, you:me.seat, players:players.map(p=>[p.seat,p.ready,p.loaded_version===r.plan_version?1:0,p.left,p.answer_status||null]) };
     if (new TextEncoder().encode(JSON.stringify(summary)).byteLength > 1024) throw new Error('Room summary exceeds 1 KiB');
     const response = { summary };
@@ -104,7 +105,7 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
         stmt(env,'UPDATE rooms SET expires_at=?,metadata_version=metadata_version+1,version=version+1 WHERE id=? AND changes()=1',until,r.id)
       ]);
       const p=await stmt(env,'SELECT id,token FROM room_players WHERE room_id=? AND join_key=?',r.id,input.requestId).first();
-      if (!p) throw fail('房間已開始或參賽席位已滿。',409,'seats_full');
+      if (!p) throw fail('房間已開始或人數已滿。',409,'seats_full');
       return { ...(await read(env,code,p.token)).response,session:{code,id:p.id,token:p.token,mode:'multi'} };
     }
     const initial=await read(env,code,token,input.metadata,false),r=initial.room,p=initial.player;
@@ -124,7 +125,7 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
       if(type==='leave')return{closed:true};
     } else if(type==='settings' || type==='replay') {
       host();const [settings,questions,versions]=plan(input);
-      if(JSON.parse(settings).capacity<initial.players.filter(player=>!player.left).length)throw fail('容量不能少於目前玩家人數。');
+      if(JSON.parse(settings).capacity<initial.players.filter(player=>!player.left).length)throw fail('人數上限不能少於目前玩家人數。');
       if(type==='settings' && input.revision!==r.plan_version)throw fail('設定已更新，請重新確認。',409,'state_changed');
       if(type==='replay' && input.gameId!==r.game_id)throw fail('本局已更新。',409,'round_changed');
       const expected=type==='settings'?'lobby':'results';
@@ -137,44 +138,49 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
       if(!result[0].meta.changes)throw fail('房間狀態已更新，請重新確認。',409,'state_changed');
     } else if(type==='loaded' || type==='ready') {
       if(input.revision!==r.plan_version)throw fail('設定已更新，請重新載入。',409,'state_changed');
-      if(type==='loaded' && JSON.stringify(input.versions)!==r.versions)throw fail('圖資版本不同，請重新整理。',409,'version_mismatch');
+      if(type==='loaded' && JSON.stringify(input.versions)!==r.versions)throw fail('遊戲版本不同，請重新整理。',409,'version_mismatch');
       await env.DB.batch([
         stmt(env,`UPDATE room_players SET ${type==='loaded'?'loaded_version=?':'ready=?'} WHERE room_id=? AND id=? AND left=0 AND EXISTS(SELECT 1 FROM rooms WHERE ${active} AND phase='lobby' AND plan_version=?) AND ${type==='loaded'?'loaded_version<>?':'loaded_version=? AND ready<>?'}`,
           type==='loaded'?r.plan_version:input.ready?1:0,r.id,p.id,r.id,at,r.plan_version,r.plan_version,...(type==='ready'?[input.ready?1:0]:[])),
         stmt(env,'UPDATE rooms SET version=version+1,expires_at=? WHERE id=? AND changes()=1',until,r.id)
       ]);
     } else if(type==='start') {
-      if(JSON.parse(r.versions).rulesVersion!==RULES_VERSION)throw fail('計分規則已更新，請重新整理後再開新局。',409,'version_mismatch');
+      if(JSON.parse(r.versions).rulesVersion!==RULES_VERSION)throw fail('遊戲已更新，請重新整理後開新局。',409,'version_mismatch');
       host();const game=key(),question=key(),deadline=at+BUFFER+JSON.parse(r.settings).seconds*1000;
       const results=await env.DB.batch([
         stmt(env,`UPDATE rooms SET phase='playing',game_id=?,round_id=?,round_index=0,start_at=?,deadline=?,version=version+1,metadata_version=metadata_version+1,expires_at=? WHERE ${active} AND phase='lobby' AND plan_version=? AND (SELECT COUNT(*) FROM room_players WHERE room_id=rooms.id AND left=0)>=2 AND NOT EXISTS(SELECT 1 FROM room_players WHERE room_id=rooms.id AND left=0 AND (ready=0 OR loaded_version<>rooms.plan_version))`,game,question,at+BUFFER,deadline,until,r.id,at,input.revision),
         stmt(env,'UPDATE room_players SET in_game=1 WHERE room_id=? AND left=0 AND EXISTS(SELECT 1 FROM rooms WHERE id=? AND game_id=?)',r.id,r.id,game)
       ]);
-      if(!results[0].meta.changes)throw fail('所有參賽者須載入並準備完成後才能開始。',409,'not_ready');
+      if(!results[0].meta.changes)throw fail('等所有玩家準備好再開始。',409,'not_ready');
     } else if(type==='submit') {
       const a=answer(input,r),points=JSON.stringify(a.points);
       const previous=await stmt(env,'SELECT submission_id,status,score,elapsed FROM room_answers WHERE room_id=? AND game_id=? AND round_id=? AND player_id=?',r.id,input.gameId,input.questionId,p.id).first();
-      if(previous){if(previous.submission_id!==a.submissionId)throw fail('本題已交卷，不能覆寫。',409,'answer_locked');return{...(await read(env,code,token,input.metadata)).response,receipt:previous};}
+      if(previous){if(previous.submission_id!==a.submissionId)throw fail('本題已送出。',409,'answer_locked');return{...(await read(env,code,token,input.metadata)).response,receipt:previous};}
       round();
+      const complete="(SELECT COUNT(*) FROM room_answers WHERE room_id=rooms.id AND round_id=rooms.round_id)=(SELECT COUNT(*) FROM room_players WHERE room_id=rooms.id AND in_game=1)";
       const result=await env.DB.batch([
         stmt(env,"INSERT OR IGNORE INTO room_answers(room_id,game_id,round_id,round_index,player_id,submission_id,status,score,elapsed,points) SELECT r.id,r.game_id,r.round_id,r.round_index,?,?,?,?,?,? FROM rooms r JOIN room_players p ON p.room_id=r.id AND p.id=? WHERE r.id=? AND r.game_id=? AND r.round_id=? AND r.phase='playing' AND r.start_at<=? AND r.expires_at>? AND p.in_game=1 AND p.left=0",p.id,a.submissionId,a.status,a.score,a.elapsed,points,p.id,r.id,input.gameId,input.questionId,at,at),
-        stmt(env,"UPDATE rooms SET phase=CASE WHEN (SELECT COUNT(*) FROM room_answers WHERE room_id=rooms.id AND round_id=rooms.round_id)=(SELECT COUNT(*) FROM room_players WHERE room_id=rooms.id AND in_game=1) THEN 'reveal' ELSE phase END, metadata_version=metadata_version+CASE WHEN (SELECT COUNT(*) FROM room_answers WHERE room_id=rooms.id AND round_id=rooms.round_id)=(SELECT COUNT(*) FROM room_players WHERE room_id=rooms.id AND in_game=1) THEN 1 ELSE 0 END,version=version+1,expires_at=? WHERE id=? AND changes()=1",until,r.id)
+        // In 0.9, deadline belongs to the current phase; older rooms retain their answer deadline.
+        stmt(env,`UPDATE rooms SET phase=CASE WHEN ${complete} THEN 'reveal' ELSE phase END,deadline=CASE WHEN ? AND ${complete} THEN ? ELSE deadline END,metadata_version=metadata_version+CASE WHEN ${complete} THEN 1 ELSE 0 END,version=version+1,expires_at=? WHERE id=? AND changes()=1`,autoNext(r)?1:0,at+REVEAL,until,r.id)
       ]);
       const receipt=await stmt(env,'SELECT submission_id,status,score,elapsed FROM room_answers WHERE room_id=? AND game_id=? AND round_id=? AND player_id=?',r.id,input.gameId,input.questionId,p.id).first();
-      if(!receipt || receipt.submission_id!==a.submissionId)throw fail('回合已封存，無法補交。',409,'round_closed');
+      if(!receipt || receipt.submission_id!==a.submissionId)throw fail('本題已結束，無法補交。',409,'round_closed');
       const response=(await read(env,code,token,input.metadata)).response;
       if(result[0].meta.changes && response.summary.phase==='reveal')sweep(env,ctx);
       return{...response,receipt};
     } else if(type==='force-settle') {
-      host();round();if(at<r.deadline+GRACE)throw fail('寬限時間結束後才能強制結算。',409,'grace_active');
+      host();round();if(at<r.deadline+GRACE)throw fail('請等候其他玩家送出。',409,'grace_active');
       await env.DB.batch([
         stmt(env,"INSERT OR IGNORE INTO room_answers(room_id,game_id,round_id,round_index,player_id,submission_id,status,score,elapsed,points) SELECT r.id,r.game_id,r.round_id,r.round_index,p.id,'forced:'||p.id,'forced_missing',0,?,NULL FROM rooms r JOIN room_players p ON p.room_id=r.id AND p.in_game=1 WHERE r.id=? AND r.game_id=? AND r.round_id=? AND r.phase='playing' AND r.expires_at>? AND r.deadline+10000<=?",JSON.parse(r.settings).seconds*1000,r.id,r.game_id,r.round_id,at,at),
-        stmt(env,"UPDATE rooms SET phase='reveal',metadata_version=metadata_version+1,version=version+1,expires_at=? WHERE id=? AND game_id=? AND round_id=? AND phase='playing' AND expires_at>? AND deadline+10000<=?",until,r.id,r.game_id,r.round_id,at,at)
+        stmt(env,"UPDATE rooms SET phase='reveal',deadline=CASE WHEN ? THEN ? ELSE deadline END,metadata_version=metadata_version+1,version=version+1,expires_at=? WHERE id=? AND game_id=? AND round_id=? AND phase='playing' AND expires_at>? AND deadline+10000<=?",autoNext(r)?1:0,at+REVEAL,until,r.id,r.game_id,r.round_id,at,at)
       ]);sweep(env,ctx);
     } else if(type==='next' || type==='force-next') {
-      host();round();const last=r.round_index+1>=JSON.parse(r.questions).length,question=last?null:key();
+      round();
+      if(!p.in_game)throw fail('你不在這一局。',403,'identity_lost');
+      if(p.id!==r.host_id){if(!autoNext(r))host();if(r.phase==='reveal'&&at<r.deadline)throw fail('還沒到換題時間。',409,'reveal_active');}
+      const last=r.round_index+1>=JSON.parse(r.questions).length,question=last?null:key();
       const result=await env.DB.batch([
-        stmt(env,"UPDATE rooms SET phase=?,round_id=?,round_index=?,start_at=?,deadline=?,version=version+1,metadata_version=metadata_version+1,expires_at=? WHERE id=? AND game_id=? AND round_id=? AND phase='reveal' AND expires_at>?",last?'results':'playing',question,r.round_index+(last?0:1),last?null:at+BUFFER,last?null:at+BUFFER+JSON.parse(r.settings).seconds*1000,until,r.id,r.game_id,r.round_id,at),
+        stmt(env,"UPDATE rooms SET phase=?,round_id=?,round_index=?,start_at=?,deadline=?,version=version+1,metadata_version=metadata_version+1,expires_at=? WHERE id=? AND game_id=? AND round_id=? AND phase='reveal' AND expires_at>? AND EXISTS(SELECT 1 FROM room_players WHERE room_id=rooms.id AND id=? AND in_game=1 AND left=0) AND (host_id=? OR (json_extract(versions,'$.rulesVersion')='circle-taiwan-0.9' AND deadline<=?))",last?'results':'playing',question,r.round_index+(last?0:1),last?null:at+BUFFER,last?null:at+BUFFER+JSON.parse(r.settings).seconds*1000,until,r.id,r.game_id,r.round_id,at,p.id,p.id,at),
         stmt(env,'UPDATE room_answers SET points=NULL WHERE room_id=? AND round_id=? AND changes()=1',r.id,r.round_id)
       ]);
       if(!result[0].meta.changes)throw fail('回合已更新。',409,'round_changed');
@@ -194,10 +200,10 @@ export function createFreeWorker({ now = Date.now, logError = error => console.e
         ]);
         const r=room.results[0];
         if(!r||r.expires_at<=now())throw fail('房間已過期或關閉，請重新開房。',410,'room_closed');
-        if(!r.player_id||r.left)throw fail('房間身分已失效，請重新加入。',403,'identity_lost');
+        if(!r.player_id||r.left)throw fail('你已離開房間，請重新加入。',403,'identity_lost');
         if(r.game_id!==url.searchParams.get('game')||r.round_id!==url.searchParams.get('question'))throw fail('回合已更新。',409,'round_changed');
         if(r.phase!=='reveal')throw fail('尚未揭曉。',409,'not_revealed');
-        if(!r.in_game)throw fail('不是本局參賽者。',403,'identity_lost');
+        if(!r.in_game)throw fail('你不在這一局。',403,'identity_lost');
         // points is written only by JSON.stringify after answer validation; sealed missing answers use NULL.
         const drawings=answers.results.map(a=>`{"id":${JSON.stringify(a.player_id)},"points":${a.points||'[]'}}`).join(',');
         return new Response(`{"gameId":${JSON.stringify(r.game_id)},"questionId":${JSON.stringify(r.round_id)},"drawings":[${drawings}]}`, {

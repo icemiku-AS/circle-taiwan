@@ -1,37 +1,40 @@
 import { drawPath, drawLandmarkTarget } from './map.js';
 
 export const scoreText = (value, challenge = 'county') => Number.isFinite(value) ? `${value.toFixed(2)}${challenge === 'landmark' ? ' 分' : '%'}` : '—';
-export const questionName = question => question.anchorLabel ? `${question.officialName || question.name}（${question.anchorLabel}）` : question.name;
+export const questionName = question => question.name || question.officialName;
 export function landmarkSummary(history, playerId) {
   const rounds = history.filter(q => !q.voided && !Object.values(q.results || {}).some(r => r.status === 'calculation_failed'));
   const hits = rounds.filter(q => ['valid', 'ok'].includes(q.results[playerId]?.status) && q.results[playerId].landmark?.hit === true).length;
   return `🎯 命中率：${hits} / ${rounds.length} 題（${rounds.length ? Math.round(100 * hits / rounds.length) + '%' : '—'}）`;
 }
 export function landmarkFeedback(result) {
-  if (result.status === 'skipped') return '已跳過 · 0 分';
+  if (!result) return '未作答';
+  if (result.voided || result.status === 'calculation_failed') return '本題作廢';
+  if (['unanswered', 'forced_missing'].includes(result.status)) return '未作答';
+  if (result.status === 'skipped') return '已跳過';
   const detail = result.landmark;
-  if (!detail || detail.hit === null) return '無有效圈選 · 0 分';
-  return detail.hit ? `🟢 ${result.score.toFixed(2)} 分 · 命中！（圈選面積 ${(detail.areaM2 / 1e6).toFixed(1)} km²）`
-    : `🔴 0 分 · 未命中（離景點最近 ${(detail.outsideDistanceM / 1000).toFixed(1)} km）`;
+  if (!detail || detail.hit === null) return '圈選無效';
+  return detail.hit ? `🟢 命中 · 面積 ${(detail.areaM2 / 1e6).toFixed(1)} km²`
+    : `🔴 未中 · ${landmarkDistance(detail.outsideDistanceM)}`;
 }
+const landmarkDistance = meters => meters < 100 ? '差不到 0.1 km' : `差 ${(meters / 1000).toFixed(1)} km`;
 export function landmarkDetails(detail) {
-  if (!detail || detail.hit === null) return '無有效圈選';
+  if (!detail || detail.hit === null) return '圈選無效';
   const area = detail.areaM2 < 10000 ? `${detail.areaM2.toFixed(2)} m²` : `${(detail.areaM2 / 1e6).toLocaleString('zh-TW', { maximumFractionDigits: 2 })} km²`;
-  const distance = (detail.outsideDistanceM / 1000).toLocaleString('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
-  return `${detail.hit ? '命中' : `未命中 · 距離 ${distance} km`} · 圈選 ${area}`;
+  return `${detail.hit ? '命中' : `未中 · ${landmarkDistance(detail.outsideDistanceM)}`} · 面積 ${area}`;
 }
 
 export function challengeScope(data, settings) {
-  if (settings.challenge === 'landmark') return `景點挑戰 · ${settings.scope === 'county' ? data.regions.find(r => r.id === settings.county)?.name || '指定縣市' : '台灣本島'} · ${settings.pool === 'all' ? '全部題庫' : '經典精選'}`;
-  if (settings.challenge === 'county') return '縣市挑戰 · 台灣本島與核准近岸範圍';
+  if (settings.challenge === 'landmark') return `景點挑戰 · ${settings.scope === 'county' ? data.regions.find(r => r.id === settings.county)?.name || '指定縣市' : '臺灣本島'} · ${settings.pool === 'all' ? '全部題庫' : '經典精選'}`;
+  if (settings.challenge === 'county') return '縣市挑戰 · 臺灣本島';
   const region = data.regions.find(r => r.id === (settings.challenge === 'village' ? settings.town : settings.county));
-  return `${settings.challenge === 'village' ? '村里' : '鄉鎮'}挑戰 · ${region?.name || '全台灣（遊戲範圍）'}`;
+  return `${settings.challenge === 'village' ? '村里' : '鄉鎮市區'}挑戰 · ${region?.name || '全島'}`;
 }
 
 export function roundScoreText(result, challenge = 'county') {
   if (!result) return '—';
   if (result.voided) return `本題作廢${result.status === 'calculation_failed' ? '（計分失敗）' : ''}`;
-  const status = { forced_missing: '強制封存缺件', unanswered: '未作答', invalid: '無效筆畫', calculation_failed: '計分失敗' }[result.status];
+  const status = { forced_missing: '未交卷', unanswered: '未作答', invalid: '圈選無效', calculation_failed: '計分失敗' }[result.status];
   return `${result.points > 0 ? `+${result.points}` : '0'} 點 · ${scoreText(result.score, challenge)}${status ? `（${status}）` : ''}`;
 }
 
@@ -81,12 +84,12 @@ export function scoreImage(data, state, scope = {}) {
   const header = landmark ? 310 : 260;
   const canvas = document.createElement('canvas'); canvas.width = 1200; canvas.height = header + 70 + rows * 430;
   const c = canvas.getContext('2d'); c.fillStyle = '#f2efe7'; c.fillRect(0, 0, canvas.width, canvas.height);
-  c.fillStyle = '#1f2a23'; c.font = 'bold 40px sans-serif'; c.fillText('圈出台灣｜我的圈選與正確答案', 40, 65);
+  c.fillStyle = '#1f2a23'; c.font = 'bold 40px sans-serif'; c.fillText('圈出台灣｜單人成績', 40, 65);
   c.font = '23px sans-serif'; c.fillText(challengeScope(data, state.settings), 40, 108, 1120);
   c.fillText(`${mine.name}・${state.settings.difficulty === 'easy' ? '初階' : '高階'}・不限時・${state.history.length} 題`, 40, 146, 1120);
   if (landmark) { c.font = 'bold 34px sans-serif'; c.fillText(landmarkSummary(state.history, state.you), 40, 195, 1120); }
   c.font = 'bold 34px sans-serif'; c.fillText(`${landmark ? '平均得分' : '平均'} ${scoreText(mine.score, state.settings.challenge)}　作答 ${mine.time.toFixed(1)} 秒`, 40, header - 65, 1120);
-  c.font = '20px sans-serif'; c.fillText(landmark ? '橙色實線：我的圈選　紅色圖針：景點　虛線：距圈選最近位置' : '橙色實線：我的圈選　綠色虛線：正確邊界　金色：圈對　灰色：內部中立區', 40, header - 25);
+  c.font = '20px sans-serif'; c.fillText(landmark ? '橙線：圈選　紅針：景點　虛線：最近距離' : '橙線：圈選　綠線：正解　金色：圈對　灰色：不計分範圍；海面不計分', 40, header - 25);
   state.history.forEach((round, i) => {
     const x = 30 + (i % 2) * 585, y = header + Math.floor(i / 2) * 430, r = round.results[state.you];
     c.fillStyle = '#fffdf7'; c.fillRect(x, y, 555, 410); c.fillStyle = '#1f2a23'; c.font = 'bold 22px sans-serif';
@@ -94,10 +97,10 @@ export function scoreImage(data, state, scope = {}) {
     c.font = '20px sans-serif'; c.fillText(`${scoreText(r.score, state.settings.challenge)}${r.status === 'skipped' ? '・已跳過' : ''}　${(Math.round(r.elapsed / 100) / 10).toFixed(1)} 秒`, x + 14, y + 65);
     comparison(c, data, round, state.you, x + 14, y + 82, 527, 287, scope);
     c.fillStyle = '#657466'; c.font = '15px sans-serif';
-    c.fillText(landmark ? landmarkDetails(r.landmark) : round.neutralNames?.length ? `${round.neutralNames.join('、')}不計分；海面不計分` : '海面不計分；兩條輪廓使用相同位置與比例', x + 14, y + 395, 525);
+    c.fillText(landmark ? r.status === 'skipped' ? '' : landmarkDetails(r.landmark) : round.neutralNames?.length ? `${round.neutralNames.join('、')}不計分` : '', x + 14, y + 395, 525);
   });
   c.fillStyle = '#657466'; c.font = '15px sans-serif';
-  c.fillText(`${landmark ? '景點：交通部觀光署；' : ''}行政邊界：內政部國土測繪中心／政府資料開放授權條款第 1 版・${data.manifest.version}`, 40, canvas.height - 22, 1120);
+  c.fillText(`${landmark ? '景點：交通部觀光署；' : ''}行政邊界：內政部國土測繪中心／政府資料開放授權條款第 1 版 · circle.hiyaowl.com`, 40, canvas.height - 22, 1120);
   return canvas;
 }
 
@@ -125,16 +128,15 @@ export function multiplayerScoreImage(data, state) {
     return { entries, names, rows, headerHeight: 24 + Math.max(...names.map(lines => lines.length)) * lineHeight };
   });
   canvas.width = 1200;
-  canvas.height = 330 + players.length * 64 + blocks.reduce((height, block) => height + 60 + block.headerHeight + block.rows.reduce((sum, row) => sum + row.height, 0), 0) + 65;
+  canvas.height = 280 + players.length * 64 + blocks.reduce((height, block) => height + 60 + block.headerHeight + block.rows.reduce((sum, row) => sum + row.height, 0), 0) + 65;
   c.fillStyle = '#f2efe7'; c.fillRect(0, 0, canvas.width, canvas.height);
   c.fillStyle = '#1f2a23'; c.font = 'bold 40px sans-serif'; c.fillText('圈出台灣｜多人結算', 40, 65);
   c.font = '23px sans-serif'; c.fillText(challengeScope(data, state.settings), 40, 108, 1120);
   c.fillText(`${state.settings.difficulty === 'easy' ? '初階' : '高階'} · ${state.history.length} 題 · 每題 ${state.settings.seconds} 秒 · ${players.length} 人`, 40, 146);
-  c.font = '19px sans-serif'; c.fillText(multiplayerRulesText(state.rulesVersion, state.settings.challenge), 40, 187, 1120);
-  if (players.every(p => p.rank == null)) { c.fillStyle = '#8c3b19'; c.fillText('本局無有效題，不產生名次。', 40, 221); }
+  if (players.every(p => p.rank == null)) { c.fillStyle = '#8c3b19'; c.font = '19px sans-serif'; c.fillText('本局無有效成績', 40, 185); }
   c.fillStyle = '#657466'; c.font = '20px sans-serif';
-  ['名次', '玩家', '積分', landmark ? '平均得分' : '平均吻合度', '總作答時間'].forEach((text, i) => c.fillText(text, [40, 128, 640, 815, 1005][i], 270));
-  let y = 310;
+  ['名次', '玩家', '總積分', landmark ? '平均得分' : '平均吻合度', '總時間'].forEach((text, i) => c.fillText(text, [40, 128, 640, 815, 1005][i], 220));
+  let y = 260;
   players.forEach(p => {
     c.fillStyle = '#1f2a23'; c.font = 'bold 25px sans-serif';
     c.fillText(p.rank == null ? '—' : `#${p.rank}`, 40, y);
@@ -157,6 +159,6 @@ export function multiplayerScoreImage(data, state) {
     });
   });
   c.fillStyle = '#657466'; c.font = '15px sans-serif';
-  c.fillText(`${landmark ? '景點：交通部觀光署；' : ''}行政邊界：內政部國土測繪中心／政府資料開放授權條款第 1 版 · ${data.manifest.version}`, 40, canvas.height - 22, 1120);
+  c.fillText(`${landmark ? '景點：交通部觀光署；' : ''}行政邊界：內政部國土測繪中心／政府資料開放授權條款第 1 版 · circle.hiyaowl.com`, 40, canvas.height - 22, 1120);
   return canvas;
 }

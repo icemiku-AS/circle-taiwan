@@ -39,7 +39,7 @@ export class SoloGame {
   }
   async submit(questionId, skip = false) {
     if (!this.active || this.record.phase !== 'answering' || this.current.id !== questionId) return;
-    if (!skip && !this.current.closed) throw new Error('請先封閉筆畫，或重畫後送出');
+    if (!skip && !this.current.closed) throw new Error('請先完成圈選再送出');
     if (!skip && this.current.points.length < 3) throw new Error('請圈出範圍，或跳過本題');
     const q = this.current; q.submittedAt = this.now(); q.skipped = skip; if (skip) { q.points = []; q.closed = true; }
     this.record.phase = 'scoring'; this.publish(); await this.compute(q);
@@ -51,7 +51,7 @@ export class SoloGame {
       const result = review.results.solo;
       if (result.status === 'invalid' || result.status === 'unanswered') {
         this.record.phase = 'answering'; q.submittedAt = null; q.skipped = false;
-        this.onMessage('圈選沒有有效面積；筆畫已保留，請重畫或跳過');
+        this.onMessage('請圈出一個範圍，或跳過本題');
       } else {
         q.result = { score: result.score, status: result.status, elapsed: result.elapsed, breakdown: result.breakdown, ...(result.landmark ? { landmark: result.landmark } : {}) };
         this.reviews.set(q.id, review); this.record.phase = 'reveal-scores';
@@ -102,7 +102,7 @@ export class SoloGame {
     const player = { id: 'solo', name: r.nickname, color: '#c56e46', loaded: true, online: true, left: false, spectator: false };
     const region = this.byId.get(q.regionId);
     return { local: true, type: 'state', mode: 'single', code: r.id, phase: r.phase, settings: r.settings, settingsRevision: 1, you: 'solo', hostId: 'solo', players: [player],
-      serverNow: this.now(), error: '背景計分失敗；圈選與原提交時間已保留，可重新計分或重畫。', notices: [],
+      serverNow: this.now(), error: '計分失敗，圈選已保留。請重試或重畫。', notices: [],
       question: r.phase === 'results' ? null : { id: q.id, name: region.name, officialName: region.officialName, anchorLabel: region.anchorLabel,
         number: r.index + 1, count: r.questions.length, start: q.start, deadline: null,
         points: q.points, closed: q.closed, extent: this.extent, revision: q.revision, locked: r.phase !== 'answering', checking: false, neutralNames: region.neutralNames || [], results: revealed ? { solo: q.result } : null },

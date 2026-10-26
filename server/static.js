@@ -10,7 +10,7 @@ export async function serveStatic(req, res, root = resolve('dist')) {
   try { path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { res.writeHead(400); res.end(); return true; }
   if (path.startsWith('/api/')) return false;
   if (req.method !== 'GET') { res.writeHead(405); res.end(); return true; }
-  const file = resolve(root, `.${path === '/' ? '/index.html' : path}`);
+  const file = resolve(root, `.${path === '/' ? '/index.html' : path === '/data-notes' ? '/data-notes.html' : path}`);
   if (!file.startsWith(root + sep) || path.split('/').some(p => p.startsWith('.'))) { res.writeHead(403); res.end(); return true; }
   try {
     const body = await readFile(file), tag = `W/"${createHash('sha256').update(body).digest('hex')}"`;
@@ -21,7 +21,7 @@ export async function serveStatic(req, res, root = resolve('dist')) {
     if (req.headers['if-none-match'] === tag) { res.writeHead(304); res.end(); return true; }
     if (!['.gz', '.bin'].includes(extname(file)) && /\bgzip\b/.test(req.headers['accept-encoding'] || '')) { res.setHeader('Vary', 'Accept-Encoding'); res.setHeader('Content-Encoding', 'gzip'); res.end(gzipSync(body)); }
     else res.end(body);
-  } catch (error) { res.writeHead(error.code === 'ENOENT' ? 404 : 500); res.end('找不到靜態檔案；請先執行 npm run build:static'); }
+  } catch (error) { res.writeHead(error.code === 'ENOENT' ? 404 : 500); res.end(error.code === 'ENOENT' ? '找不到頁面' : '載入失敗，請重試'); }
   return true;
 }
 export async function startStatic({ port = Number(process.env.PORT || 4175), host = '127.0.0.1', root = resolve('dist') } = {}) {

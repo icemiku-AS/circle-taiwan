@@ -70,17 +70,17 @@ export class MultiplayerHTTP {
     const extent=extentForSettings(settings,this.data.regions,this.data.bounds);
     const q=s.round?{id:s.round,regionId:id,name:region?.name||id,officialName:region?.officialName,anchorLabel:region?.anchorLabel,number:s.index+1,count:d.questions.length,start:s.start,deadline:s.deadline,extent,
       points:this.pending?.points||this.draftPoints,revision:0,locked:Boolean(this.pending||me.submitted||this.now()>=s.deadline),checking:this.calculating,
-      results:current?.results||null,voided:current?.voided||false,neutralNames:region?.neutralNames||[],scoredAt:s.now,nextAt:null}:null;
+      results:current?.results||null,voided:current?.voided||false,neutralNames:region?.neutralNames||[],scoredAt:s.now,nextAt:s.nextAt??null}:null;
     const state={type:'state',free:true,code:d.code,mode:'multi',rulesVersion:d.versions.rulesVersion,phase,gameId:s.game,hostId:players.find(p=>p.seat===s.host)?.id,you:me.id,players,settings,settingsRevision:s.plan,
       serverNow:this.now(),question:q,notices:[],expiresAt:s.expires,localFailure:this.localError,canReportFailure:this.localError==='calculation'&&(this.pending?.attempts||0)>=2,
-      error:this.localError==='upload'?'圈選與成績已保留，請重新送出。':'背景計分失敗，原筆跡與作答時間已保留，請重新計分。',
+      error:this.localError==='upload'?'圈選與成績已保留，請重新送出。':'計分失敗，圈選已保留，請重試。',
       roundStandings:d.roundStandings,cumulativeStandings:d.cumulativeStandings,standings:s.phase==='results'?d.cumulativeStandings:null,
       history:s.phase==='results'?d.rounds.map(r=>{const region=this.data.regions.find(q=>q.id===r.regionId);return{...r,name:region?.name||r.regionId,officialName:region?.officialName,anchorLabel:region?.anchorLabel};}):null};
     this.state=state;this.lastPhase=phase;this.emit(state);
   }
   async loadEngine() {
     const d=this.details,key=`${this.summary.room}:${this.summary.plan}`;
-    if(JSON.stringify(d.versions)!==JSON.stringify(this.versions))throw new Error('遊戲圖資或計分版本不同，請重新整理。');
+    if(JSON.stringify(d.versions)!==JSON.stringify(this.versions))throw new Error('遊戲版本不同，請重新整理。');
     if(this.engineKey!==key){
       const rules=landmarkRulesForSettings(d.settings,this.data.regions.find(r=>r.id===d.settings.county)?.areaM2);
       this.engine?.close();this.engineKey=key;this.engine=this.engineFactory(this.manifest,this.data,d.questions,rules);
@@ -95,7 +95,7 @@ export class MultiplayerHTTP {
     if(this.lastPhase==='countdown'&&this.now()>=s.start)this.publish();
   }
   storageKey(){return`circle-pending:${this.session?.code}`;}
-  persistPending(){try{if(!this.storage)throw new Error();this.storage.setItem(this.storageKey(),JSON.stringify(this.pending));return true;}catch{this.message('瀏覽器無法暫存本題；請保持此分頁開啟，直到顯示已收件。');return false;}}
+  persistPending(){try{if(!this.storage)throw new Error();this.storage.setItem(this.storageKey(),JSON.stringify(this.pending));return true;}catch{this.message('無法儲存圈選；請保持此頁開啟，直到送出成功。');return false;}}
   removePending(){try{this.storage?.removeItem(this.storageKey());}catch{}}
   restorePending(){
     try{const p=JSON.parse(this.storage?.getItem(this.storageKey())||'null');if(p&&p.gameId===this.summary.game&&p.questionId===this.summary.round&&Array.isArray(p.points)&&p.points.length<=2048){
@@ -143,30 +143,38 @@ export class MultiplayerHTTP {
     if(this.running||this.readyState!==1)return;this.running=true;
     try{while(this.queue.length&&this.readyState===1){const {message:m,resolve}=this.queue.shift();
       try{
-        if(m.type==='replay'&&this.state.hostId!==this.state.you){await this.syncOnce();if(this.summary.phase==='results')this.message('房主尚未返回大廳，請稍後再查看。','info');}
+        if(m.type==='replay'&&this.state.hostId!==this.state.you){await this.syncOnce();if(this.summary.phase==='results')this.message('房主尚未返回大廳','info');}
         else{const extra=['create','settings','replay'].includes(m.type)?this.plan(m.settings||this.details.settings):['join','loaded'].includes(m.type)?{versions:this.versions}:{};await this.command({...m,...extra});}
         resolve(true);
       }catch(error){if(['room_closed','identity_lost'].includes(error.code)){this.stopPolling();this.emit({type:'removed',message:error.message});}
-        else{this.message(error.message);if(['round_changed','state_changed'].includes(error.code))await this.syncOnce().catch(()=>{});}resolve(false);}
+        else{if(!(error.code==='round_changed'&&['next','force-next'].includes(m.type)))this.message(error.message);if(['round_changed','state_changed'].includes(error.code))await this.syncOnce().catch(()=>{});}resolve(false);}
     }}finally{this.running=false;this.schedulePoll();}
   }
   stopPolling(){this.generation++;clearTimeout(this.timer);this.timer=null;this.pollController?.abort();}
-  schedulePoll() {
+  schedulePoll(retryDelay=0) {
     clearTimeout(this.timer);this.timer=null;
     if(this.readyState!==1||!this.session||!this.summary||this.hidden||this.final)return;
     const s=this.summary,me=this.state?.players.find(p=>p.id===this.state.you);
     let delay=s.phase==='lobby'||s.phase==='reveal'?4500:2500;
     if(s.phase==='playing'&&!me?.submitted&&this.now()<s.deadline)delay=s.deadline-this.now()+100;
+    if(s.phase==='reveal'&&Number.isFinite(s.nextAt))delay=Math.min(delay,Math.max(0,s.nextAt-this.now()));
     const generation=this.generation;
     this.timer=setTimeout(async()=>{
       if(generation!==this.generation)return;
       this.pollController=new AbortController();
-      try{await this.syncOnce(this.pollController.signal);}
+      let retryDelay=0;
+      try{
+        const current=this.summary;
+        if(current.phase==='reveal'&&Number.isFinite(current.nextAt)&&this.now()>=current.nextAt){
+          try{await this.command({type:'next',gameId:current.game,questionId:current.round});}
+          catch(error){if(!['round_changed','reveal_active'].includes(error.code))throw error;retryDelay=4500;await this.syncOnce(this.pollController.signal);}
+        }else await this.syncOnce(this.pollController.signal);
+      }
       catch(error){if(error.name!=='AbortError'){
         if(['room_closed','identity_lost'].includes(error.code)){this.stopPolling();this.emit({type:'removed',message:error.message});return;}
-        this.message(error.message);if(error.status===429){this.stopPolling();return;}
-      }}finally{if(generation===this.generation)this.schedulePoll();}
-    },delay);
+        retryDelay=4500;this.message(error.message);if(error.status===429){this.stopPolling();return;}
+      }}finally{if(generation===this.generation)this.schedulePoll(retryDelay);}
+    },Math.max(delay,retryDelay));
   }
   async syncOnce(signal){if(!this.session)return;const generation=this.generation;const value=await this.request({url:`/api/room?${new URLSearchParams({code:this.session.code,metadata:this.metadataVersion??-1})}`},signal);if(generation===this.generation)this.apply(value);return value;}
   setHidden(hidden){this.hidden=hidden;this.stopPolling();if(!hidden&&this.readyState===1&&!this.final){this.tick();this.syncOnce().then(()=>{if(this.pending?.answer)this.upload();else if(this.pending&&!this.calculating&&!this.localError)this.compute();}).catch(error=>this.message(error.message)).finally(()=>this.schedulePoll());}}

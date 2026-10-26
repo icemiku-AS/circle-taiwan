@@ -102,11 +102,16 @@ test('景點結算：低分命中也計入，跳過列分母，作廢排除；�
   const history = [round(10, true), round(0, false), round(0, null, 'skipped'), { ...round(100, true), voided: true }, round(null, null, 'calculation_failed')];
   assert.equal(landmarkSummary(history, 'solo'), '🎯 命中率：1 / 3 題（33%）');
   assert.equal(landmarkSummary([], 'solo'), '🎯 命中率：0 / 0 題（—）');
-  assert.equal(questionName({ name: '舊題名', officialName: '台北101', anchorLabel: '主塔' }), '台北101（主塔）');
+  assert.equal(questionName({ name: '紅毛城', officialName: '紅毛城園區(新北市立淡水古蹟博物館)', anchorLabel: '官方代表點' }), '紅毛城');
+  assert.equal(questionName({ name: '', officialName: '迎曦門(東門城)', anchorLabel: '東門' }), '迎曦門(東門城)');
   assert.equal(questionName({ name: '臺北市' }), '臺北市');
-  assert.equal(landmarkFeedback({ status: 'valid', score: 10, landmark: { hit: true, areaM2: 59721560 } }), '🟢 10.00 分 · 命中！（圈選面積 59.7 km²）');
-  assert.equal(landmarkFeedback({ status: 'valid', score: 0, landmark: { hit: false, outsideDistanceM: 900 } }), '🔴 0 分 · 未命中（離景點最近 0.9 km）');
-  assert.equal(landmarkFeedback({ status: 'skipped' }), '已跳過 · 0 分');
+  assert.equal(landmarkFeedback({ status: 'valid', score: 10, landmark: { hit: true, areaM2: 59721560 } }), '🟢 命中 · 面積 59.7 km²');
+  assert.equal(landmarkFeedback({ status: 'valid', score: 0, landmark: { hit: false, outsideDistanceM: 900 } }), '🔴 未中 · 差 0.9 km');
+  assert.equal(landmarkFeedback({ status: 'valid', score: 0, landmark: { hit: false, outsideDistanceM: 3 } }), '🔴 未中 · 差不到 0.1 km');
+  assert.equal(landmarkFeedback({ status: 'skipped' }), '已跳過');
+  assert.equal(landmarkFeedback({ status: 'forced_missing' }), '未作答');
+  assert.equal(landmarkFeedback({ status: 'invalid' }), '圈選無效');
+  assert.equal(landmarkFeedback({ status: 'unanswered', voided: true }), '本題作廢');
   assert.equal(challengeScope(data, { challenge: 'landmark', scope: 'county', county: '65000', pool: 'all' }), '景點挑戰 · 新北市 · 全部題庫');
 });
 
@@ -165,8 +170,8 @@ test('單人：無效筆畫可重畫，Worker 失敗不記零分且重試保留�
 test('揭曉與分享：景點顯示分數、完整面積與最近距離，行政區仍顯示百分比', () => {
   assert.equal(scoreText(75, 'landmark'), '75.00 分'); assert.equal(scoreText(75), '75.00%');
   assert.match(roundScoreText({ points: 1, score: 10, status: 'ok' }, 'landmark'), /10.00 分/);
-  assert.equal(landmarkDetails({ hit: false, areaM2: 40000, outsideDistanceM: 900 }), '未命中 · 距離 0.90 km · 圈選 0.04 km²');
-  assert.equal(landmarkDetails({ hit: null }), '無有效圈選');
+  assert.equal(landmarkDetails({ hit: false, areaM2: 40000, outsideDistanceM: 900 }), '未中 · 差 0.9 km · 面積 0.04 km²');
+  assert.equal(landmarkDetails({ hit: null }), '圈選無效');
   const box = comparisonBounds([], square([0, 0], 10), [1000, 2000]);
   assert.ok(box[0] < -10 && box[1] < -10 && box[2] > 1000 && box[3] > 2000);
 });

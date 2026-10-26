@@ -97,9 +97,9 @@ test('單人仍按吻合度與時間排序，原始分數嚴格大於 50 才計�
   assert.deepEqual(rows.map(p => [p.id, p.points, p.score, p.rank]), [['0', 0, 50, 1], ['1', 1, 50, 2]]);
 });
 
-test('既有 0.5 房間保留舊積分；0.8 與 0.6／0.7 共用名次規則', () => {
-  assert.equal(RULES_VERSION, 'circle-taiwan-0.8');
-  for (const version of ['circle-taiwan-0.6', 'circle-taiwan-0.7']) assert.deepEqual(
+test('既有 0.5 房間保留舊積分；0.9 與 0.6／0.7／0.8 共用名次規則', () => {
+  assert.equal(RULES_VERSION, 'circle-taiwan-0.9');
+  for (const version of ['circle-taiwan-0.6', 'circle-taiwan-0.7', 'circle-taiwan-0.8']) assert.deepEqual(
     standings(roster(2), [round([95, 95])], 20, 'multi', RULES_VERSION),
     standings(roster(2), [round([95, 95])], 20, 'multi', version));
   const rows = standings(roster(2), [round([95, 95])], 20, 'multi', 'circle-taiwan-0.5');
@@ -139,7 +139,7 @@ test('景點 scope／pool／difficulty 獨立；行政區與預設 classic 相�
 
 test('逐題文字支援動態點數，保留缺件與作廢回饋', () => {
   for (const points of [1, 3, 9, 10]) assert.equal(roundScoreText({ points, score: 92, status: 'ok' }), `+${points} 點 · 92.00%`);
-  assert.equal(roundScoreText({ points: 0, score: 0, status: 'forced_missing' }), '0 點 · 0.00%（強制封存缺件）');
+  assert.equal(roundScoreText({ points: 0, score: 0, status: 'forced_missing' }), '0 點 · 0.00%（未交卷）');
   assert.equal(roundScoreText({ voided: true, score: null, status: 'calculation_failed' }), '本題作廢（計分失敗）');
   assert.equal(roundScoreText(null), '—');
   assert.match(multiplayerRulesText(RULES_VERSION), /同分依平均吻合度排序，相同則並列/);

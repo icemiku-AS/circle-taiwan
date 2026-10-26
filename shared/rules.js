@@ -1,4 +1,4 @@
-export const RULES_VERSION = 'circle-taiwan-0.8';
+export const RULES_VERSION = 'circle-taiwan-0.9';
 export const TIMES = [10, 20, 30, 45, 60];
 export const COUNTS = { single: [5, 10], multi: [1, 3, 5, 10] };
 export const DEFAULTS = { challenge: 'county', scope: 'mainland', county: '', town: '', pool: 'classic', count: 5, seconds: 20, capacity: 5, difficulty: 'easy' };
@@ -17,7 +17,7 @@ export function validateSettings(input, mode, regions) {
   if (!['easy', 'hard'].includes(s.difficulty)) throw new Error('難度選項無效');
   if (mode === 'single') s.seconds = null;
   else if (!TIMES.includes(s.seconds)) throw new Error('時間選項無效');
-  if (!Number.isInteger(s.capacity) || s.capacity < 2 || s.capacity > 8) throw new Error('房間容量需為 2～8 人');
+  if (!Number.isInteger(s.capacity) || s.capacity < 2 || s.capacity > 8) throw new Error('人數上限需為 2～8 人');
   if (s.challenge !== 'landmark') s.pool = 'classic';
   else if (!['classic', 'all'].includes(s.pool)) throw new Error('請選擇有效的題庫');
   if (s.challenge === 'county') { s.scope = 'mainland'; s.county = ''; s.town = ''; }
@@ -37,7 +37,7 @@ export function validateSettings(input, mode, regions) {
     s.scope = 'town';
     if (!regions.some(r => r.level === 'town' && r.id === s.town && r.county === s.county)) throw new Error('請選擇有效的鄉鎮市區');
   }
-  if (!questionPool(s, regions).length) throw new Error('此範圍尚未匯入可用圖資');
+  if (!questionPool(s, regions).length) throw new Error('此範圍目前沒有題目');
   return Object.fromEntries(Object.keys(DEFAULTS).map(k => [k, s[k]]));
 }
 

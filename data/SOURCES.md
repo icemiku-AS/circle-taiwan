@@ -1,4 +1,4 @@
-# 遊戲圖資與來源
+# 資料來源與授權
 
 ## 景點題庫轉檔
 
@@ -16,7 +16,7 @@
 }
 ```
 
-選題清單 `landmarks-selection.json` 為下列物件的陣列；全島經典以童年、畢旅與假期回憶為主題，納入 17 個園區／場館替換，保留鹿野高台。縣市 classic 先保留這些題目，再按來源 ID 排序自動補足 20 題，避免同縣同名；不另增人工審查。範例只說明格式；正式收錄前須核對題名、代表點、縣市及遊戲覆蓋範圍。大型景區採官方代表點時必須明示，不能未查核就改稱某個入口或核心設施。
+選題清單 `landmarks-selection.json` 為下列物件的陣列；全島經典 100 題納入 17 個園區／場館替換，保留鹿野高台。縣市 classic 先保留這些題目，再按來源 ID 排序自動補足 20 題，避免同縣同名；不另增人工審查。範例只說明格式；正式收錄前須核對題名、代表點、縣市及遊戲覆蓋範圍。題目優先顯示整理後的 `name`，缺少時才使用 `officialName`；錨點仍保存在資料中，玩法說明交代代表點判定。大型景區採官方代表點時不能未查核就改稱某個入口或核心設施。
 
 ```json
 [
@@ -98,7 +98,7 @@ npm run data:landmarks -- --source data/landmarks-source.zip --selection data/la
 
 ## 初階線索底圖
 
-行政區初階使用真實地形、道路及水系；景點全島初階僅顯示縣市邊界，縣市初階顯示所選外框與鄉鎮界。景點全島高階保留海岸輪廓，縣市高階只增加所選縣市外框；均不使用地形與道路線索。線索**不參與計分、不改動陸域及行政邊界**。不因繪出河川或湖泊而排除內陸水面計分。
+行政區初階使用真實地形、道路及水系，高階保留海岸輪廓。景點兩種難度皆有行政區界線：全島顯示縣市界，指定縣市顯示所選外框與鄉鎮界；景點初階另載入地形、河川與道路，高階不載入這些線索。線索**不參與計分、不改動陸域及行政邊界**。不因繪出河川或湖泊而排除內陸水面計分。
 
 - 地形：[內政部 2025 年版 20 公尺網格 DTM](https://data.gov.tw/dataset/176927)。來源 ZIP `不分幅_全台20MDEM(2025).zip`，實際 TIFF 名為 `DEM_tawiwan_V2025.tif`，10035×18852，20 m 網格，NoData -32767。
 - 地形 TIFF 為 TM2／121°、中央經線比例 .9999，PixelIsPoint；檔內橢球標為 WGS84。顯示沿用公尺制座標，未做精密參考框架改正。以 5 倍間距取樣為 **100 m 顯示網格**（2007×3770），保留原本 NoData，不人工補山形；輸出的 bounds 依網格中心轉為像元外緣。
@@ -107,6 +107,6 @@ npm run data:landmarks -- --source data/landmarks-source.zip --selection data/la
 - 僅匯入幾何、類別及視野索引，沒有地名、路名、POI 或行政界線。顯示線條使用約 4～10 m 的簡化，**答案資料仍無額外簡化或手繪容錯**。
 - 來源網址、來源及產物 SHA-256、投影、數量與限制見 [basemap-manifest.json](basemap-manifest.json)。產物為 `basemap.json.gz`（約 15.5 MB）及 `terrain.bin.gz`（約 4.9 MB）。單人與多人均由瀏覽器按視野載入靜態分包，不一次下載全台線段。
 
-地形依 [政府資料開放授權條款第 1 版](https://data.gov.tw/license)；OSM 道路／水系衍生資料維持 [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/)，署名為 **© OpenStreetMap contributors / Geofabrik**，並連到 [OSM 版權頁](https://www.openstreetmap.org/copyright)。自有程式碼的 AGPL 不取代這些資料授權。頁尾保留署名；成績分享圖只畫行政邊界／海岸與圈選，未嵌入 OSM 或地形底圖。
+地形依 [政府資料開放授權條款第 1 版](https://data.gov.tw/license)；OSM 道路／水系衍生資料維持 [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/)，署名為 **© OpenStreetMap contributors / Geofabrik**，並連到 [OSM 版權頁](https://www.openstreetmap.org/copyright)。自有程式碼的 AGPL 不取代這些資料授權。頁尾提供「資料來源與授權」入口，該頁首頁區塊列出上述署名與連結；成績分享圖只畫行政邊界／海岸與圈選，未嵌入 OSM 或地形底圖。
 
 `npm run data:basemap` 重新產製線索，原始 ZIP／解開的 TIFF 只快取於 `.cache/basemap/`。啟動與遊玩使用已產出的本機資料，不向政府、OSM 或 Geofabrik 逐題請求圖磚。細村里地形解析度、來源更新時間差、NoData、海岸裁切與手機實機效能仍待檢查。

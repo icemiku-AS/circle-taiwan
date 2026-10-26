@@ -33,6 +33,6 @@ self.onmessage = ({ data }) => {
         }
       } else throw new Error('未知計分操作');
       self.postMessage({ id: data.id, value });
-    } catch (error) { self.postMessage({ id: data.id, error: error.message }); }
+    } catch (error) { console.error('計分處理失敗', error); self.postMessage({ id: data.id, error: error.message }); }
   });
 };
