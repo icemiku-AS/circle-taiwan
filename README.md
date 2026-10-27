@@ -1,4 +1,4 @@
-# 圈出台灣｜Circle Taiwan v1.1.2
+# 圈出台灣｜Circle Taiwan v1.1.3
 
 台灣本島網頁地理圈選遊戲。
 
@@ -17,7 +17,7 @@
 
 ## 授權與致謝
 
-程式碼採 [AGPL-3.0-only](LICENSE)；圖資來源與授權見 [data/SOURCES.md](data/SOURCES.md)。
+程式碼採 [AGPL-3.0](LICENSE)；圖資來源與授權見 [data/SOURCES.md](data/SOURCES.md)。
 
 靈感來自 [KSKだぜGAMES 的《県境王》](https://kskdazegames.com/games/kenkyo)，感謝原作。
 

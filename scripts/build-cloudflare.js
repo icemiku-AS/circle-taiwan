@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { build } from 'esbuild';
 import { buildStatic } from './build-static.js';
-import { prepareSoloRelease,SOLO_SOURCE_FILES } from './prepare-solo-release.js';
+import { prepareSoloRelease } from './prepare-solo-release.js';
 
 export const FREE_ASSETS={directory:'./client',binding:'ASSETS',run_worker_first:['/api/*'],not_found_handling:'404-page'};
 
@@ -29,11 +29,10 @@ export async function buildFreeLocal(out='.cache/cloudflare-free-local') {
   assert.ok(Buffer.byteLength(worker)<=64*1024*1024,'Worker 超過 64 MiB 上限');
   return{root:out,client,schema:resolve('server/free-schema.sql'),workerBytes:Buffer.byteLength(worker),assets:await checkStaticLimits(client)};
 }
-export const FREE_SOURCE_FILES=[...SOLO_SOURCE_FILES,'server/free-rooms.js','server/free-schema.sql','scripts/build-cloudflare.js','scripts/start-sites-local.js'];
 export async function buildFreeRelease(out,previous) {
   out=resolve(out);await mkdir(out,{recursive:true});assert.equal((await readdir(out)).length,0,'發布輸出必須為全新空目錄');
   const prepared=await buildFreeLocal(join(out,'prepared')),client=join(out,'client');
-  const evidence=prepareSoloRelease(client,previous,FREE_SOURCE_FILES,{freshSite:true});
+  const evidence=prepareSoloRelease(client,previous,{freshSite:true});
   await cp(join(prepared.root,'server.js'),join(out,'worker.js'));
   assert.equal(prepared.root,join(out,'prepared'));await rm(prepared.root,{recursive:true});
   await writeFile(join(client,'environment.json'),JSON.stringify({multiplayer:'local',url:null,transport:'poll',protocol:3}));
